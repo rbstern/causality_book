@@ -1,0 +1,13 @@
+Package: causality_book
+Title: Inferência Causal
+Version: 0.0.0.1
+Authors@R: person("Rafael", "Stern", email = "first.last@example.com", role = c("aut", "cre"))
+Description: Gera o livro de Inferência Causal.
+Depends: R (>= 3.3.2)
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true
+Remotes:
+    azeloc/puBuild
+Imports: puBuild
+

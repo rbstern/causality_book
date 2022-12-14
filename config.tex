@@ -1,0 +1,143 @@
+\documentclass[11pt]{scrbook}
+\usepackage[portuguese]{babel}
+\usepackage[utf8]{inputenc}
+
+\usepackage{nameref}
+\usepackage[colorlinks=true, urlcolor=blue, citecolor=blue, linkcolor=blue]{hyperref}
+\usepackage{amsfonts, amsmath, amssymb, amsthm, thmtools}
+  
+\usepackage{cleveref}
+
+\declaretheorem[name=Teorema, refname={Teorema, Teoremas}, Refname={Teorema, Teoremas}, parent=section]{theorem}
+\declaretheorem[name=Algoritmo, refname={Algoritmo, Algoritmos}, Refname={Algoritmo, Algoritmos}, sibling=theorem, style=definition]{algorithm2}
+\declaretheorem[name=Corolário, refname={Corolário, Corolários}, Refname={Corolário, Corolários}, sibling=theorem]{corollary}
+\declaretheorem[name=Definição, refname={Definição, Definições}, Refname={Definição, Definições}, sibling=theorem, style=definition]{definition}
+\declaretheorem[name=Exemplo, refname={Exemplo, Exemplos}, Refname={Exemplo, Exemplos}, sibling=theorem, style=definition]{example}
+\declaretheorem[name=Lema, refname={Lema, Lemas}, Refname={Lema, Lemas}, sibling=theorem]{lemma}
+\declaretheorem[name=Exercício, refname={Exercício, Exercícios}, Refname={Exercício, Exercícios}, sibling=theorem, style=definition]{exercise}
+
+\crefname{section}{seção}{seções}
+\Crefname{section}{Seção}{Seções}
+\crefname{chapter}{capítulo}{capítulos}
+\Crefname{chapter}{Capítulo}{Capítulos}
+\crefname{table}{tabela}{tabelas}
+\Crefname{table}{Tabela}{Tabelas}
+
+\newcommand{\crefpairconjunction}{ e }
+\newcommand{\creflastconjunction}{ e }
+
+\setcounter{tocdepth}{4}
+
+\usepackage{color, xcolor, enumitem, fancyhdr, float, layout, multirow, setspace, slashbox, verbatim}
+\usepackage{algorithm2e, algorithmicx, listings}
+\usepackage{caption, subcaption}
+\usepackage[authoryear]{natbib}
+%\usepackage[all]{xy}
+\usepackage{authblk}
+\usepackage{cprotect}
+\bibpunct[; ]{(}{)}{,}{a}{,}{;}
+
+\usepackage{graphicx}
+\graphicspath{{figures/}{../figures/}}
+\renewcommand{\floatpagefraction}{.9}
+
+\usepackage{ifthen}
+\newboolean{noShowSolutions}
+\setboolean{noShowSolutions}{true}
+\newcommand{\solutioncmd}[2]{{{#1}}{{#2}}}
+\newcommand{\solution}[2]{\ifthenelse {\boolean{noShowSolutions}} {\solutioncmd{#2}}{\solutioncmd{#1} }}
+\usepackage{xcolor}
+\def\X{***ATTN***}
+\newcommand{\red}[1]{\textbf{\color{red} ***ATTN*** #1}}
+\renewcommand{\vec}[1]{\mathbf{#1}}
+
+\def\limn{\lim_{n \rightarrow \infty}}
+\def\convas{\stackrel{a.s.}{\longrightarrow}}
+
+\DeclareRobustCommand{\rchi}{{\mathpalette\irchi\relax}}
+\newcommand{\irchi}[2]{\raisebox{\depth}{$#1\chi$}}
+
+\def\sA{{\mathcal A}}
+\def\sE{{\mathcal E}}
+\def\sG{{\mathcal G}}
+\def\sV{{\mathcal V}}
+
+\def\I{{\mathbb I}}
+\def\P{{\mathbb P}}
+\def\E{{\mathbb E}}
+\def\V{{\mathbb V}}
+\def\N{{\mathbb N}}
+\def\R{{\mathbb R}}
+\def\seqn{{_{n \in N}}}
+\def\X{{\vec{X}}}
+\def\x{{\vec{x}}}
+\def\Y{{\vec{Y}}}
+\def\y{{\vec{y}}}
+\def\Z{{\vec{Z}}}
+\def\z{{\vec{z}}}
+
+\newcommand{\ind}{\perp\!\!\!\!\perp} 
+
+\usepackage{epigraph}
+
+
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+
+\textheight25cm \footskip0.5cm \topmargin-1.5cm \headsep0.2cm
+\oddsidemargin-1.5cm \evensidemargin-1.5cm
+\marginparwidth0cm \marginparsep = 0pt
+\textwidth19cm
+\onehalfspacing
+
+\title{Inferência Causal \\[8mm]}
+\subtitle{Notas de Aula \\[8mm]}
+\author{Rafael Bassi Stern}
+\date{Última revisão: \today \\[8mm]
+Por favor, enviem comentários, typos e erros para rbstern@gmail.com}

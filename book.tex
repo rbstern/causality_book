@@ -1,0 +1,1295 @@
+\input{config.tex}
+
+\begin{document}
+
+\maketitle
+
+\vspace{20mm}
+
+\textbf{Agradecimentos}: 
+
+\newpage
+
+
+\epigraph{
+``Teaching is giving opportunities to students to discover things by themselves.''
+}
+{George P\'olya}
+ 
+ 
+\newpage
+ 
+\tableofcontents
+  
+\newpage
+
+
+
+
+\chapter{Por que estudar Inferência Causal?}
+\label{cap:intro}
+
+Você já deve ter ouvido diversas vezes que
+\textbf{correlação não implica causalidade}. Contudo,
+o que é causalidade e como 
+ela pode ser usada para resolver problemas práticos?
+Antes de estudarmos definições formais,
+nesta aula veremos como conceitos intuitivos de causalidade
+podem ser necessários para resolver questões
+usuais em Inferência Estatística.
+Para tal, a seguir estudaremos um exemplo de \citet{Glymour2016}.
+
+\section{O Paradoxo de Simpson}
+
+Considere que observamos em $500$ pacientes $3$ variáveis: 
+$X$ e $Y$ são as indicadoras de que, respectivamente,
+o paciente recebeu um tratamento e o paciente se recuperou de uma doença, e
+$Z$ é uma variável binária cujo significado será discutido mais tarde.
+Os dados foram resumidos em uma tabela de contingência:
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{verbatim}
+##     Y   0   1
+## Z X          
+## 0 0    36 234
+##   1     6  81
+## 1 0    25  55
+##   1    71 192
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+Em uma primeira análise desta tabela, podemos 
+verificar a efetividade do tratamento 
+dentro de cada valor de $Z$.
+Por exemplo, quando $Z=0$,
+a frequência de recuperação dentre aqueles que 
+receberam e não receberam o tratamento 
+são, respectivamente: $\frac{81}{6+81} \approx 0.93$ e
+$\frac{234}{36+234} \approx 0.87$.
+Similarmente, quando $Z=1$,
+as respectivas frequências são:
+$\frac{192}{71+192} \approx 0.73$ e
+$\frac{55}{25+55} \approx 0.69$.
+À primeira vista, para todos os valores de $Z$, a taxa de recuperação 
+é maior com o tratamento do que sem ele.
+Isso nos traz informação de que 
+o tratamento é efetivo na recuperação do paciente?
+
+Em uma segunda análise, podemos considerar
+apenas as contagens para as variáveis $X$ e $Y$,
+sem estratificar por $Z$.
+Dentre os pacientes que receberam e não receberam o tratamento
+as taxa de recuperação são, respectivamente:
+$\frac{81+192}{6+71+81+192} \approx 0.78$ e
+$\frac{234+55}{36+25+234+55} \approx 0.83$. Isto é,
+sem estratificar por $Z$, a frequência de recuperação é
+maior dentre aqueles que não receberam o tratamento
+do que dentre aqueles que o receberam.
+
+O que é possível concluir destas análises?
+Uma conclusão ingênua poderia ser a de que,
+se $Z$ não for observada, então o tratamento não é recomendado.
+Por outro lado, se $Z$ é observada, 
+não importa qual seja o seu valor, o tratamento será recomendado.
+A falta de sentido desta conclusão ingênua é
+o que tornou este tipo de dado famoso como sendo
+um caso de Paradoxo de Simpson \citep{Simpson1951}.
+
+Contudo, se a conclusão ingênua é paradoxal e incorreta,
+então qual conclusão pode ser obtida destes dados?
+A primeira lição que verificaremos é que não é possível obter
+uma conclusão sobre o \textbf{efeito causal} do tratamento usando
+apenas a informação na tabela, isto é associações.
+Para tal, analisaremos a tabela dando 
+dois nomes distintos para a variável $Z$.
+Veremos que, usando exatamente os mesmos dados,
+uma conclusão válida diferente é obtida para cada nome de $Z$.
+Em outras palavras, o efeito causal depende de
+mais informação do que somente aquela disponível na tabela.
+
+Em um primeiro cenário, considere que $Z$ é a indicadora de que
+o sexo do paciente é masculino.
+Observando a tabela, notamos que, proporcionalmente, 
+mais homens receberam o tratamento do que mulheres.
+Como o tratamento não tem qualquer influência sobre o sexo do paciente,
+podemos imaginar um cenário em que, proporcionalmente,
+mais homens escolheram receber o tratamento do que mulheres.
+
+Usando esta observação,
+podemos fazer sentido do Paradoxo anteriormente obtido.
+Quando agregamos os dados,
+notamos que o primeiro grupo de pacientes que 
+receberam o tratamento é predominantemente composto por homens e,
+similarmente, o segundo grupo de 
+pacientes que não receberam o tratamento é
+predominantemente composto por mulheres.
+Isto é, na análise dos dados agregados estamos 
+essencialmente comparando a taxa de recuperação de homens 
+que receberam o tratamento com
+a de mulheres que não receberam o tratamento.
+Se assumirmos que, independentemente do tratamento, 
+mulheres tem uma probabilidade de recuperação maior do que homens,
+então a taxa de recuperação menor no primeiro grupo pode ser explicada
+pelo fato de ele ser composto predominantemente por homens e
+não pelo fato de ser o grupo de pacientes que recebeu o tratamento.
+Também, da análise anterior, obtemos que para cada sexo, 
+a taxa de recuperação é maior com o tratamento  do que sem ele. 
+Isto é, neste cenário, o tratamento parece efetivo para
+a recuperação dos pacientes.
+Isto significa que a análise estratificando $Z$ é sempre a correta?
+
+Caso o significado da variável $Z$ seja outro, veremos que 
+esta conclusão é incorreta.
+Considere que $Z$ é a indicadora de que 
+a pressão sanguínea do paciente está elevada.
+Além disso, é sabido que o tratamento tem como
+efeito colateral aumentar o risco
+pressão elevada nos pacientes.
+Neste caso, o fato de que
+há mais indivíduos com pressão elevada dentre aqueles que
+receberam o tratamento é
+um efeito direto do tratamento.
+
+Usando esta observação,
+podemos chegar a outras conclusões sobre o
+efeito do tratamento sobre a recuperação dos pacientes.
+Para tal, considere que o tratamento tem
+um efeito positivo moderado sobre a recuperação dos pacientes,
+mas que a pressão sanguínea elevada prejudica gravemente a recuperação.
+Quando fazemos comparações apenas dentre indivíduos com pressão alta ou
+apenas dentre indivíduos sem pressão alta, 
+não é possível identificar o efeito coletaral do tratamento.
+Isto é, observamos apenas
+o efeito positivo moderado que o tratamento tem sobre a recuperação.
+Por outro lado, quando fazemos a análise agregada,
+observamos que a frequência de recuperação é 
+maior dentre os indivíduos que não receberam o tratamento
+do que dentre os que o receberam.
+Isso ocorre pois o efeito colateral negativo tem um impacto
+maior sobre a recuperação do paciente do que o efeito geral benéfico.
+Assim, neste cenário, o tratamento não é
+eficiente para levar à recuperação do paciente.
+
+Como nossas conclusões dependem de qual história adotamos,
+podemos ver que a mera apresentação da tabela é
+insuficiente para determinar a eficiência do tratamento.
+Observando com cuidado os cenários,
+identificamos uma explicação geral para
+as diferentes as conclusões.
+Na primeiro cenário, quando $Z$ é sexo,
+$Z$ é uma causa do indivíduo receber ou não o tratamento.
+Já no segundo cenário, quando $Z$ é pressão elevada,
+o tratamento é causa de $Z$. Isto é,
+a diferença nas relações entre as variáveis
+explica as diferenças entre as conclusões obtidas.
+
+Ao longo do curso, desenvolveremos ferramentas para
+formalizar a diferença entre estes cenários e, com base nisso,
+conseguir estimar o efeito causal que $X$ tem sobre $Y$.
+Contudo, para tal, será necessário desenvolver
+um modelo em que seja possível descrever relações causais.
+Esta questão será tratada no \cref{cap:dag}.
+
+\subsection{Exercícios}
+
+\begin{exercise}[{\citet{Glymour2016}[p.6]}]
+ Há evidência de que há correlação positiva entre
+ uma pessoa estar atrasada e estar apressada.
+ Isso significa que uma pessoa pode evitar atrasos
+ se não tiver pressa? 
+ Justifique sua resposta em palavras.
+\end{exercise}
+
+
+
+\chapter{Modelo Estrutural Causal (SCM)}
+\label{cap:dag}
+
+No \cref{cap:intro} vimos que 
+as relações causais entre variáveis são
+essenciais para conseguirmos determinar
+o efeito que uma variável pode ter em outra.
+Contudo, como podemos especificar
+relações causais formalmente?
+
+Como resposta a esta pergunta iremos
+definir o Modelo Estrutural Causal (SCM),
+que permite especificar formalmente relações causais.
+Para tal, será necessário primeiro introduzir
+modelos probabilísticos em grafos.
+Um curso completo sobre estes modelos 
+pode ser encontrado, por exemplo,
+em \citet{Maua2022}.
+A seguir, estudaremos resultados
+essenciais destes modelos.
+
+\section{Elementos de Modelos Probabilísticos em Grafos}
+
+\subsection{Grafo Direcionado}
+
+\begin{definition}
+ \label{def:grafo}
+ Um \textbf{grafo direcionado}, 
+ $\sG = (\sV, \sE)$,
+ é composto por um conjunto de vértices,
+ $\sV = \{V_1, \ldots, V_n\}$, e
+ e um conjunto de arestas,
+ $\sE = \{E_1, \ldots, E_m\}$, onde
+ cada aresta é um par ordenado de vértices, isto é,
+ $E_i \in \sV^2$.
+\end{definition}
+
+Para auxiliar nossa intuição sobre a
+\cref{def:grafo}, é comum representarmos
+o grafo por meio de uma figura.
+Nesta, representamos cada vértice por meio de um ponto.
+Além disso, para cada aresta, $(V_i, V_j)$,
+traçamos uma seta que aponta de $V_i$ para $V_j$.
+
+Por exemplo, considere que os vértices são
+$\sV = \{V_1, V_2, V_3\}$ e as arestas são
+$\sE = \{(V_1, V_2), (V_1, V_3), (V_2, V_3)\}$.
+Neste caso, teremos os $3$ pontos como vértices e,
+além disso, traçaremos setas de $V_1$ para $V_2$ e para $V_3$ e,
+também, de $V_2$ para $V_3$.
+Podemos desenhar este grafo utilizando o
+pacote \textit{dagitty} \citep{Textor2016}:
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{library}\hlstd{(dagitty)}
+\hlkwd{library}\hlstd{(ggdag)}
+\hlkwd{library}\hlstd{(ggplot2)}
+
+\hlcom{# Especificar o grafo}
+\hlstd{grafo} \hlkwb{<-} \hlkwd{dagitty}\hlstd{(}\hlstr{"dag \{
+    V1 -> \{ V2 V3 \}
+    V2 -> V3
+\}"}\hlstd{)}
+
+\hlcom{# Exibir a figura do grafo}
+\hlkwd{ggdag}\hlstd{(grafo,} \hlkwc{layout} \hlstd{=} \hlstr{"circle"}\hlstd{)} \hlopt{+}
+  \hlkwd{theme}\hlstd{(}\hlkwc{axis.text.x}\hlstd{=}\hlkwd{element_blank}\hlstd{(),}
+      \hlkwc{axis.ticks.x}\hlstd{=}\hlkwd{element_blank}\hlstd{(),}
+      \hlkwc{axis.text.y}\hlstd{=}\hlkwd{element_blank}\hlstd{(),}
+      \hlkwc{axis.ticks.y}\hlstd{=}\hlkwd{element_blank}\hlstd{())} \hlopt{+}
+  \hlkwd{xlab}\hlstd{(}\hlstr{""}\hlstd{)} \hlopt{+} \hlkwd{ylab}\hlstd{(}\hlstr{""}\hlstd{)}
+\end{alltt}
+\end{kframe}\begin{figure}[t]
+
+{\centering \includegraphics[width=\maxwidth]{./figures/grafo1-1} 
+
+}
+
+\caption[Exemplo de grafo]{Exemplo de grafo.}\label{fig:grafo1}
+\end{figure}
+
+\end{knitrout}
+
+Grafos direcionados serão úteis para 
+representar causalidade pois 
+usaremos vértices para representar variáveis e
+arestas para apontar de 
+cada causa imediata para seu efeito.
+Por exemplo, no \Cref{cap:intro}
+consideramos um caso em que Sexo e Tratamento são
+causas imediatas de recuperação e, além disso,
+Sexo é causa imediata de Tratamento.
+O grafo na \cref{fig:grafo1} poderia
+representar estas relações se definirmos que
+$V_1$ é Sexo, $V_2$ é Tratamento e 
+$V_3$ é Recuperação.
+
+Usando a representação de um grafo,
+podemos imaginar caminhos sobre ele.
+Começamos um *caminho direcionado* 
+em um determinado vértice e, 
+seguindo a direção das setas, 
+vamos de um vértice para outro.
+Por exemplo, $(V_1, V_2, V_3)$ é
+um caminho direcionado na 
+\cref{fig:grafo1}, pois existe
+uma seta de $V_1$ para $V_2$ e
+de $V_2$ para $V_3$.
+É comum denotarmos este caminho direcionado por
+$V_1 \rightarrow V_2 \rightarrow V_3$.
+Similarmente, $(V_1, V_3, V_2)$ não é
+um caminho direcionado, pois
+não existe seta de $V_3$ para $V_2$.
+A definição de caminho direcionado é
+formalizada a seguir:
+
+\begin{definition}
+ \label{lem:caminhodir}
+ Um \textbf{caminho direcionado} é 
+ uma sequência de vértices em
+ um grafo direcionado,
+ $C = \{V_1, \ldots, V_n\}$ tal que, 
+ para cada $1 \leq i < n$,
+ $(V_i, V_{i+1}) \in \sE$.
+\end{definition}
+
+Um \textit{caminho} é uma generalização 
+de caminho direcionado.
+Em um caminho, começamos em um vértice e,
+seguindo por setas, mas 
+não necessariamente na direção 
+em que elas apontam, vamos
+de um vértice para outro.
+Por exemplo, na \cref{fig:grafo1}
+vimos que $(V_1, V_3, V_2)$ não é um 
+caminho direcionado pois não existe seta de $V_3$ para $V_2$.
+Contudo, $(V_1, V_3, V_2)$ é um caminho pois
+existe uma seta ligando $V_3$ e $V_2$,
+a seta que aponta de $V_2$ para $V_3$.
+É comum representarmos este caminho por
+$V_1 \rightarrow V_3 \leftarrow V_2$.
+Caminho é formalizado a seguir:
+
+\begin{definition}
+ \label{def:caminho}
+ Um \textbf{caminho} é uma sequência de vértices,
+ $C = \{V_1, \ldots, V_n\}$ tal que, 
+ para cada $1 \leq i < n$,
+ $(V_i, V_{i+1}) \in \mathbb{E}$ ou 
+ $(V_{i+1}, V_{i}) \in \mathbb{E}$. 
+\end{definition}
+
+\subsection{Grafo Direcionado Acíclico (DAG)}
+
+Um DAG é um grafo direcionado tal que,
+para todo vértice, $V$, não é possível
+seguir setas partindo de $V$ e
+voltar para $V$. Este conceito é
+formalizado a seguir:
+
+\begin{definition}
+ \label{def:dag}
+ Um \textbf{grafo direcionado acíclico} (DAG) é
+ um grafo direcionado, $\sG$,
+ tal que, para todo
+ vértice, $V \in \sV$, não existe um
+ caminho direcionado, $C = \{V_1, \ldots, V_n\}$
+ tal que $V_1 = V = V_n$.
+\end{definition}
+
+Usualmente representaremos
+as relações causais por meio de um DAG.
+Especificamente, existirá uma aresta de $V_1$ para $V_2$
+para indicar que $V_1$ é causa imediata de $V_2$.
+Caso um grafo direcionado não seja um DAG,
+então existe um caminho de $V$ em $V$, isto é,
+$V$ seria uma causa de si mesma, 
+o que desejamos evitar.
+
+Um DAG induz uma \textit{ordem parcial} entre 
+os seus vértices. Isto é,
+se existe uma aresta de $V_1$ para $V_2$,
+então podemos interpretar que
+$V_1$ antecede $V_2$ causalmente.
+Com base nesta ordem parcial, é
+possível construir diversas
+definições que nos serão úteis.
+
+Dizemos que $V_1$ é pai de $V_2$ em
+um DAG, $\sG$, se
+existe uma aresta de $V_1$ a $V_2$,
+isto é, $(V_1, V_2) \in \sE$.
+Denotamos por $Pa(V)$ o
+conjunto de todos os pais de $V$:
+
+\begin{definition}
+ \label{def:pais}
+ Em um DAG, $\sG$,
+ o conjunto de \textbf{pais} de $V \in \sV$, $Pa(V)$, é:
+ $$Pa(V) = \{V^* \in \sV: (V^*, V) \in \sE\}.$$
+\end{definition}
+
+Similarmente, dizemos que $V_1$ é um ancestral de $V_2$ em
+um DAG, se $V_1$ antecede $V_2$ causalmente. Isto é,
+se $V_1$ é pai de $V_2$ ou, pai de pai de $V_2$, ou
+pai de pai de pai de $V_2$, e assim por diante $\ldots$
+Denotamos por $Anc(V)$ o conjunto de todos os ancestrais de $V$:
+
+\begin{definition}
+ \label{def:ancestrais}
+ Em um DAG, $\sG$,
+ o conjunto de \textbf{ancestrais} de $V \in \sV$, $Anc(V)$, é tal que
+ $Anc(V) \subseteq \sV$ e
+ $V^* \in Anc(V)$ se e somente se existe
+ um caminho direcionado em $\sG$, C, tal que
+ $C_1 = V^*$ e, para algum i, $C_i = V$.
+\end{definition}
+
+Note que podemos interpretar $Anc(V)$ como
+o conjunto de todas as causas diretas e indiretas de $V$.
+
+Finalmente, diremos que um conjunto de vértices,
+$\sA \subseteq \sV$ é \textit{ancestral} em um DAG,
+se não existe algum vértice fora de $\sA$ que
+seja pai de algum vértice em $\sA$.
+Segundo nossa interpretação causal,
+$\sA$ será ancestral quando 
+nenhum vértice fora de $\sA$ 
+é causa direta de 
+algum vértice em $\sA$:
+
+\begin{definition}
+ \label{def:ancestral}
+ Em um DAG, $\sG$,
+ dizemos que $\sA \subseteq \sV$ é \textbf{ancestral} se,
+ para todo $V \in \sA$, temos que
+ $Pa(V) \subseteq \sA$.
+\end{definition}
+
+\begin{lemma}
+ \label{lem:anc}
+ Em um DAG, $\sG$,
+ para todo $V \in \sV$, 
+ $Anc(V)$ é ancestral.
+\end{lemma}
+
+\subsection{Modelo Probabilístico em um DAG}
+
+Um modelo probabilístico em um DAG é
+tal que cada um dos vértices é uma variável aleatória.
+O DAG será usada para descrever 
+relações de independência condicional existentes entre
+estas variáveis.
+Mais especificamente, cada vértice será
+independente dos demais vértices dados os seus pais.
+Uma maneira alternativa de pensar sobre esta afirmação é
+imaginar que cada vértice é gerado somente pelos seus pais.
+Esta intuição é formalizada em \cref{def:compativel}:
+
+\begin{definition}
+ \label{def:compativel}
+ Para $\sV$ um conjunto de variáveis aleatórias,
+ dizemos que uma função de densidade sobre $\sV$, 
+ $f$, é compatível com um DAG, $\sG$, se:
+ $$f(v_1,\ldots,v_n) = \prod_{i=1}^n f(v_i|Pa(v_i))$$
+\end{definition}
+
+Na prática, pode ser difícil verificar 
+se a \cref{def:compativel} está satisfeita 
+Para esses casos,
+pode ser útil aplicar o 
+\cref{lem:compativel-equiv}:
+
+\begin{lemma}
+ \label{lem:compativel-equiv}
+ Uma função de densidade, $f$, é
+ compatível com um DAG, $\sG$,
+ se e somente se, existem funções,
+ $g_1,\ldots,g_n$ tais que:
+ $$f(v_1,\ldots,v_n) = \prod_{i=1}^n g_i(v_i, Pa(v_i))$$
+\end{lemma}
+
+A seguir, estudaremos três tipos fundamentais
+de modelos probabilísticos em DAG's com
+$3$ vértices. 
+A intuição obtida a partir destes
+exemplos continuará valendo quando
+estudarmos grafos mais gerais.
+
+\subsection{Exemplos de Modelo Probabilístico em um DAG}
+\label{sec:dag-ex}
+
+Nos exemplos a seguir, considere que
+$\sV = (V_1, V_2, V_3)$.
+
+\subsubsection{Confundidor (Confounder)}
+
+No modelo de confundidor, 
+as únicas duas arestas são 
+$(V_2, V_1)$ e $(V_2, V_3)$.
+Uma ilustração de um confundidor
+pode ser encontrada 
+na \cref{fig:confundidor}.
+O modelo de confundidor pode ser usado quando
+acreditamos que $V_2$ é uma causa comum a
+$V_1$ a $V_3$. Além disso,
+$V_1$ não é causa imediata de $V_3$ 
+nem vice-versa.
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{figure}[t]
+
+{\centering \includegraphics[width=\maxwidth]{./figures/confundidor-1} 
+
+}
+
+\caption[Ilustração de confundidor]{Ilustração de confundidor.}\label{fig:confundidor}
+\end{figure}
+
+\end{knitrout}
+
+Em um modelo de confundidor 
+a relação de dependência entre 
+$V_1$ e $V_3$ é explicada pelos
+resultados a seguir:
+
+\begin{lemma}
+ \label{lem:conf-ind}
+ Para qualquer probabilidade compatível com 
+ o DAG na \cref{fig:confundidor},
+ $V_1 \ind V_3 | V_2$.
+\end{lemma}
+
+\begin{proof}
+ \begin{align*}
+  f(v_1,v_3|v_2) 
+  &= \frac{f(v_1,v_2,v_3)}{f(v_2)} \\
+  &= \frac{f(v_2)f(v_1|v_2)f(v_3|v_2)}{f(v_2)} 
+  & \text{\cref{def:compativel}} \\
+  &= f(v_1|v_2)f(v_3|v_2)
+ \end{align*}
+\end{proof}
+
+\begin{lemma}
+ \label{lem:conf-dep}
+ Existe ao menos uma probabilidade compatível com
+ o DAG na \cref{fig:confundidor} tal que
+ $V_1 \not\ind V_3$.
+\end{lemma}
+
+\begin{proof}
+ Considere que $V_2 \sim \text{Bernoulli}(0.02)$.
+ Além disso, $V_1, V_3 \in \{0,1\}$ são independentes dado $V_2$. 
+ Também,
+ $\P(V_1 = 1|V_2 = 1) = \P(V_3 = 1|V_2 = 1) = 0.9$ e
+ $\P(V_1 = 1|V_2 = 0) = \P(V_3 = 1|V_2 = 0) = 0.05$.
+ Note que, por construção, $\P$ é 
+ compatível com \cref{fig:confundidor}.
+ Isto é, $P(v_1,v_2,v_3) = \P(v_2)\P(v_1|v_2)\P(v_3|v_2)$.
+ Além disso,
+ \begin{align*}
+  \P(V_1 = 1) &= \P(V_1 = 1, V_2 = 1) + \P(V_1 = 1, V_2 = 0) \\
+              &= \P(V_2=1)\P(V_1=1|V_2=1)
+               +\P(V_2=0)\P(V_1=1|V_2=0) \\
+              &= 0.02 \cdot 0.9 + 0.98 \cdot 0.05= 0.067
+ \end{align*}
+ Por simetria, $\P(V_3=1) = 0.067$. Além disso,
+ \begin{align*}
+  \P(V_1 = 1, V_3 = 1)
+  &= \P(V_1 = 1, V_3 = 1, V_2 = 1) 
+  +  \P(V_1 = 1, V_3 = 1, V_2 = 0) \\
+  &= \P(V_2 = 1)\P(V_1 = 1|V_2 = 1)\P(V_3 = 1|V_2 = 1)
+  +  \P(V_2 = 0)\P(V_1 = 1|V_2 = 0)\P(V_3 = 1|V_2 = 0) \\
+  &= 0.02 \cdot 0.9 \cdot 0.9 + 0.98 \cdot 0.05 \cdot 0.05 = 0.01865
+ \end{align*}
+ Como $\P(V_1=1)\P(V_3=1) = 0.067 \cdot 0.067 \approx 0.0045 \neq 0.01865 = \P(V_1=1,V_3=1)$,
+ temos que $V_1$ e $V_3$ não são independentes.
+\end{proof}
+
+Combinando os \cref{lem:conf-ind,lem:conf-dep} é 
+possível compreender melhor como 
+usaremos confundidores num contexto causal.
+Nestes casos, $V_2$ será uma causa comum a $V_1$ e a $V_3$.
+Esta causa comum torna $V_1$ e $V_3$ associados,
+ainda que nenhum seja causa direta ou indireta do outro.
+
+Podemos contextualizar estas ideias
+em um caso de diagnóstico de dengue.
+Considere que 
+$V_2$ é a indicadora de que um indivíduo tem dengue, e
+$V_1$ e $V_3$ são indicadoras de sintomas típicos de dengue, como
+dor atrás dos olhos e febre.
+Neste caso, $V_1$ e $V_3$ tipicamente são associados:
+caso um paciente tenha febre,
+aumenta a probabilidade de que tenha dengue e, portanto,
+aumenta a probabilidade de que tenha dor atrás dos olhos.
+Contudo, apesar dessa associação 
+$V_3$ não tem influência causal sobre $V_1$.
+Se aumentarmos a temperatura corporal do indivíduo,
+não aumentará a probabilidade de que ele tenha dor atrás dos olhos.
+A dengue que causa febre, não o contrário.
+
+\subsubsection{Mediador (Mediator)}
+
+No modelo de mediador, 
+as únicas duas arestas são 
+$(V_1, V_2)$ e $(V_2, V_3)$.
+Uma ilustração de um mediador
+pode ser encontrada 
+na \cref{fig:mediador}.
+Neste modelo, acreditamos que 
+$V_1$ é causa de $V_2$ que,
+por sua vez, é causa de $V_3$.
+Assim, $V_1$ é ancestral de $V_3$,
+isto é, o primeiro é 
+causa indireta do segundo.
+
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{figure}[t]
+
+{\centering \includegraphics[width=\maxwidth]{./figures/mediador-1} 
+
+}
+
+\caption[Ilustração de mediador]{Ilustração de mediador.}\label{fig:mediador}
+\end{figure}
+
+\end{knitrout}
+
+Em um modelo de mediador 
+a relação de dependência entre 
+$V_1$ e $V_3$ é explicada pelos
+resultados a seguir:
+
+\begin{lemma}
+ \label{lem:med-ind}
+ Para qualquer probabilidade compatível com 
+ o DAG na \cref{fig:mediador},
+ $V_1 \ind V_3 | V_2$.
+\end{lemma}
+
+\begin{proof}
+ \begin{align*}
+  f(v_3|v_1,v_2) 
+  &= \frac{f(v_1,v_2,v_3)}{f(v_1,v_2)} \\
+  &= \frac{f(v_1)f(v_2|v_1)f(v_3|v_2)}{f(v_1)f(v_2|v_1)} 
+  & \text{\cref{def:compativel}} \\
+  &= f(v_3|v_2)
+ \end{align*}
+\end{proof}
+
+\begin{lemma}
+ \label{lem:med-dep}
+ Existe ao menos uma probabilidade compatível com
+ o DAG na \cref{fig:mediador} tal que
+ $V_1 \not\ind V_3$.
+\end{lemma}
+
+\begin{proof}
+ Considere que $V_1 \sim \text{Bernoulli}(0.5)$,
+ $\P(V_2=1|V_1=1)=0.9$, $\P(V_2=1|V_1=0)=0.05$,
+ $\P(V_3=1|V_2=1,V_1)=0.9$, e $\P(V_3=1|V_2=0,V_1)=0.05$.
+ Note que $(V_1,V_2,V_3)$ formam uma Cadeia de Markov.
+ Note que, por construção, $\P$ é 
+ compatível com \cref{fig:mediador}.
+ Isto é, $P(v_1,v_2,v_3) = \P(v_1)\P(v_2|v_1)\P(v_3|v_2)$.
+ Além disso,
+ \begin{align*}
+  \P(V_3 = 1) &= \P(V_1=0, V_2=0, V_3=1) + \P(V_1=0, V_2=1, V_3=1) \\
+              &+ \P(V_1=1, V_2=0, V_3=1) + \P(V_1=1, V_2=1, V_3=1) \\
+              &= 0.5 \cdot 0.9 \cdot 0.05 + 0.5 \cdot 0.05 \cdot 0.9 \\
+              &+ 0.5 \cdot 0.05 \cdot 0.05 + 0.5 \cdot 0.9 \cdot 0.9 
+              = 0.45125
+ \end{align*}
+ Além disso,
+ \begin{align*}
+  \P(V_1 = 1, V_3 = 1)
+  &= \P(V_1 = 1, V_2 = 0, V_3 = 1) 
+  +  \P(V_1 = 1, V_2 = 1, V_3 = 1) \\
+  &= 0.5 \cdot 0.05 \cdot 0.9 + 0.5 \cdot 0.9 \cdot 0.9
+  = 0.40625
+ \end{align*}
+ Como $\P(V_1=1)\P(V_3=1) = 0.5 \cdot 0.45125 \approx 0.226 \neq 
+ 0.40625 = \P(V_1=1,V_3=1)$,
+ temos que $V_1$ e $V_3$ não são independentes.
+\end{proof}
+
+Combinando os \cref{lem:med-ind,lem:med-dep} é 
+possível compreender melhor como 
+usaremos mediadores num contexto causal.
+Nestes casos, $V_2$ será uma consequência de $V_1$ e
+uma causa de $V_3$. Assim, o mediador torna
+$V_1$ e $V_3$ e associados, 
+ainda que nenhum seja causa direta do outro.
+Contudo, ao contrário do confundidor,
+neste caso $V_1$ é uma causa indireta de $V_3$,
+isto é, tem influência causal sobre $V_3$.
+
+Para contextualizar estas ideias,
+considere que $V_1$ é a indicadora de consumo elevado de sal,
+$V_2$ é a indicadora de pressão alta, e
+$V_3$ é a indicadora de ocorrência de um derrame.
+Como consumo elevado de sal causa pressão alta e
+pressão alta tem influência causal sobre a ocorrência de um derrame,
+pressão alta é um mediador entre consumo elevado de sal e
+ocorrência de derrame. Assim,
+consumo elevado de sal tem influência causal sobre
+a ocorrência de derrame.
+
+\subsubsection{Colisor (Collider)}
+
+O último exemplo de DAG com $3$ vértices que 
+estudaremos é o de modelo de colisor, em que
+as únicas duas arestas são 
+$(V_1, V_2)$ e $(V_3, V_2)$.
+Uma ilustração de um colisor
+pode ser encontrada 
+na \cref{fig:colisor}.
+O modelo de colisor pode ser usado quando
+acreditamos que $V_1$ e $V_3$ são 
+causas comuns a $V_2$. Além disso,
+$V_1$ não é causa imediata de $V_3$ 
+nem vice-versa.
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{figure}[t]
+
+{\centering \includegraphics[width=\maxwidth]{./figures/colisor-1} 
+
+}
+
+\caption[Ilustração de colisor]{Ilustração de colisor.}\label{fig:colisor}
+\end{figure}
+
+\end{knitrout}
+
+Em um modelo de colisor 
+a relação de dependência entre 
+$V_1$ e $V_3$ é explicada pelos
+resultados a seguir:
+
+\begin{lemma}
+ \label{lem:col-ind}
+ Para qualquer probabilidade compatível com 
+ o DAG na \cref{fig:colisor},
+ $V_1 \ind V_3$.
+\end{lemma}
+
+\begin{proof}
+ \begin{align*}
+  f(v_1,v_3) 
+  &= \sum_{v_2} f(v_1, v_2, v_3) \\
+  &= \sum_{v_2} f(v_1)f(v_3)f(v_2|v_1,v_3) 
+  & \text{\cref{def:compativel}} \\
+  &= f(v_1)f(v_3) \sum_{v_2}f(v_2|v_1,v_3) \\
+  &= f(v_1)f(v_3)
+ \end{align*}
+\end{proof}
+
+\begin{lemma}
+ \label{lem:col-dep}
+ Existe ao menos uma probabilidade compatível com
+ o DAG na \cref{fig:colisor} tal que
+ $V_1 \not\ind V_3 | V_2$.
+\end{lemma}
+
+\begin{proof}
+ Considere que $V_1$ e $V_3$ são
+ independentes e tem distribuição $\text{Bernoulli}(0.5)$.
+ Além disso, $V_2 \equiv V_1+V_2$.
+ Como $\P(V_3 = 1) = 0.5$ e
+ $\P(V_3=1|V_1=1,V_2=2) = 1$, conclua que
+ $V_1 \not\ind V_3 | V_2$.
+\end{proof}
+
+Combinando os \cref{lem:col-ind,lem:col-dep} vemos 
+como utilizaremos confundidores num contexto causal.
+Nestes casos, $V_1$ e $V_3$ serão causas comuns e independentes de $V_2$.
+Uma vez que obtemos informação sobre o efeito comum, $V_2$,
+$V_1$ e $V_3$ passam a ser associados.
+
+Esse modelo pode ser contextualizado observando
+a prevalência de doenças em uma determinada população 
+\citep{Sackett1979}.
+Considere que  $V_1$ e $V_3$ são 
+indicadoras de que um indivíduo tem
+doenças que ocorrem independentemente na população.
+Além disso, $V_2$ é a indicadora de que 
+o indíviduo foi hospitalizado, isto é,
+$V_2$ é influeciado causalmente 
+tanto por $V_1$ quanto por $V_3$.
+Para facilitar as contas envolvidas,
+desenvolveremos o exemplo com distribuições fictícias.
+Considere que
+$V_1$ e $V_3$ são independentes e
+tem distribuição Bernoulli(0.05).
+Além disso, quanto maior o número de doenças,
+maior a probabilidade de o indíviduo ser hospitalizado.
+Por exemplo,
+$\P(V_2=1|V_1=0,V_3=0) = 0.01$,
+$\P(V_2=1|V_1=0,V_3=1) = 0.1$,
+$\P(V_2=1|V_1=1,V_3=0) = 0.1$, e
+$\P(V_2=1|V_1=1,V_3=1) = 0.5$.
+
+Com base nestas especificações, podemos
+verificar se $V_1$ e $V_3$ estão associados
+quando $V_2=1$. Para tal,
+primeiramente calcularemos algumas
+probabilidades conjuntas que serão úteis:
+\begin{align}
+ \label{eq:ex-col-1}
+ \begin{cases}
+  \P(V_1=0,V_2=1,V_3=0) &= 0.95 \cdot 0.01 \cdot 0.95 = 0.009025 \\
+  \P(V_1=0,V_2=1,V_3=1) &= 0.95 \cdot 0.1 \cdot 0.05 = 0.0475 \\
+  \P(V_1=1,V_2=1,V_3=0) &= 0.05 \cdot 0.1 \cdot 0.95 = 0.0475 \\
+  \P(V_1=1,V_2=1,V_3=1) &= 0.05 \cdot 0.5 \cdot 0.05 = 0.00125
+ \end{cases}
+\end{align}
+
+Com base nestes cálculos é possível obter
+a prevalência da doença dentre os indivíduos hospitalizados:
+\begin{align*}
+ \P(V_1=1|V_2=1) 
+ &= \frac{\P(V_1=1,V_2=1)}{\P(V_2=1)} \\
+ &= \frac{0.0475 + 0.00125}{0.009025 + 0.0475 + 0.0475 + 0.00125} 
+ & \text{\cref{eq:ex-col-1}} \\
+ &\approx 0.46
+\end{align*}
+
+Finalmente,
+\begin{align*}
+ \P(V_1 = 1|V_2 = 1, V_3 = 1)
+ &= \frac{\P(V_1=1,V_2=1,V_3=1)}{\P(V_2=1,V_3=1)} \\
+ &= \frac{\P(V_1=1,V_2=1,V_3=1)}
+ {\P(V_1=0,V_2=1,V_3=1) + \P(V_1=1,V_2=1,V_3=1)} \\
+ &= \frac{0.00125}{0.0475 + 0.00125} & \text{\cref{eq:ex-col-1}} \\
+ &\approx 0.26 
+\end{align*}
+
+Como $\P(V_1=1|V_2=1) = 0.46 \neq 0.26 \approx \P(V_1=1|V_2=1,V_3=1)$,
+verificamos que $V_1$ não é independente de $V_3$ dado $V_2$.
+De fato, ao observar que um indivíduo está hospitalizado e
+tem uma das doenças, a probabilidade de que ele tenha
+a outra doença é inferior àquela obtida se soubéssemos apenas
+que o indivíduo está hospitalizado.
+
+Esta observação 
+não implica que uma doença tenha influência causal sobre a outra.
+Note que a frequência de hospitalização aumenta 
+drasticamente quando um indivíduo tem ao menos uma das doenças.
+Além disso, cada uma das doenças é relativamente rara na população geral.
+Assim, dentre os indíviduos hospitalizados,
+a frequência daqueles que tem somente uma das doenças é
+maior do que seria caso as doenças não estivessem associadas.
+Quando fixamos o valor de uma consequência comum (hospitalização),
+as causas (doenças) passam a ser associadas.
+Esta associação não significa que,
+infectar um indivíduo com uma das doenças
+reduz a probabilidade que ele tenha a outra.
+
+\subsection{Modelo Estrutural Causal (Structural Causal Model)}
+
+Com base nos conceitos abordados anteriormente,
+finalmente podemos definir formalmente
+o Modelo Estrutural Causal (SCM):
+
+\begin{definition}
+ \label{def:scm}
+ Um SCM é um par $(\sG,f)$ tal que
+ $\sG = (\sV, \sE)$ é um DAG (\cref{def:dag}) e
+ $f$ é uma função de densidade sobre $\sV$
+ compatível com $\sG$ (\cref{def:compativel}).
+\end{definition}
+
+Note pela \cref{def:scm} que
+um SCM é formalmente um modelo probabilístico em um DAG.
+O principal atributo de um SCM que 
+o diferencia de um modelo probabilístico genérico em um DAG é
+como o interpretamos.
+Existe uma aresta de $V_1$ em $V_2$ em um SCM
+se e somente se $V_1$ é uma causa direta de $V_2$.
+
+No próximo capítulo estudaremos consequências desta interpretação causal.
+Contudo, antes disso, a próxima seção desenvolverá
+um resultado fundamental de modelos probabilísticos em DAGs que
+será fundamental nos capítulos posteriores.
+
+\subsection{Exercícios}
+
+\begin{exercise}
+ Em um DAG, $\sG = (\sV, \sE)$,
+ Considere que $Anc^*(V) \subseteq \sV$ é
+ definido como o menor conjunto tal que
+ $Pa(V) \subseteq Anc^*(V)$ e, se
+ $V^* \in Anc^*(V)$, então $Pa(V^*) \subseteq Anc^*(V)$.
+ Prove que $Anc(V) \equiv Anc^*(V)$.
+\end{exercise}
+
+\begin{exercise} 
+ Prove o \cref{lem:anc}.
+\end{exercise}
+
+\begin{exercise}
+ Prove o \cref{lem:compativel-equiv}.
+\end{exercise}
+
+\begin{exercise}
+ Considere que $(X_1,X_2)$ são independentes e
+ tais que $\P(X_i=1)=\P(X_i=-1)=0.5$.
+ Além disso, $Y \equiv X_1 \cdot X_2$.
+ \begin{enumerate}[label=(\alph*)]
+  \item Desenhe um DAG compatível
+  com as relações de independência dadas pelo enunciado.
+  \item Prove que $Y$ e $X_1$ são independentes.
+  Isso contradiz sua resposta para o item anterior?
+ \end{enumerate}
+\end{exercise}
+
+\begin{exercise}
+ Para cada um dos modelos de confundidor, mediador e colisor,
+ dê exemplos de situações práticas em que este modelo é razoável.
+\end{exercise}
+
+\begin{exercise}
+ Considere que, dado $T$, $X_1,\ldots,X_n$ são i.i.d. e
+ $X_i|T \sim \text{Bernoulli}(T)$. Além disso,
+ $T \sim \text{Beta}(a,b)$.
+ \begin{enumerate}[label=(\alph*)]
+  \item Seja $f(t,x_1,\ldots,x_n)$ dada pelo enunciado.
+  Exiba um DAG, $\sG$, tal que $f$ é compatível com $\sG$.
+  \item $(X_1,\ldots,X_n)$ são independentes?
+  \item Determine $f(x_1,\ldots,x_n)$.
+ \end{enumerate}
+\end{exercise}
+
+\begin{exercise}
+ Exiba um exemplo em que $V_1$, $V_2$, $V_3$ sejam binárias,
+ que $V_2$ seja um colisor e que, além disso,
+ $Corr[V_1,V_3|V_2=1] > 0$.
+\end{exercise}
+
+\begin{exercise}
+ Seja $\sV = (V_1, V_2, V_3)$
+ Exiba um exemplo de $f$ sobre $\sV$ e
+ grafos $\sG_1$ e $\sG_2$ sobre $\sV$ tais que
+ $\sG_1 \neq \sG_2$ e
+ $f$ é compatível tanto com $\sG_1$ 
+ quanto com $\sG_2$.
+\end{exercise}
+
+\begin{exercise}
+ Seja $f$ uma densidade arbitrária sobre $\sV = (V_1,\ldots,V_n)$.
+ Exiba um DAG sobre $\sV$, $\sG$,
+ tal que $f$ é compatível com $\sG$.
+\end{exercise}
+
+\section{Independência Condicional e D-separação}
+\label{sec:d-sep}
+
+Independência condicional é uma forma fundamental de
+indicar relações entre variáveis aleatórias.
+Se $\X_1,\ldots,\X_d$ e $\Y$ são vetores de variáveis aleatórias,
+definimos que $(\X_1,\ldots,\X_d) | \Y$ e
+dizemos que $\X_1,\ldots,\X_d$ são independentes dado $\Y$, se
+conhecido o valor de $\Y$, 
+observar quaisquer valores de $\X$ não traz 
+informação sobre os demais valores.
+Nesta seção veremos que 
+as relações de independência condicional em um SCM
+estão diretamente ligadas ao seu grafo.
+
+\subsection{Independência Condicional}
+\label{sec:indep}
+
+\begin{definition}
+ \label{def:indep}
+ Dizemos que $(\X_1,\ldots,\X_d)$ são independentes dado $\Y$ se,
+ para qualquer $\x_1,\ldots,\x_n$ e $\y$,
+ \begin{align*}
+  f(\x_1,\ldots,\x_n|\y)	&= \prod_{i=1}^d f(\x_i|\y)
+ \end{align*}
+ Em particular, $(\X_1,\ldots,\X_d)$ são independente se,
+ para quaiquer $(\x_1,\ldots,\x_d)$,
+ \begin{align*}
+  f(\x_1,\ldots,\x_d)	&= \prod_{i=1}^d f(\x_i)
+ \end{align*}
+\end{definition}
+
+Verificar se a \cref{def:indep} está satisfeita nem sempre é fácil.
+A princípio, ela exige obter tanto a distribuição condicional conjunta, 
+$f(\x_1,\ldots,\x_d|\y)$, quanto cada uma das marginais, $f(\x_i|\y)$.
+O \cref{lemma:equivIndep} a seguir apresenta outras condições que
+são equivalentes a independência condicional:
+
+\begin{lemma}
+ \label{lemma:equivIndep}
+ As seguintes afirmações são equivalentes:
+ \begin{enumerate}
+  \item $(\X_1,\ldots,\X_d)$ são independentes dado $\Y$,
+  \item Existem funções, $h_1,\ldots,h_d$ tais que
+  $f(\x_1,\ldots,\x_d|\y) = \prod_{j=1}^{d}{h_j(\x_j,\y)}$.	
+	\item Para todo $i$, 
+	$f(\x_i|\x_{-i},\y) = f(\x_i|\y)$.
+	\item Para todo $i$,
+	$f(\x_i|\x_1^{i-1},\y) = f(\x_i|\y)$.
+ \end{enumerate}
+\end{lemma}
+
+As condições no \cref{lemma:equivIndep} apresentam
+condições que, em geral, são
+mais fáceis de verificar do que 
+a definição direta de independência condicional.
+A seguir veremos que, em um SMC, pode
+ser mais fácil ainda verificar
+muitas das relações de independência condicional.
+
+\subsection{D-separação}
+
+Em um SCM, é possível indicar 
+as relações de independência incondicional em $\sV$
+por meio do grafo associado.
+Intuitivamente, haverá uma dependência
+entre $V_1$ e $V_2$ se for possível
+transmitir a informação de $V_1$ para $V_2$
+por um caminho que ligue ambos os vértices.
+Para entender se a informação 
+pode ser transmitida por um caminho,
+classificaremos a seguir os vértices que o constituem.
+
+\begin{definition}
+ \label{def:caminho-cat}
+ Seja $C = (C_1,\ldots,C_n)$ um caminho 
+ em um DAG, $\sG = (\sV,\sE)$.
+ Para cada $2 \leq i \leq n-1$:
+ \begin{enumerate}
+  \item $C_i$ é um \textbf{confundidor} em $C$ se
+  $(C_i,C_{i-1}) \in \sE$ e $(C_i,C_{i+1}) \in \sE$,
+  isto é, existem arestas apontando de $C_i$ para
+  $C_{i-1}$ e $C_{i+1}$. Neste caso, desenhamos
+  $C_{i-1} \leftarrow C_i \rightarrow C_{i+1}$.
+  \item $C_i$ é um \textbf{mediador} em $C$ se
+  $(C_{i-1},C_{i}) \in \sE$ e $(C_i,C_{i+1}) \in \sE$, ou
+  $(C_{i+1},C_{i}) \in \sE$ e $(C_i,C_{i-1}) \in \sE$,
+  isto é, $(C_{i-1},C_i,C_{i+1})$ ou $(C_{i+1},C_i,C_{i-1})$ é 
+  um caminho direcionado. Neste caso, desenhamos
+  $C_{i-1} \rightarrow C_i \rightarrow C_{i+1}$ ou
+  $C_{i-1} \leftarrow C_i \leftarrow C_{i+1}$.
+  \item $C_i$ é um \textbf{colisor} em $C$ se
+  $(C_{i-1},C_{i}) \in \sE$ e $(C_{i+1},C_{i}) \in \sE$,
+  isto é, existem arestas apontando de $C_{i-1}$ e de $C_{i+1}$ 
+  para $C_{i}$. Neste caso, desenhamos
+  $C_{i-1} \rightarrow C_i \leftarrow C_{i+1}$.
+ \end{enumerate}
+\end{definition}
+
+Note que a classificação na \cref{def:caminho-cat}
+generaliza os exemplos de DAG's com 3 vértices 
+na \cref{sec:dag-ex}. 
+
+Essa classificação é ilustrada com 
+o DAG na \cref{fig:caminho-cat}.
+Existem dois caminhos que vão de $V_1$ a $V_4$:
+$V_1 \rightarrow V_2 \leftarrow V_4$ e
+$V_1 \rightarrow V_2 \rightarrow V_3 \leftarrow V_4$.
+No primeiro caminho $V_2$ é um colisor, pois
+o caminho passa por duas arestas que apontam para $V_2$.
+Já no segundo caminho $V_2$ é um mediador e
+$V_3$ é um colisor.
+Note que a classificação do vértice depende 
+do caminho analisado.
+Enquanto que no primeiro caminho $V_2$ é um colisor,
+no segundo $V_2$ é um mediador.
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{figure}[t]
+
+{\centering \includegraphics[width=\maxwidth]{./figures/caminho-cat-1} 
+
+}
+
+\caption[Ilustração do conceito de bloqueio de um caminho]{Ilustração do conceito de bloqueio de um caminho. No caminho (V1, V2, V4), V2 é um colisor. Isto ocorre pois, para chegar de V1 a V4 passando apenas por V2, as duas arestas apontam para V2. Já no caminho (V1, V2, V3, V4) temos que V2 é um mediador. Para chegar de V1 a V3 passando por V2, passa-se por duas arestas, uma entrando e outra saindo de V2. Como V2 é um colisor em (V1, V2, V4), este caminho está bloqueado se e somente se o valor de V2 é desconhecido. Como V2 é um mediador em (V1, V2, V3, V4), esse caminho está bloqueado quando o valor de V2 é conhecido.}\label{fig:caminho-cat}
+\end{figure}
+
+\end{knitrout}
+
+Com base na \cref{def:caminho-cat}, é
+possível compreender se um caminho permite a
+passagem de informação.
+Na \cref{sec:dag-ex} vimos que,
+se $V_2$ é um confundidor ou um mediador entre
+$V_1$ e $V_3$, então
+$V_1$ e $V_3$ são independentes dado $V_2$.
+Por analogia, podemos intuir que um vértice que
+é um confundidor ou um mediador num caminho
+não permite a passagem de informação
+quando seu valor é conhecido.
+Similarmente, na \cref{sec:dag-ex},
+se $V_2$ é um colisor entre
+$V_1$ e $V_3$, então 
+$V_1$ e $V_3$ são independentes.
+Assim, também podemos intuir que um vértice que
+é um colisor em um caminho não permite
+a passagem de informação quando seu valor é desconhecido.
+Finalmente, a informação não passa pelo caminho quando
+ela não passa por pelo menos um de seus vértices.
+Neste caso, dizemos que o caminho está \textit{bloqueado}:
+
+\begin{definition}
+ \label{def:caminho-bloq}
+ Seja $C = (C_1,\ldots,C_n)$ um caminho 
+ em um DAG, $\sG = (\sV,\sE)$.
+ Dizemos que $C$ está bloqueado dado $\Z \subset \sV$, se
+ \begin{enumerate}
+  \item Existe algum $2 \leq i \leq n-1$ tal que
+  $C_i$ é um confundidor ou mediador em $C$ e $C_{i} \in \Z$, ou
+  \item Existe algum $2 \leq i \leq n-1$ tal que 
+  $C_i$ é um colisor em $C$ e $C_{i} \notin Anc(\Z)$.
+ \end{enumerate}
+\end{definition}
+
+Finalmente, dizemos que $\V_1$ está d-separado de $\V_2$
+dado $\V_3$ se todos os caminhos de 
+$\V_1$ a $\V_2$ estão bloqueados dado $\V_3$:
+
+\begin{definition}
+ \label{def:d-sep}
+ Seja $\sG = (\sV, \sE)$ um DAG. 
+ Para $\V_1,\V_2,\V_3 \subseteq \sV$, dizemos que
+ $\V_1$ está d-separado de $\V_2$ dado $\V_3$ se,
+ para todo caminho $C = (C_1,\ldots,C_n)$ tal que
+ $C_1 \in V_1$ e $C_n \in \V_2$,
+ $C$ está bloqueado dado $\V_3$.
+ Neste caso, escrevemos $\V_1 \perp \V_2 | \V_3$.
+\end{definition}
+
+Intuitivamente, se $\V_1 \perp \V_2 | \V_3$, então 
+não é possível passar informação de $\V_1$ a $\V_2$ quando
+$\V_3$ é conhecido.
+Assim, temos razão para acreditar que
+$\V_1$ é condicionalmente independente de $\V_2$ dado $\V_3$,
+isto é $\V_1 \ind \V_2 | \V_3$.
+Esta conclusão é apresentada no 
+\cref{thm:d-sep} a seguir:
+
+\begin{theorem}
+ \label{thm:d-sep}
+ Seja $\sG = (\sV, \sE)$ um DAG e
+ $\sV$ um conjunto de variáveis aleatórias.
+ $\V_1$ está d-separado de $\V_2$ dado $\V_3$
+ se e somente se, para todo $f$ compatível com $\sG$,
+ $\V_1 \ind^f \V_2 | \V_3$.
+\end{theorem}
+
+\begin{example}
+ Ilustração manual de d-separação e
+ com o uso de dagitty.
+\end{example}
+
+\begin{lemma}
+ \label{lem:d-sep}
+ Seja $\sG = (\sV, \sE)$ um DAG e
+ $\sV$ um conjunto de variáveis aleatórias.
+ Se $\V_1$ não está d-separado de $\V_2$ dado $\V_3$,
+ então existe $f$ compatível com $\sG$ tal que
+ $\V_1$ e $\V_2$ são condicionalmente dependentes dado $\V_3$.
+\end{lemma}
+
+\begin{example}
+ Restrições para que $V_1$ e $V_3$ sejam
+ independentes sem condicionar em $V_2$, 
+ um confundidor.
+\end{example}
+
+\section{Exercícios}
+
+\begin{exercise}
+ Considere que $f$ é uma densidade sobre 
+ $\sV = (V_1, V_2, V_3, V_4)$ que é compatível com
+ o grafo em \cref{fig:colisor-desc}.
+ Além disso, cada $V_i \in \{0,1\}$,
+ $V_1, V_2 \sim \text{Bernoulli}(0.5)$,
+ $V_3 \equiv V_1 \cdot V_2$ e
+ $\P(V_4 = i | V_3 = i) = 0.9$, para todo $i$.
+ \begin{enumerate}[label=(\alph*)]
+  \item $V_1$ e $V_2$ são d-separados dado $V_3$?
+  \item $V_1$ e $V_2$ são condicionalmente independentes dado $V_3$?
+  \item $V_1$ e $V_2$ são d-separados dado $V_4$?
+  \item $V_1$ e $V_2$ são condicionalmente independentes dado $V_4$?
+ \end{enumerate}
+ 
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{figure}[t]
+
+{\centering \includegraphics[width=\maxwidth]{./figures/colisor-desc-1} 
+
+}
+
+\caption[Exemplo em que V4 é um descendente de um colisor, V3]{Exemplo em que V4 é um descendente de um colisor, V3.}\label{fig:colisor-desc}
+\end{figure}
+
+\end{knitrout}
+\end{exercise}
+
+\bibliographystyle{apalike}
+\bibliography{book}
+
+
+\appendix
+
+\chapter{Demonstrações}
+
+\section{Relativas à \cref{sec:d-sep}}
+
+\begin{proof}[Prova do \cref{lemma:equivIndep}]
+ A prova consistirá em demonstrar que,
+ para cada $i$, a afirmação $i$ decorre da afirmação $i-1$.
+ Finalmente, a afirmação $1$ decorre da afirmação $4$.
+ Os símbolos $\X$ e $\x$ referem-se a 
+ $(\X_1,\ldots,\X_d)$ e $(\x_1,\ldots,\x_d)$. 
+ \begin{itemize}
+  \item $(1 \Longrightarrow 2)$
+	\begin{align*}
+	 f(\x|\y)	&= \prod_{j=1}^{d}{f(\x_j|\y)}  & (1) \\
+	          &= \prod_{j=1}^{d}{h(\x_j,\y)}
+	          & h(\x_j,\y) = f(\x_j|\y)
+	\end{align*}
+	\vspace{-5mm}
+  \item $(2 \Longrightarrow 3)$ Note que,
+	\begin{align*}
+	 f(\x_i|\x_{-i},\y)	
+	 &= \frac{f(\x|\y)}{f(\x_1,\ldots,\x_{i-1},\x_{i+1},\ldots\x_d|\y)}	\\
+	 &= \frac{f(\x|\y)}{\int_{\mathbb{R}}{f(\x|\y)d\x_i}} \\
+	 &= \frac{\prod_{j=1}^{d}{h_j(\x_j,\y)}}
+	 {\int_{\mathbb{R}}{\prod_{j=1}^{d}{h_j(\x_j,\y)}d\x_i}} (2) \\
+	 &= \frac{\prod_{j=1}^{d}{h_j(\x_j,\y)}}
+	 {\prod_{j \neq i}{h_j(\x_j,\y)} \int_{\mathbb{R}}{h_i(\x_i,\y)d\x_i}}	\\
+	 &= \frac{\tilde{h}_i(\x_i,\y)}{\int_{\mathbb{R}}{h_i(\x_i,\y)d\x_i}}	\\
+	 &= \frac{\prod_{j \neq i}{\int_{\mathbb{R}}{h_j(\x_j,\y)d\x_j}}}
+	 {\prod_{j \neq i}{\int_{\mathbb{R}}{h_j(\x_j,\y)d\x_j}}} \cdot 
+	 \frac{h_i(\x_i,\y)}{\int_{\mathbb{R}}{h_i(\x_i,\y)d\x_i}}	\\
+	 &= \frac{\int_{\mathbb{R}^{d-1}}{\prod_{j=1}^{d}{h_j(\x_j,\y)}d\x_{-i}}}
+	 {\int_{\mathbb{R}^{d}}{\prod_{j=1}^{d}{h_j(\x_j,\y)}d\x}}	\\
+	 &= \frac{\int_{\mathbb{R}^{d-1}}{f(\x|\y)d\x_{-i}}}
+	 {\int_{\mathbb{R}^{d}}{f(\x|\y)d\x}} & (2) \\
+	 &= f(\x_i|\y)
+	\end{align*}
+
+ \vspace{-5mm}
+ \item $(3 \Longrightarrow 4)$
+ \begin{align*}
+  f(\x_i|\x_1^{i-1},\y)	
+  &= \frac{f(\x_1^{i}|\y)}{f(\x_1^{i-1}|\y)} \\
+	&= \frac{\int_{\mathbb{R}^{d-i}}{f(\x|\y)}d\x_{i+1}^{d}}
+	{f(\x_1^{i-1}|\y)} \\
+	&= \frac{\int_{\mathbb{R}^{d-i}}{f(\x_{-i}|\y)f(\x_i|\x_{-i},\y)d\x_{i+1}^{d}}}
+	{f(\x_1^{i-1}|\y)} \\
+	&= \frac{f(\x_i|\y)\int_{\mathbb{R}^{d-i}}{f(\x_{-i}|\y)d\x_{i+1}^{d}}}
+	{f(\x_1^{i-1}|\y)} & (3) \\
+	&= \frac{f(\x_i|\y)f(\x_1^{i-1}|\y)}
+	{f(\x_1^{i-1}|\y)} \\
+	&= f(\x_i|\y)
+ \end{align*}
+
+ \item $(4 \Longrightarrow 1)$
+ \begin{align*}
+  f(\x|\y)	
+  &= \prod_{i=1}^{d}{f(\x_i|\x_1^{i-1},\y)} \\
+	&= \prod_{i=1}^{d}{f(\x_i|\y)} & (4)
+ \end{align*}
+ \end{itemize}
+\end{proof}
+
+\begin{proof}[Prova do \cref{thm:d-sep}]
+\end{proof}
+
+\begin{lemma}
+\end{lemma}
+
+\begin{proof}
+ 
+\end{proof}
+
+\begin{proof}[Prova do \cref{lem:d-sep}]
+\end{proof}
+
+\end{document}

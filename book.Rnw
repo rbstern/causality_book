@@ -1,0 +1,41 @@
+\input{config.tex}
+
+\begin{document}
+
+\maketitle
+
+\vspace{20mm}
+
+\textbf{Agradecimentos}: 
+
+\newpage
+
+
+\epigraph{
+``Teaching is giving opportunities to students to discover things by themselves.''
+}
+{George P\'olya}
+ 
+ 
+\newpage
+ 
+\tableofcontents
+  
+\newpage
+
+<<echo = FALSE, warnings = FALSE>>=
+library(knitr)
+opts_knit$set(self.contained=FALSE)
+opts_chunk$set(cache=TRUE,fig.path="./figures/")
+@
+
+\Sexpr{knit_child("chapters/01-intro.Rnw")}
+\Sexpr{knit_child("chapters/02-1-dag.Rnw")}
+\Sexpr{knit_child("chapters/02-2-d-sep.Rnw")}
+
+\bibliographystyle{apalike}
+\bibliography{book}
+
+\Sexpr{knit_child("chapters/0A-proofs.Rnw")}
+
+\end{document}

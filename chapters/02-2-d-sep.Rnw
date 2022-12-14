@@ -1,0 +1,259 @@
+\section{Independência Condicional e D-separação}
+\label{sec:d-sep}
+
+Independência condicional é uma forma fundamental de
+indicar relações entre variáveis aleatórias.
+Se $\X_1,\ldots,\X_d$ e $\Y$ são vetores de variáveis aleatórias,
+definimos que $(\X_1,\ldots,\X_d) | \Y$ e
+dizemos que $\X_1,\ldots,\X_d$ são independentes dado $\Y$, se
+conhecido o valor de $\Y$, 
+observar quaisquer valores de $\X$ não traz 
+informação sobre os demais valores.
+Nesta seção veremos que 
+as relações de independência condicional em um SCM
+estão diretamente ligadas ao seu grafo.
+
+\subsection{Independência Condicional}
+\label{sec:indep}
+
+\begin{definition}
+ \label{def:indep}
+ Dizemos que $(\X_1,\ldots,\X_d)$ são independentes dado $\Y$ se,
+ para qualquer $\x_1,\ldots,\x_n$ e $\y$,
+ \begin{align*}
+  f(\x_1,\ldots,\x_n|\y)	&= \prod_{i=1}^d f(\x_i|\y)
+ \end{align*}
+ Em particular, $(\X_1,\ldots,\X_d)$ são independente se,
+ para quaiquer $(\x_1,\ldots,\x_d)$,
+ \begin{align*}
+  f(\x_1,\ldots,\x_d)	&= \prod_{i=1}^d f(\x_i)
+ \end{align*}
+\end{definition}
+
+Verificar se a \cref{def:indep} está satisfeita nem sempre é fácil.
+A princípio, ela exige obter tanto a distribuição condicional conjunta, 
+$f(\x_1,\ldots,\x_d|\y)$, quanto cada uma das marginais, $f(\x_i|\y)$.
+O \cref{lemma:equivIndep} a seguir apresenta outras condições que
+são equivalentes a independência condicional:
+
+\begin{lemma}
+ \label{lemma:equivIndep}
+ As seguintes afirmações são equivalentes:
+ \begin{enumerate}
+  \item $(\X_1,\ldots,\X_d)$ são independentes dado $\Y$,
+  \item Existem funções, $h_1,\ldots,h_d$ tais que
+  $f(\x_1,\ldots,\x_d|\y) = \prod_{j=1}^{d}{h_j(\x_j,\y)}$.	
+	\item Para todo $i$, 
+	$f(\x_i|\x_{-i},\y) = f(\x_i|\y)$.
+	\item Para todo $i$,
+	$f(\x_i|\x_1^{i-1},\y) = f(\x_i|\y)$.
+ \end{enumerate}
+\end{lemma}
+
+As condições no \cref{lemma:equivIndep} apresentam
+condições que, em geral, são
+mais fáceis de verificar do que 
+a definição direta de independência condicional.
+A seguir veremos que, em um SMC, pode
+ser mais fácil ainda verificar
+muitas das relações de independência condicional.
+
+\subsection{D-separação}
+
+Em um SCM, é possível indicar 
+as relações de independência incondicional em $\sV$
+por meio do grafo associado.
+Intuitivamente, haverá uma dependência
+entre $V_1$ e $V_2$ se for possível
+transmitir a informação de $V_1$ para $V_2$
+por um caminho que ligue ambos os vértices.
+Para entender se a informação 
+pode ser transmitida por um caminho,
+classificaremos a seguir os vértices que o constituem.
+
+\begin{definition}
+ \label{def:caminho-cat}
+ Seja $C = (C_1,\ldots,C_n)$ um caminho 
+ em um DAG, $\sG = (\sV,\sE)$.
+ Para cada $2 \leq i \leq n-1$:
+ \begin{enumerate}
+  \item $C_i$ é um \textbf{confundidor} em $C$ se
+  $(C_i,C_{i-1}) \in \sE$ e $(C_i,C_{i+1}) \in \sE$,
+  isto é, existem arestas apontando de $C_i$ para
+  $C_{i-1}$ e $C_{i+1}$. Neste caso, desenhamos
+  $C_{i-1} \leftarrow C_i \rightarrow C_{i+1}$.
+  \item $C_i$ é um \textbf{mediador} em $C$ se
+  $(C_{i-1},C_{i}) \in \sE$ e $(C_i,C_{i+1}) \in \sE$, ou
+  $(C_{i+1},C_{i}) \in \sE$ e $(C_i,C_{i-1}) \in \sE$,
+  isto é, $(C_{i-1},C_i,C_{i+1})$ ou $(C_{i+1},C_i,C_{i-1})$ é 
+  um caminho direcionado. Neste caso, desenhamos
+  $C_{i-1} \rightarrow C_i \rightarrow C_{i+1}$ ou
+  $C_{i-1} \leftarrow C_i \leftarrow C_{i+1}$.
+  \item $C_i$ é um \textbf{colisor} em $C$ se
+  $(C_{i-1},C_{i}) \in \sE$ e $(C_{i+1},C_{i}) \in \sE$,
+  isto é, existem arestas apontando de $C_{i-1}$ e de $C_{i+1}$ 
+  para $C_{i}$. Neste caso, desenhamos
+  $C_{i-1} \rightarrow C_i \leftarrow C_{i+1}$.
+ \end{enumerate}
+\end{definition}
+
+Note que a classificação na \cref{def:caminho-cat}
+generaliza os exemplos de DAG's com 3 vértices 
+na \cref{sec:dag-ex}. 
+
+Essa classificação é ilustrada com 
+o DAG na \cref{fig:caminho-cat}.
+Existem dois caminhos que vão de $V_1$ a $V_4$:
+$V_1 \rightarrow V_2 \leftarrow V_4$ e
+$V_1 \rightarrow V_2 \rightarrow V_3 \leftarrow V_4$.
+No primeiro caminho $V_2$ é um colisor, pois
+o caminho passa por duas arestas que apontam para $V_2$.
+Já no segundo caminho $V_2$ é um mediador e
+$V_3$ é um colisor.
+Note que a classificação do vértice depende 
+do caminho analisado.
+Enquanto que no primeiro caminho $V_2$ é um colisor,
+no segundo $V_2$ é um mediador.
+
+<<caminho-cat, fig.pos="t", fig.height=3, fig.width=4, fig.cap="Ilustração do conceito de bloqueio de um caminho. No caminho (V1, V2, V4), V2 é um colisor. Isto ocorre pois, para chegar de V1 a V4 passando apenas por V2, as duas arestas apontam para V2. Já no caminho (V1, V2, V3, V4) temos que V2 é um mediador. Para chegar de V1 a V3 passando por V2, passa-se por duas arestas, uma entrando e outra saindo de V2. Como V2 é um colisor em (V1, V2, V4), este caminho está bloqueado se e somente se o valor de V2 é desconhecido. Como V2 é um mediador em (V1, V2, V3, V4), esse caminho está bloqueado quando o valor de V2 é conhecido.", fig.align="center", echo = FALSE, message = FALSE, warning = FALSE>>==
+library(dagitty)
+library(ggdag)
+library(ggplot2)
+
+# Especificar o grafo
+grafo <- dagitty("dag {
+    V1 -> V2 <- V4;
+    V2 -> V3 <- V4
+}")
+
+ggdag(grafo, layout = "circle") +
+  theme(axis.text.x=element_blank(),
+      axis.ticks.x=element_blank(),
+      axis.text.y=element_blank(),
+      axis.ticks.y=element_blank()) +
+  xlab("") + ylab("")
+@
+
+Com base na \cref{def:caminho-cat}, é
+possível compreender se um caminho permite a
+passagem de informação.
+Na \cref{sec:dag-ex} vimos que,
+se $V_2$ é um confundidor ou um mediador entre
+$V_1$ e $V_3$, então
+$V_1$ e $V_3$ são independentes dado $V_2$.
+Por analogia, podemos intuir que um vértice que
+é um confundidor ou um mediador num caminho
+não permite a passagem de informação
+quando seu valor é conhecido.
+Similarmente, na \cref{sec:dag-ex},
+se $V_2$ é um colisor entre
+$V_1$ e $V_3$, então 
+$V_1$ e $V_3$ são independentes.
+Assim, também podemos intuir que um vértice que
+é um colisor em um caminho não permite
+a passagem de informação quando seu valor é desconhecido.
+Finalmente, a informação não passa pelo caminho quando
+ela não passa por pelo menos um de seus vértices.
+Neste caso, dizemos que o caminho está \textit{bloqueado}:
+
+\begin{definition}
+ \label{def:caminho-bloq}
+ Seja $C = (C_1,\ldots,C_n)$ um caminho 
+ em um DAG, $\sG = (\sV,\sE)$.
+ Dizemos que $C$ está bloqueado dado $\Z \subset \sV$, se
+ \begin{enumerate}
+  \item Existe algum $2 \leq i \leq n-1$ tal que
+  $C_i$ é um confundidor ou mediador em $C$ e $C_{i} \in \Z$, ou
+  \item Existe algum $2 \leq i \leq n-1$ tal que 
+  $C_i$ é um colisor em $C$ e $C_{i} \notin Anc(\Z)$.
+ \end{enumerate}
+\end{definition}
+
+Finalmente, dizemos que $\V_1$ está d-separado de $\V_2$
+dado $\V_3$ se todos os caminhos de 
+$\V_1$ a $\V_2$ estão bloqueados dado $\V_3$:
+
+\begin{definition}
+ \label{def:d-sep}
+ Seja $\sG = (\sV, \sE)$ um DAG. 
+ Para $\V_1,\V_2,\V_3 \subseteq \sV$, dizemos que
+ $\V_1$ está d-separado de $\V_2$ dado $\V_3$ se,
+ para todo caminho $C = (C_1,\ldots,C_n)$ tal que
+ $C_1 \in V_1$ e $C_n \in \V_2$,
+ $C$ está bloqueado dado $\V_3$.
+ Neste caso, escrevemos $\V_1 \perp \V_2 | \V_3$.
+\end{definition}
+
+Intuitivamente, se $\V_1 \perp \V_2 | \V_3$, então 
+não é possível passar informação de $\V_1$ a $\V_2$ quando
+$\V_3$ é conhecido.
+Assim, temos razão para acreditar que
+$\V_1$ é condicionalmente independente de $\V_2$ dado $\V_3$,
+isto é $\V_1 \ind \V_2 | \V_3$.
+Esta conclusão é apresentada no 
+\cref{thm:d-sep} a seguir:
+
+\begin{theorem}
+ \label{thm:d-sep}
+ Seja $\sG = (\sV, \sE)$ um DAG e
+ $\sV$ um conjunto de variáveis aleatórias.
+ $\V_1$ está d-separado de $\V_2$ dado $\V_3$
+ se e somente se, para todo $f$ compatível com $\sG$,
+ $\V_1 \ind^f \V_2 | \V_3$.
+\end{theorem}
+
+\begin{example}
+ Ilustração manual de d-separação e
+ com o uso de dagitty.
+\end{example}
+
+\begin{lemma}
+ \label{lem:d-sep}
+ Seja $\sG = (\sV, \sE)$ um DAG e
+ $\sV$ um conjunto de variáveis aleatórias.
+ Se $\V_1$ não está d-separado de $\V_2$ dado $\V_3$,
+ então existe $f$ compatível com $\sG$ tal que
+ $\V_1$ e $\V_2$ são condicionalmente dependentes dado $\V_3$.
+\end{lemma}
+
+\begin{example}
+ Restrições para que $V_1$ e $V_3$ sejam
+ independentes sem condicionar em $V_2$, 
+ um confundidor.
+\end{example}
+
+\section{Exercícios}
+
+\begin{exercise}
+ Considere que $f$ é uma densidade sobre 
+ $\sV = (V_1, V_2, V_3, V_4)$ que é compatível com
+ o grafo em \cref{fig:colisor-desc}.
+ Além disso, cada $V_i \in \{0,1\}$,
+ $V_1, V_2 \sim \text{Bernoulli}(0.5)$,
+ $V_3 \equiv V_1 \cdot V_2$ e
+ $\P(V_4 = i | V_3 = i) = 0.9$, para todo $i$.
+ \begin{enumerate}[label=(\alph*)]
+  \item $V_1$ e $V_2$ são d-separados dado $V_3$?
+  \item $V_1$ e $V_2$ são condicionalmente independentes dado $V_3$?
+  \item $V_1$ e $V_2$ são d-separados dado $V_4$?
+  \item $V_1$ e $V_2$ são condicionalmente independentes dado $V_4$?
+ \end{enumerate}
+ 
+ <<colisor-desc, fig.pos="t", fig.height=3, fig.width=4, fig.cap="Exemplo em que V4 é um descendente de um colisor, V3.", fig.align="center", echo = FALSE, message = FALSE, warning = FALSE>>==
+library(dagitty)
+library(ggdag)
+library(ggplot2)
+
+# Especificar o grafo
+grafo <- dagitty("dag {
+    {V1 V2} -> V3 -> V4
+}")
+
+ggdag(grafo, layout = "circle") +
+  theme(axis.text.x=element_blank(),
+      axis.ticks.x=element_blank(),
+      axis.text.y=element_blank(),
+      axis.ticks.y=element_blank()) +
+  xlab("") + ylab("")
+@
+\end{exercise}

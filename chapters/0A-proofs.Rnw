@@ -1,0 +1,103 @@
+\appendix
+
+\chapter{Demonstrações}
+
+\section{Relativas à \cref{sec:d-sep}}
+
+\subsection{Relativas a \cref{lemma:equivIndep}}
+
+\begin{proof}[Prova do \cref{lemma:equivIndep}]
+ A prova consistirá em demonstrar que,
+ para cada $i$, a afirmação $i$ decorre da afirmação $i-1$.
+ Finalmente, a afirmação $1$ decorre da afirmação $4$.
+ Os símbolos $\X$ e $\x$ referem-se a 
+ $(\X_1,\ldots,\X_d)$ e $(\x_1,\ldots,\x_d)$. 
+ \begin{itemize}
+  \item $(1 \Longrightarrow 2)$
+	\begin{align*}
+	 f(\x|\y)	&= \prod_{j=1}^{d}{f(\x_j|\y)}  & (1) \\
+	          &= \prod_{j=1}^{d}{h(\x_j,\y)}
+	          & h(\x_j,\y) = f(\x_j|\y)
+	\end{align*}
+	\vspace{-5mm}
+  \item $(2 \Longrightarrow 3)$ Note que,
+	\begin{align*}
+	 f(\x_i|\x_{-i},\y)	
+	 &= \frac{f(\x|\y)}{f(\x_1,\ldots,\x_{i-1},\x_{i+1},\ldots\x_d|\y)}	\\
+	 &= \frac{f(\x|\y)}{\int_{\mathbb{R}}{f(\x|\y)d\x_i}} \\
+	 &= \frac{\prod_{j=1}^{d}{h_j(\x_j,\y)}}
+	 {\int_{\mathbb{R}}{\prod_{j=1}^{d}{h_j(\x_j,\y)}d\x_i}} (2) \\
+	 &= \frac{\prod_{j=1}^{d}{h_j(\x_j,\y)}}
+	 {\prod_{j \neq i}{h_j(\x_j,\y)} \int_{\mathbb{R}}{h_i(\x_i,\y)d\x_i}}	\\
+	 &= \frac{\tilde{h}_i(\x_i,\y)}{\int_{\mathbb{R}}{h_i(\x_i,\y)d\x_i}}	\\
+	 &= \frac{\prod_{j \neq i}{\int_{\mathbb{R}}{h_j(\x_j,\y)d\x_j}}}
+	 {\prod_{j \neq i}{\int_{\mathbb{R}}{h_j(\x_j,\y)d\x_j}}} \cdot 
+	 \frac{h_i(\x_i,\y)}{\int_{\mathbb{R}}{h_i(\x_i,\y)d\x_i}}	\\
+	 &= \frac{\int_{\mathbb{R}^{d-1}}{\prod_{j=1}^{d}{h_j(\x_j,\y)}d\x_{-i}}}
+	 {\int_{\mathbb{R}^{d}}{\prod_{j=1}^{d}{h_j(\x_j,\y)}d\x}}	\\
+	 &= \frac{\int_{\mathbb{R}^{d-1}}{f(\x|\y)d\x_{-i}}}
+	 {\int_{\mathbb{R}^{d}}{f(\x|\y)d\x}} & (2) \\
+	 &= f(\x_i|\y)
+	\end{align*}
+
+ \vspace{-5mm}
+ \item $(3 \Longrightarrow 4)$
+ \begin{align*}
+  f(\x_i|\x_1^{i-1},\y)	
+  &= \frac{f(\x_1^{i}|\y)}{f(\x_1^{i-1}|\y)} \\
+	&= \frac{\int_{\mathbb{R}^{d-i}}{f(\x|\y)}d\x_{i+1}^{d}}
+	{f(\x_1^{i-1}|\y)} \\
+	&= \frac{\int_{\mathbb{R}^{d-i}}{f(\x_{-i}|\y)f(\x_i|\x_{-i},\y)d\x_{i+1}^{d}}}
+	{f(\x_1^{i-1}|\y)} \\
+	&= \frac{f(\x_i|\y)\int_{\mathbb{R}^{d-i}}{f(\x_{-i}|\y)d\x_{i+1}^{d}}}
+	{f(\x_1^{i-1}|\y)} & (3) \\
+	&= \frac{f(\x_i|\y)f(\x_1^{i-1}|\y)}
+	{f(\x_1^{i-1}|\y)} \\
+	&= f(\x_i|\y)
+ \end{align*}
+
+ \item $(4 \Longrightarrow 1)$
+ \begin{align*}
+  f(\x|\y)	
+  &= \prod_{i=1}^{d}{f(\x_i|\x_1^{i-1},\y)} \\
+	&= \prod_{i=1}^{d}{f(\x_i|\y)} & (4)
+ \end{align*}
+ \end{itemize}
+\end{proof}
+
+\subsection{Relativas a \cref{thm:d-sep}}
+
+\begin{lemma}
+ Se $f$ é compatível com $\sG$ e
+ $\V_1 \perp \V_2 | \V_3$, então
+ $\V_1 \ind^f \V_2 | \V_3$.
+\end{lemma}
+
+\begin{proof}
+ 
+\end{proof}
+
+\begin{lemma}
+ \label{lemma:d-sep-volta}
+ Se $\V_1$ não é d-separado de $\V_2$
+ dado $\V_3$ segundo o DAG $\sG = (\sV, \sE)$, então
+ existe $f$ compatível com $\sG$ tal que
+ $\V_1$ e $\V_2$ são condicionalmente dependentes
+ dado $\V_3$ segundo $f$
+\end{lemma}
+
+\begin{proof}
+ Como $\V_1$ e $\V_2$ não são d-separados dado $\V_3$,
+ então existe um caminho, $C = (C_1,\ldots,C_n)$, que 
+ não está bloqueado dado $\V_3$ e tal que
+ $C_1 \in \V_1$ e $C_n \in \V_2$.
+ 
+ Defina $
+ 
+\end{proof}
+
+\begin{proof}[Prova do \cref{thm:d-sep}]
+\end{proof}
+
+\begin{proof}[Prova do \cref{lem:d-sep}]
+\end{proof}
