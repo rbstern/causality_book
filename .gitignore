@@ -7,3 +7,5 @@ build/
 
 *.Rproj
 *.log
+*.synctex.gz
+*.toc
