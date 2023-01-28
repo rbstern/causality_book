@@ -305,10 +305,10 @@ $V_3$ é Recuperação.
 
 Usando a representação de um grafo,
 podemos imaginar caminhos sobre ele.
-Começamos um *caminho direcionado* 
+Um \textbf{caminho direcionado} inicia-se 
 em um determinado vértice e, 
 seguindo a direção das setas, 
-vamos de um vértice para outro.
+vai de um vértice para outro.
 Por exemplo, $(V_1, V_2, V_3)$ é
 um caminho direcionado na 
 \cref{fig:grafo1}, pois existe
@@ -1220,6 +1220,8 @@ Esta conclusão é apresentada no
 
 \section{Relativas à \cref{sec:d-sep}}
 
+\subsection{Relativas a \cref{lemma:equivIndep}}
+
 \begin{proof}[Prova do \cref{lemma:equivIndep}]
  A prova consistirá em demonstrar que,
  para cada $i$, a afirmação $i$ decorre da afirmação $i-1$.
@@ -1279,14 +1281,38 @@ Esta conclusão é apresentada no
  \end{itemize}
 \end{proof}
 
-\begin{proof}[Prova do \cref{thm:d-sep}]
-\end{proof}
+\subsection{Relativas a \cref{thm:d-sep}}
 
 \begin{lemma}
+ Se $f$ é compatível com $\sG$ e
+ $\V_1 \perp \V_2 | \V_3$, então
+ $\V_1 \ind^f \V_2 | \V_3$.
 \end{lemma}
 
 \begin{proof}
  
+\end{proof}
+
+\begin{lemma}
+ \label{lemma:d-sep-volta}
+ Se $\V_1$ não é d-separado de $\V_2$
+ dado $\V_3$ segundo o DAG $\sG = (\sV, \sE)$, então
+ existe $f$ compatível com $\sG$ tal que
+ $\V_1$ e $\V_2$ são condicionalmente dependentes
+ dado $\V_3$ segundo $f$
+\end{lemma}
+
+\begin{proof}
+ Como $\V_1$ e $\V_2$ não são d-separados dado $\V_3$,
+ então existe um caminho, $C = (C_1,\ldots,C_n)$, que 
+ não está bloqueado dado $\V_3$ e tal que
+ $C_1 \in \V_1$ e $C_n \in \V_2$.
+ 
+ Defina
+ 
+\end{proof}
+
+\begin{proof}[Prova do \cref{thm:d-sep}]
 \end{proof}
 
 \begin{proof}[Prova do \cref{lem:d-sep}]

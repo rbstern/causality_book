@@ -87,10 +87,10 @@ $V_3$ é Recuperação.
 
 Usando a representação de um grafo,
 podemos imaginar caminhos sobre ele.
-Começamos um *caminho direcionado* 
+Um \textbf{caminho direcionado} inicia-se 
 em um determinado vértice e, 
 seguindo a direção das setas, 
-vamos de um vértice para outro.
+vai de um vértice para outro.
 Por exemplo, $(V_1, V_2, V_3)$ é
 um caminho direcionado na 
 \cref{fig:grafo1}, pois existe

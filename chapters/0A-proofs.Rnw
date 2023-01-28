@@ -92,7 +92,7 @@
  não está bloqueado dado $\V_3$ e tal que
  $C_1 \in \V_1$ e $C_n \in \V_2$.
  
- Defina $
+ Defina
  
 \end{proof}
 
