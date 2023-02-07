@@ -1,0 +1,88 @@
+\chapter{Intervenções}
+
+Com base no modelo estrutural causal discutido 
+no \cref{cap:dag}, agora estabeleceremos
+um significado para o efeito causal
+de uma variável em outra. 
+
+<<simpson_sexo, fig.height=3, fig.width=4, fig.cap="Grafo que representa as relações causais entre S (Sexo), T (Tratamento), e C (Cura).", fig.align="center", echo = FALSE, message = FALSE, warning = FALSE>>==
+library(dagitty)
+library(ggdag)
+library(ggplot2)
+
+# Especificar o grafo
+grafo <- dagitty("dag {
+    S -> { T C };
+    T -> C
+}")
+
+ggdag(grafo, layout = "circle") +
+  theme(axis.text.x=element_blank(),
+      axis.ticks.x=element_blank(),
+      axis.text.y=element_blank(),
+      axis.ticks.y=element_blank()) +
+  xlab("") + ylab("")
+@
+
+Para iniciar esta discussão, considere
+as variáveis $S$ (Sexo), $T$ (Tratamento), 
+e $C$ (Cura), discutidas no \cref{cap:intro}.
+Podemos considerar que $S$ é uma causa
+tanto de $T$ quanto de $C$ e que
+$T$ é uma causa de $C$. Assim,
+podemos representar as relações causais 
+entre estas variáveis por meio do grafo
+na \cref{fig:simpson_sexo}.
+Usando este grafo, podemos 
+discutir mais a fundo porque 
+a probabilidade condicional de cura dado tratamento é
+distinta do efeito causal do tratamento na cura.
+
+Quando calculamos a probabilidade condicional
+de cura dado o tratamento, estamos perguntando:
+``Qual é a probabilidade de que um indivíduo selecionado
+  aleatoriamente da população se cure dado que
+  \textbf{aprendemos} que recebeu o tratamento?''
+Para responder a esta pergunta, propagamos
+a informação do tratamento usado em 
+todos os caminhos do tratamento para a cura.
+Assim, além do efeito direto que o tratamento tem na cura,
+o tratamento também está associado ao sexo do paciente,
+o que indiretamente traz mais informação sobre a cura deste.
+Isto é, neste caso o tratamento traz informação
+tanto sobre seus efeitos (cura), 
+quanto sobre suas causas (sexo).
+Uma outra maneira de verificar estas afirmações é
+calculando diretamente $f(c|t)$:
+\begin{align}
+ \label{eq:prob_causa_1}
+ f(c|t)
+ &= \sum_s f(s,c|t) \nonumber \\
+ &= \sum_s \frac{f(s,c,t)}{f(t)} \nonumber \\
+ &= \sum_s \frac{f(s,t)f(c|s,t)}{f(t)} \nonumber \\
+ &= \sum_s f(s|t)f(c|s,t)
+\end{align}
+Notamos que $f(c|t)$ é a média das
+probabilidades de cura em 
+cada sexo, $f(c|s,t)$,
+ponderadas pela distribuição do sexo
+após aprender o tratamento do indivíduo, $f(s|t)$.
+
+A probabilidade condicional de cura dado tratamento
+não corresponde àquilo que entendemos por
+efeito causal de tratamento em cura. 
+Este efeito é a resposta para a pergunta:
+``Qual a probabilidade de que um indivíduo selecionado
+  aleatoriamente da população se cure dado que
+  \textbf{prescrevemos} a ele o tratamento?''.
+Ao contrário da primeira pergunta,
+em que apenas observamos a população,
+nesta segunda fazemos uma \textbf{intervenção} sobre
+o comportamento do indivíduo.
+Assim, estamos fazendo uma pergunta sobre 
+uma probabilidade diferente daquela que
+
+Na última linha, a informação obtida do tratamento é
+usada tanto em $f(s|t)$ quanto em $f(c|s,t)$.
+Ainda que 
+

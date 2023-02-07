@@ -194,20 +194,23 @@ Similarmente, dizemos que $V_1$ é um ancestral de $V_2$ em
 um DAG, se $V_1$ antecede $V_2$ causalmente. Isto é,
 se $V_1$ é pai de $V_2$ ou, pai de pai de $V_2$, ou
 pai de pai de pai de $V_2$, e assim por diante $\ldots$
-Denotamos por $Anc(V)$ o conjunto de todos os ancestrais de $V$:
+Denotamos por $Anc(\V)$ o conjunto de 
+todos os ancestrais de elementos de $\V$:
 
 \begin{definition}
  \label{def:ancestrais}
  Em um DAG, $\sG$,
- o conjunto de \textbf{ancestrais} de $V \in \sV$, $Anc(V)$, é tal que
- $Anc(V) \subseteq \sV$ e
- $V^* \in Anc(V)$ se e somente se existe
+ o conjunto de \textbf{ancestrais} de $\V \subseteq \sV$, 
+ $Anc(\V)$, é tal que
+ $Anc(\V) \subseteq \sV$ e
+ $V^* \in Anc(\V)$ se e somente se existe
+ $V \in \V$ e
  um caminho direcionado em $\sG$, C, tal que
  $C_1 = V^*$ e, para algum i, $C_i = V$.
 \end{definition}
 
-Note que podemos interpretar $Anc(V)$ como
-o conjunto de todas as causas diretas e indiretas de $V$.
+Note que podemos interpretar $Anc(\V)$ como
+o conjunto de todas as causas diretas e indiretas de $\V$.
 
 Finalmente, diremos que um conjunto de vértices,
 $\sA \subseteq \sV$ é \textit{ancestral} em um DAG,
@@ -230,8 +233,8 @@ algum vértice em $\sA$:
 \begin{lemma}
  \label{lem:anc}
  Em um DAG, $\sG$,
- para todo $V \in \sV$, 
- $Anc(V)$ é ancestral.
+ para todo $\V \subseteq \sV$, 
+ $Anc(\V)$ é ancestral.
 \end{lemma}
 
 \subsection{Modelo Probabilístico em um DAG}
@@ -268,6 +271,18 @@ pode ser útil aplicar o
  se e somente se, existem funções,
  $g_1,\ldots,g_n$ tais que:
  $$f(v_1,\ldots,v_n) = \prod_{i=1}^n g_i(v_i, Pa(v_i))$$
+\end{lemma}
+
+O seguinte lema também é útil
+
+\begin{lemma}
+ \label{lem:anc_fat}
+ Seja $\sG = (\sV, \sE)$ um DAG.
+ Se $\sA$ é ancestral e 
+ $f$ é compatível com $\sG$, então
+ \begin{align*}
+  f(\sA) = \prod_{V \in \sA} f(V|Pa(V))
+ \end{align*}
 \end{lemma}
 
 A seguir, estudaremos três tipos fundamentais
@@ -698,11 +713,12 @@ será fundamental nos capítulos posteriores.
 
 \begin{exercise}
  Em um DAG, $\sG = (\sV, \sE)$,
- Considere que $Anc^*(V) \subseteq \sV$ é
+ Considere que $Anc^*(\V) \subseteq \sV$ é
  definido como o menor conjunto tal que
- $Pa(V) \subseteq Anc^*(V)$ e, se
- $V^* \in Anc^*(V)$, então $Pa(V^*) \subseteq Anc^*(V)$.
- Prove que $Anc(V) \equiv Anc^*(V)$.
+ $\V \subseteq Anc^*(\V)$ e,
+ se $V \in Anc^*(\V)$, então
+ $Pa(V) \subseteq Anc^*(\V)$.
+ Prove que $Anc(\V) \equiv Anc^*(\V)$.
 \end{exercise}
 
 \begin{exercise} 
@@ -710,7 +726,20 @@ será fundamental nos capítulos posteriores.
 \end{exercise}
 
 \begin{exercise}
+ Sejam $\sG_1 = (\sV, \sE_1)$ e
+ $\sG_2 = (\sV, \sE_2)$ grafos
+ tais que $\sE_1 \subseteq \sE_2$.
+ Prove que se 
+ $f$ é compatível com $\sG_2$, então 
+ $f$ é compatível com $\sG_1$.
+\end{exercise}
+
+\begin{exercise}
  Prove o \cref{lem:compativel-equiv}.
+\end{exercise}
+
+\begin{exercise}
+ Prove o \cref{lem:anc_fat}.
 \end{exercise}
 
 \begin{exercise}

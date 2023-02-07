@@ -6,7 +6,7 @@ Você já deve ter ouvido diversas vezes que
 o que é causalidade e como 
 ela pode ser usada para resolver problemas práticos?
 Antes de estudarmos definições formais,
-nesta aula veremos como conceitos intuitivos de causalidade
+veremos como conceitos intuitivos de causalidade
 podem ser necessários para resolver questões
 usuais em Inferência Estatística.
 Para tal, a seguir estudaremos um exemplo de \citet{Glymour2016}.

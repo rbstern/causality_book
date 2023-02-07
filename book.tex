@@ -34,7 +34,7 @@ Você já deve ter ouvido diversas vezes que
 o que é causalidade e como 
 ela pode ser usada para resolver problemas práticos?
 Antes de estudarmos definições formais,
-nesta aula veremos como conceitos intuitivos de causalidade
+veremos como conceitos intuitivos de causalidade
 podem ser necessários para resolver questões
 usuais em Inferência Estatística.
 Para tal, a seguir estudaremos um exemplo de \citet{Glymour2016}.
@@ -412,20 +412,23 @@ Similarmente, dizemos que $V_1$ é um ancestral de $V_2$ em
 um DAG, se $V_1$ antecede $V_2$ causalmente. Isto é,
 se $V_1$ é pai de $V_2$ ou, pai de pai de $V_2$, ou
 pai de pai de pai de $V_2$, e assim por diante $\ldots$
-Denotamos por $Anc(V)$ o conjunto de todos os ancestrais de $V$:
+Denotamos por $Anc(\V)$ o conjunto de 
+todos os ancestrais de elementos de $\V$:
 
 \begin{definition}
  \label{def:ancestrais}
  Em um DAG, $\sG$,
- o conjunto de \textbf{ancestrais} de $V \in \sV$, $Anc(V)$, é tal que
- $Anc(V) \subseteq \sV$ e
- $V^* \in Anc(V)$ se e somente se existe
+ o conjunto de \textbf{ancestrais} de $\V \subseteq \sV$, 
+ $Anc(\V)$, é tal que
+ $Anc(\V) \subseteq \sV$ e
+ $V^* \in Anc(\V)$ se e somente se existe
+ $V \in \V$ e
  um caminho direcionado em $\sG$, C, tal que
  $C_1 = V^*$ e, para algum i, $C_i = V$.
 \end{definition}
 
-Note que podemos interpretar $Anc(V)$ como
-o conjunto de todas as causas diretas e indiretas de $V$.
+Note que podemos interpretar $Anc(\V)$ como
+o conjunto de todas as causas diretas e indiretas de $\V$.
 
 Finalmente, diremos que um conjunto de vértices,
 $\sA \subseteq \sV$ é \textit{ancestral} em um DAG,
@@ -448,8 +451,8 @@ algum vértice em $\sA$:
 \begin{lemma}
  \label{lem:anc}
  Em um DAG, $\sG$,
- para todo $V \in \sV$, 
- $Anc(V)$ é ancestral.
+ para todo $\V \subseteq \sV$, 
+ $Anc(\V)$ é ancestral.
 \end{lemma}
 
 \subsection{Modelo Probabilístico em um DAG}
@@ -486,6 +489,18 @@ pode ser útil aplicar o
  se e somente se, existem funções,
  $g_1,\ldots,g_n$ tais que:
  $$f(v_1,\ldots,v_n) = \prod_{i=1}^n g_i(v_i, Pa(v_i))$$
+\end{lemma}
+
+O seguinte lema também é útil
+
+\begin{lemma}
+ \label{lem:anc_fat}
+ Seja $\sG = (\sV, \sE)$ um DAG.
+ Se $\sA$ é ancestral e 
+ $f$ é compatível com $\sG$, então
+ \begin{align*}
+  f(\sA) = \prod_{V \in \sA} f(V|Pa(V))
+ \end{align*}
 \end{lemma}
 
 A seguir, estudaremos três tipos fundamentais
@@ -898,11 +913,12 @@ será fundamental nos capítulos posteriores.
 
 \begin{exercise}
  Em um DAG, $\sG = (\sV, \sE)$,
- Considere que $Anc^*(V) \subseteq \sV$ é
+ Considere que $Anc^*(\V) \subseteq \sV$ é
  definido como o menor conjunto tal que
- $Pa(V) \subseteq Anc^*(V)$ e, se
- $V^* \in Anc^*(V)$, então $Pa(V^*) \subseteq Anc^*(V)$.
- Prove que $Anc(V) \equiv Anc^*(V)$.
+ $\V \subseteq Anc^*(\V)$ e,
+ se $V \in Anc^*(\V)$, então
+ $Pa(V) \subseteq Anc^*(\V)$.
+ Prove que $Anc(\V) \equiv Anc^*(\V)$.
 \end{exercise}
 
 \begin{exercise} 
@@ -910,7 +926,20 @@ será fundamental nos capítulos posteriores.
 \end{exercise}
 
 \begin{exercise}
+ Sejam $\sG_1 = (\sV, \sE_1)$ e
+ $\sG_2 = (\sV, \sE_2)$ grafos
+ tais que $\sE_1 \subseteq \sE_2$.
+ Prove que se 
+ $f$ é compatível com $\sG_2$, então 
+ $f$ é compatível com $\sG_1$.
+\end{exercise}
+
+\begin{exercise}
  Prove o \cref{lem:compativel-equiv}.
+\end{exercise}
+
+\begin{exercise}
+ Prove o \cref{lem:anc_fat}.
 \end{exercise}
 
 \begin{exercise}
@@ -969,8 +998,8 @@ será fundamental nos capítulos posteriores.
 Independência condicional é uma forma fundamental de
 indicar relações entre variáveis aleatórias.
 Se $\X_1,\ldots,\X_d$ e $\Y$ são vetores de variáveis aleatórias,
-definimos que $(\X_1,\ldots,\X_d) | \Y$ e
-dizemos que $\X_1,\ldots,\X_d$ são independentes dado $\Y$, se
+definimos que $(\X_1,\ldots,\X_d) | \Y$, isto é,
+$\X_1,\ldots,\X_d$ são independentes dado $\Y$, se
 conhecido o valor de $\Y$, 
 observar quaisquer valores de $\X$ não traz 
 informação sobre os demais valores.
@@ -988,7 +1017,7 @@ estão diretamente ligadas ao seu grafo.
  \begin{align*}
   f(\x_1,\ldots,\x_n|\y)	&= \prod_{i=1}^d f(\x_i|\y)
  \end{align*}
- Em particular, $(\X_1,\ldots,\X_d)$ são independente se,
+ Em particular, $(\X_1,\ldots,\X_d)$ são independentes se,
  para quaiquer $(\x_1,\ldots,\x_d)$,
  \begin{align*}
   f(\x_1,\ldots,\x_d)	&= \prod_{i=1}^d f(\x_i)
@@ -1015,8 +1044,7 @@ são equivalentes a independência condicional:
  \end{enumerate}
 \end{lemma}
 
-As condições no \cref{lemma:equivIndep} apresentam
-condições que, em geral, são
+As condições no \cref{lemma:equivIndep} são, em geral,
 mais fáceis de verificar do que 
 a definição direta de independência condicional.
 A seguir veremos que, em um SMC, pode
@@ -1210,6 +1238,98 @@ Esta conclusão é apresentada no
 \end{knitrout}
 \end{exercise}
 
+\begin{exercise}
+ Prove que se $\V_1 \perp \V_3 | \V_4$ e
+ $\V_2 \perp \V_3 | \V_4$, então
+ $\V_1 \cup \V_2 \perp \V_3 | \V_4$.
+\end{exercise}
+
+\begin{exercise}
+ Prove que se $\V_1 \perp \V_2 | \V_3$, então
+ para todo $V \in \sV$, 
+ $V \perp \V_1 | \V_3$ ou
+ $V \perp \V_2 | \V_3$.
+\end{exercise}
+
+\chapter{Intervenções}
+
+Com base no modelo estrutural causal discutido 
+no \cref{cap:dag}, agora estabeleceremos
+um significado para o efeito causal
+de uma variável em outra. 
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{figure}
+
+{\centering \includegraphics[width=\maxwidth]{./figures/simpson_sexo-1} 
+
+}
+
+\caption[Grafo que representa as relações causais entre S (Sexo), T (Tratamento), e C (Cura)]{Grafo que representa as relações causais entre S (Sexo), T (Tratamento), e C (Cura).}\label{fig:simpson_sexo}
+\end{figure}
+
+\end{knitrout}
+
+Para iniciar esta discussão, considere
+as variáveis $S$ (Sexo), $T$ (Tratamento), 
+e $C$ (Cura), discutidas no \cref{cap:intro}.
+Podemos considerar que $S$ é uma causa
+tanto de $T$ quanto de $C$ e que
+$T$ é uma causa de $C$. Assim,
+podemos representar as relações causais 
+entre estas variáveis por meio do grafo
+na \cref{fig:simpson_sexo}.
+Usando este grafo, podemos 
+discutir mais a fundo porque 
+a probabilidade condicional de cura dado tratamento é
+distinta do efeito causal do tratamento na cura.
+
+Quando calculamos a probabilidade condicional
+de cura dado o tratamento, estamos perguntando:
+``Qual é a probabilidade de que um indivíduo selecionado
+  aleatoriamente da população se cure dado que
+  \textbf{aprendemos} que recebeu o tratamento?''
+Para responder a esta pergunta, propagamos
+a informação do tratamento usado em 
+todos os caminhos do tratamento para a cura.
+Assim, além do efeito direto que o tratamento tem na cura,
+o tratamento também está associado ao sexo do paciente,
+o que indiretamente traz mais informação sobre a cura deste.
+Isto é, neste caso o tratamento traz informação
+tanto sobre seus efeitos (cura), 
+quanto sobre suas causas (sexo).
+Uma outra maneira de verificar estas afirmações é
+calculando diretamente $f(c|t)$:
+\begin{align}
+ \label{eq:prob_causa_1}
+ f(c|t)
+ &= \sum_s f(s,c|t) \nonumber \\
+ &= \sum_s \frac{f(s,c,t)}{f(t)} \nonumber \\
+ &= \sum_s \frac{f(s,t)f(c|s,t)}{f(t)} \nonumber \\
+ &= \sum_s f(s|t)f(c|s,t)
+\end{align}
+Notamos que $f(c|t)$ é a média das
+probabilidades de cura em 
+cada sexo, $f(c|s,t)$,
+ponderadas pela distribuição do sexo
+após aprender o tratamento do indivíduo, $f(s|t)$.
+
+A probabilidade condicional de cura dado tratamento
+não corresponde àquilo que entendemos por
+efeito causal de tratamento em cura. 
+Este efeito é a resposta para a pergunta:
+``Qual a probabilidade de que um indivíduo selecionado
+  aleatoriamente da população se cure dado que
+  \textbf{prescrevemos} a ele o tratamento?''.
+Ao contrário da primeira pergunta,
+em que apenas estamos observando a população,
+
+
+Na última linha, a informação obtida do tratamento é
+usada tanto em $f(s|t)$ quanto em $f(c|s,t)$.
+Ainda que 
+
+
 \bibliographystyle{apalike}
 \bibliography{book}
 
@@ -1284,13 +1404,150 @@ Esta conclusão é apresentada no
 \subsection{Relativas a \cref{thm:d-sep}}
 
 \begin{lemma}
+ \label{lem:dsep_indep_anc}
+ Seja $\sG = (\sV, \sE)$ um DAG.
+ Se $\sA = \V_1 \cup \V_2 \cup \V_3$ é ancestral e
+ $\V_1 \perp \V_2 | \V_3$, então, 
+ para todo $f$ compatível com $\sG$,
+ $\V_1 \ind^f \V_2 | \V_3$.
+\end{lemma}
+
+\begin{proof}
+ Defina $\V^*_1 = \{V \in \sA: 
+ V \in \V_1 \text{ ou } V_1 \rightarrow V,
+ \text{ para algum } V_1 \in \V_1\}$ e
+ $\V^*_2 = \sA - \V^*_1$.
+ Como $\V_1 \perp \V_2 | \V_3$, decorre de
+ \cref{def:d-sep} que não existe
+ $V_1 \in \V_1$ e $V_2 \in \V_2$ tal que
+ $V_1 \rightarrow V_2$. Portanto,
+ \begin{align}
+  \label{eq:d_sep_tot_1}
+  \V^*_1 \subseteq \V_1 \cup \V_3 \text{ e }
+  \V^*_2 \subseteq \V_2 \cup \V_3
+ \end{align}
+ A seguir, demonstraremos que
+ \begin{align}
+  \label{eq:d_sep_tot_2}
+  \forall i \in \{1,2\} \text{ e }
+  V^*_i \in \V^*_i:
+  Pa(V^*_i) \subseteq \V_i \cup \V_3
+ \end{align}
+ Tome $V^*_1 \in \V^*_1$.
+ Como $V^*_1 \in \sA$ e $\sA$ é ancestral,
+ decorre da \cref{def:ancestral} que
+ $Pa(V^*_1) \subseteq \sA$.
+ Assim, basta demonstrar que 
+ $Pa(V^*_1) \cap \V_2 = \emptyset$. 
+ Se $V^*_1 \in \V_1$, então decorre de
+ \cref{def:d-sep} que não existe
+ $V_2 \in \V_2$ tal que $V_2 \rightarrow V^*_1$.
+ Caso contrário, se $V^*_1 \in \V_3$,
+ então existe $V_1 \in \V_1$ tal que
+ $V_1 \rightarrow V^*_1$.
+ Decorre de \cref{def:d-sep} que não existe 
+ $V_1 \in \V_1$, $V_2 \in \V_2$ e
+ $V_3 \in \V_3$ tais que $V_3$ é
+ um colisor entre $V_1$ e $V_2$, isto é,
+ $V_1 \rightarrow V_3 \leftarrow V_2$.
+ Portanto, não existe $V_2 \in \V_2$ tal que
+ $V_2 \rightarrow V^*_1$.
+ Conclua que $Pa(V^*_1) \subseteq \V_1 \cup \V_3$.
+ 
+ A seguir, note que 
+ pela definição de $\V^*_1$, 
+ se $V \in \sA$ é tal que
+ existe $V_1 \in \V_1$ com
+ $V_1 \rightarrow V$, então
+ $V \in \V^*_1$. Portanto,
+ como $\V^*_2 = \sV - \V^*_1$, 
+ para todo $V^*_2 \in \V^*_2$,
+ não existe $V_1 \in \V_1$ tal que
+ $V_1 \rightarrow V^*_2$.
+ Isto é, $Pa(V^*_2) \subseteq \sV - \V_1$.
+ Como $V^*_2 \in \sA$ e $\sA$ é ancestral,
+ conclua da \cref{def:ancestral} que
+ $Pa(V^*_2) \subseteq \sA$.
+ Combinando as duas últimas frases,
+ $Pa(V^*_2) \subseteq \V_2 \cup \V_3$.
+ 
+ Decorre da conclusão dos dois últimos parágrafos que
+ \cref{eq:d_sep_tot_2} está demonstrado.
+ \begin{align*}
+  f(\V_1,\V_2|\V_3)
+  &= \frac{f(\V_1,\V_2,\V_3)}{f(\V_3)} \\
+  &= \frac{\prod_{V \in \sA}f(V|Pa(V))}
+  {f(\V_3)} 
+  & \text{\cref{lem:anc_fat}} \\
+  &= \frac{\left(\prod_{V^*_1 \in \V^*_1}
+  f(V^*_1|Pa(V^*_1))\right)
+  \left(\prod_{V^*_2 \in \V^*_2}
+  f(V^*_2|Pa(V^*_2))\right)}
+  {f(\V_3)} 
+  & \V^*_1 \text{ e } \V^*_2 \text{ particionam } \sA \\
+  &= h_1(\V_1, \V_3) h_2(\V_2, \V_3)
+  & \text{\cref{eq:d_sep_tot_1,eq:d_sep_tot_2}}
+ \end{align*}
+ Assim, decorre do \cref{lemma:equivIndep} que
+ $\V_1 \ind^f \V_2 | \V_3$.
+\end{proof}
+
+\begin{lemma}
+ \label{lem:dsep_indep}
  Se $f$ é compatível com $\sG$ e
  $\V_1 \perp \V_2 | \V_3$, então
  $\V_1 \ind^f \V_2 | \V_3$.
 \end{lemma}
 
 \begin{proof}
- 
+ Defina $\sA = Anc(\V_1 \cup \V_2 \cup \V_3)$,
+ $\V^*_1 = \{V \in \sA: V \text{ não é d-separado de } \V_1 | \V_3\}$, e $\V^*_2 = \sA - \V^*_1$.
+ Por definição,
+ \begin{align}
+  \label{eq:dsep_indep_0}
+  \V_1 \subseteq \V^*_1 \text{ e }
+  \V_2 \subseteq \V^*_2
+ \end{align}
+
+ O primeiro é provar que
+ $\V^*_1 \perp \V^*_2 | \V_3$.
+ Pela definição de $\V^*_2$, 
+ para todo $V_1 \in \V_1$ e $V^*_2 \in \V^*_2$, 
+ $V_1 \perp V^*_2 | \V_3$, isto é,
+\begin{align}
+ \label{eq:dsep_indep_1}
+ \V_1 \perp \V^*_2 | \V_3
+\end{align}
+ Suponha por absurdo que existam
+ $V^*_1 \in \V^*_1$ e $V^*_2 \in \V^*_2$
+ tais que $V^*_1$ e $V^*_2$ 
+ não são d-separados dado $\V_3$.
+ Portanto, existe um caminho ativo dado $\V_3$,
+ $(V^*_1,C_2,\ldots,C_{n-1},V^*_2)$.
+ Pela definição de $\V^*_1$, existe
+ $V_1 \in \V_1$ e um caminho ativo dado $\V_3$,
+ $(V_1,C^*_2,\ldots,C^*_{m-1},V^*_1)$. Assim,
+ $(V_1,C^*_2,\ldots,C^*_{m-1},
+ V^*_1,C_2,\ldots,C_{n-1},V^*_2)$ é
+ é um caminho ativo dado $\V_3$ de
+ $V_1$ a $V^*_2$, uma contradição com
+ \cref{eq:dsep_indep_1}. Conclua que
+ $\V^*_1 \perp \V^*_2 | \V_3$.
+
+ A seguir, provaremos que
+ $\V^*_1 \ind^f \V^*_2 | \V_3$.
+ Como $\sA = Anc(\V_1 \cup \V_2 \cup \V_3)$,
+ decorre do \cref{lem:anc} que
+ $\sA$ é ancestral. Portanto, como
+ $\sA = \V^*_1 \cup \V^*_2 \cup \V_3$ e
+ $\V^*_1 \perp \V^*_2 | \V_3$, decorre do
+ \cref{lem:dsep_indep_anc} que
+ $\V^*_1 \ind^f \V^*_2 | \V_3$.
+
+Como $\V^*_1 \ind^f \V^*_2 | \V_3$,
+ a conclusão do lema decorre do fato de que
+ $\V_1 \subseteq \V^*_1$ e 
+ $\V_2 \subseteq \V^*_2$. 
 \end{proof}
 
 \begin{lemma}
@@ -1303,13 +1560,6 @@ Esta conclusão é apresentada no
 \end{lemma}
 
 \begin{proof}
- Como $\V_1$ e $\V_2$ não são d-separados dado $\V_3$,
- então existe um caminho, $C = (C_1,\ldots,C_n)$, que 
- não está bloqueado dado $\V_3$ e tal que
- $C_1 \in \V_1$ e $C_n \in \V_2$.
- 
- Defina
- 
 \end{proof}
 
 \begin{proof}[Prova do \cref{thm:d-sep}]

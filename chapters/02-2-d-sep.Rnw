@@ -4,8 +4,8 @@
 Independência condicional é uma forma fundamental de
 indicar relações entre variáveis aleatórias.
 Se $\X_1,\ldots,\X_d$ e $\Y$ são vetores de variáveis aleatórias,
-definimos que $(\X_1,\ldots,\X_d) | \Y$ e
-dizemos que $\X_1,\ldots,\X_d$ são independentes dado $\Y$, se
+definimos que $(\X_1,\ldots,\X_d) | \Y$, isto é,
+$\X_1,\ldots,\X_d$ são independentes dado $\Y$, se
 conhecido o valor de $\Y$, 
 observar quaisquer valores de $\X$ não traz 
 informação sobre os demais valores.
@@ -23,7 +23,7 @@ estão diretamente ligadas ao seu grafo.
  \begin{align*}
   f(\x_1,\ldots,\x_n|\y)	&= \prod_{i=1}^d f(\x_i|\y)
  \end{align*}
- Em particular, $(\X_1,\ldots,\X_d)$ são independente se,
+ Em particular, $(\X_1,\ldots,\X_d)$ são independentes se,
  para quaiquer $(\x_1,\ldots,\x_d)$,
  \begin{align*}
   f(\x_1,\ldots,\x_d)	&= \prod_{i=1}^d f(\x_i)
@@ -50,8 +50,7 @@ são equivalentes a independência condicional:
  \end{enumerate}
 \end{lemma}
 
-As condições no \cref{lemma:equivIndep} apresentam
-condições que, em geral, são
+As condições no \cref{lemma:equivIndep} são, em geral,
 mais fáceis de verificar do que 
 a definição direta de independência condicional.
 A seguir veremos que, em um SMC, pode
@@ -256,4 +255,17 @@ ggdag(grafo, layout = "circle") +
       axis.ticks.y=element_blank()) +
   xlab("") + ylab("")
 @
+\end{exercise}
+
+\begin{exercise}
+ Prove que se $\V_1 \perp \V_3 | \V_4$ e
+ $\V_2 \perp \V_3 | \V_4$, então
+ $\V_1 \cup \V_2 \perp \V_3 | \V_4$.
+\end{exercise}
+
+\begin{exercise}
+ Prove que se $\V_1 \perp \V_2 | \V_3$, então
+ para todo $V \in \sV$, 
+ $V \perp \V_1 | \V_3$ ou
+ $V \perp \V_2 | \V_3$.
 \end{exercise}
