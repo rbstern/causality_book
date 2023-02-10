@@ -12,15 +12,12 @@ usuais em Inferência Estatística.
 Para tal, a seguir estudaremos um exemplo de \citet{Glymour2016}.
 
 \section{O Paradoxo de Simpson}
+\label{sec:simpson}
 
-Considere que observamos em $500$ pacientes $3$ variáveis: 
-$X$ e $Y$ são as indicadoras de que, respectivamente,
-o paciente recebeu um tratamento e o paciente se recuperou de uma doença, e
-$Z$ é uma variável binária cujo significado será discutido mais tarde.
-Os dados foram resumidos em uma tabela de contingência:
-
+\begin{table}
 <<simpson, echo = FALSE, message = FALSE, warning = FALSE>>==
 library(tidyverse)
+library(pander)
 library(memisc)
 library(knitr)
 library(magrittr)
@@ -38,11 +35,21 @@ data = c(
 dt = matrix(data, ncol = 3, byrow = TRUE) %>% 
   as_tibble()
 colnames(dt) = c("Z", "X", "Y")
-dt %<>% 
+dt %>%  
   dplyr::select(Z, X, Y) %>% 
-  ftable()
-print(dt, center = "centering")
+  ftable() %>% 
+  print()
 @
+ \caption{Tabela de frequência conjunta 
+ das variáveis binárias $X$, $Y$, e $Z$.}
+ \label{tabs:simpson}
+\end{table}
+
+Considere que observamos em $500$ pacientes $3$ variáveis: 
+$T$ e $C$ são as indicadoras de que, respectivamente,
+o paciente recebeu um tratamento e o paciente curou de uma doença, e
+$Z$ é uma variável binária cujo significado será discutido mais tarde.
+Os dados foram resumidos na \cref{tabs:simpson}.
 
 Em uma primeira análise desta tabela, podemos 
 verificar a efetividade do tratamento 
@@ -185,5 +192,3 @@ Esta questão será tratada no \cref{cap:dag}.
  se não tiver pressa? 
  Justifique sua resposta em palavras.
 \end{exercise}
-
-

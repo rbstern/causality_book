@@ -694,6 +694,8 @@ o Modelo Estrutural Causal (SCM):
  $\sG = (\sV, \sE)$ é um DAG (\cref{def:dag}) e
  $f$ é uma função de densidade sobre $\sV$
  compatível com $\sG$ (\cref{def:compativel}).
+ Neste caso, é comum chamarmos $\sG$ de
+ \textbf{grafo causal} do SCM $(\sG,f)$.
 \end{definition}
 
 Note pela \cref{def:scm} que
