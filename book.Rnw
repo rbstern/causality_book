@@ -10,7 +10,6 @@
 
 \newpage
 
-
 \epigraph{
 ``Teaching is giving opportunities to students to discover things by themselves.''
 }

@@ -231,3 +231,210 @@ Como $\V^*_1 \ind^f \V^*_2 | \V_3$,
 
 \begin{proof}[Prova do \cref{lem:d-sep}]
 \end{proof}
+
+\section{Relativas à \cref{sec:backdoor}}
+
+Para realizar as demonstrações da \cref{sec:backdoor},
+consideraremos um SCM aumentado, 
+em que existe uma variável que representa
+a ocorrência de uma intervenção em X.
+Uma consequência interessante desta construção será
+a de que o modelo intervencional é equivalente
+ao condicionamento usual no SCM aumentado.
+
+\begin{definition}
+ \label{def:scm_star}
+ Seja $(\sG_*, f_*)$ um SCM expandido tal que
+ $\sG_* = (\sV \cup \{I\}, \sE_*)$, e
+ $\sE_* = \sE \cup \{(I \rightarrow X)\}$.
+ Isto é, $\sG_*$ é uma cópia de $\sG$ em que
+ adicionamos o vértice $I \in \{0,1\}$ e 
+ uma única aresta de $I$ para $X$.
+ 
+ $\sG^*$ admite uma interpretação intuitiva.
+ $I$ é a indicadora de que fazemos uma intervenção em $X$,
+ fazendo que esta assuma o valor $x$.
+ Se $I = 0$, não há uma intervenção e, assim,
+ $X$ segue a sua distribuição observacional.
+ Se $I = 1$, $X$ assume o valor $x$ com probabilidade $1$.
+ 
+ Finalmente, considerando $Pa(X)$ como os
+ pais de $X$ segundo $\sG$, definimos que:
+ \begin{align*}
+  f_*(X|Pa(X), I) 
+  &= \begin{cases}
+   f(X|Pa(X)) & \text{, se $I = 0$, e} \\
+   \I(X = x) & \text{, caso contrário.}
+  \end{cases}
+ \end{align*}
+\end{definition}
+
+\begin{lemma}
+ \label{lemma:backdoor_1}
+ Se $(\sG^*, f^*)$ é tal qual em \cref{def:scm_star}, então:
+ \begin{align*}
+  f(y|do(X=x)) &= f_*(y|I=1)
+ \end{align*}
+\end{lemma}
+
+\begin{proof}
+ Tomando $\V_2 = \sV - \{X\}$:
+ \begin{align*}
+  f_*(\V_2|I = 1) 
+  &= \frac{f_*(\V_2, I=1)}{f(I=1)} \\
+  &= \frac{\int f_*(\V_2, X, I=1)dX}{f(I=1)} \\
+  &= \frac{f(I=1)\I(X = x)\prod_{V_2 \in \V_2}f(V_2|Pa(V_2))}{f(I=1)}
+  & \text{\cref{def:scm_star}} \\
+  &= \I(X = x) \cdot \prod_{V_2 \in \V_2}f(V_2|Pa(V_2)) \\
+  &= f(\V_2|do(X=x)) 
+  & \text{\cref{def:intervencao}}
+ \end{align*}
+\end{proof}
+
+\begin{lemma}
+ \label{lemma:backdoor_2}
+ Se $(\sG^*, f^*)$ é tal qual em \cref{def:scm_star}, então:
+ \begin{align*}
+  f_*(\sV|I=0) &= f(\sV).
+ \end{align*}
+\end{lemma}
+
+\begin{proof}
+ \begin{align*}
+  f_*(\sV|I=0) 
+  &= \frac{f_*(\sV, I=0)}{f_*(I=0)} \\
+  &= \frac{f_*(I=0)f_*(X|Pa(X),I=0)
+  \prod_{V \in \sV-\{X\}} f(V|Pa(V))}{f_*(I=0)}
+  & \text{\cref{def:scm_star}} \\
+  &= f(X|Pa(X))\prod_{V \in \sV-\{X\}} f(V|Pa(V))
+  & \text{\cref{def:scm_star}} \\
+  &= \prod_{V \in \sV} f(V|Pa(V)) \\
+  &= f(\sV) 
+  & \text{\cref{def:compativel}}
+ \end{align*}
+\end{proof}
+
+\begin{lemma}
+ \label{lemma:backdoor_3}
+ Se $(\sG^*, f^*)$ é tal qual em \cref{def:scm_star} e
+ $\X \notin Anc(\Z)$, então:
+ \begin{align*}
+  f_*(\z) &= f(\z)
+ \end{align*}
+\end{lemma}
+
+\begin{proof}
+ Seja $\Z_* = Anc(\Z)$ e
+ $\V = \sV - (\{X\} \cup \Z_*)$.
+ Como $X \notin \Z_*$, decorre 
+ da \cref{def:scm_star} que $I \notin \Z_*$.
+ Portanto,
+ \begin{align*}
+  f_*(\z_*) 
+  &= \int f_*(\z_*, I,X,\bv) d(I,X,\bv) \\
+  &= \int \left(\prod_{z \in \z_*} f(z|Pa(z))\right)
+  \left(f_*(I)f_*(X|I,Pa(X))
+  \prod_{v \in \bv} f(v|Pa(v))\right)d(I,X,\bv)
+  & \text{\cref{def:scm_star}} \\
+  &= \left(\prod_{z \in \z_*} f(z|Pa(z))\right) 
+  \int \left(f_*(I)f_*(X|I,Pa(X)) 
+  \prod_{v \in \bv} f(v|Pa(v))\right)d(I,X,\bv) 
+  & \Z_* \cap (\V \cup \{I,X\}) = \emptyset \\
+  &\propto \prod_{z \in \z_*} f(z|Pa(z)) 
+  & \Z_* \cap (\V \cup \{I,X\}) = \emptyset \\
+  &= f(\z_*) 
+  & \text{\cref{lemma:anc_fact}}
+ \end{align*}
+ Assim, decorre da Lei da Probabilidade Total que
+ $f_*(\z) = f(\z)$.
+\end{proof}
+
+\begin{lemma}
+ \label{lemma:backdoor_4}
+ Se $(\sG^*, f^*)$ é tal qual em \cref{def:scm_star} e
+ $\Z$ satisfaz o critério backdoor para
+ medir o efeito causal de $X$ em $Y$, então $I \dsep \Z$.
+\end{lemma}
+
+\begin{proof}
+ Tome arbitrariamente um $Z \in \Z$ e
+ um caminho de $I$ em $Z$, 
+ $C = (I, C_2, \ldots, C_{n-1}, Z)$.
+ Por definição de $I$, $C_2 = X$ e
+ $I \rightarrow X$. 
+ Suponha por absurdo que $C$ não tem colisor.
+ Como, $I \rightarrow X$, decorre que
+ $C = I \rightarrow X \rightarrow \ldots 
+ \rightarrow C_{n-1} \rightarrow Z$.
+ Assim, $Z$ é um descendente de $X$,
+ uma contradição com 
+ o critério backdoor (\cref{def:backdoor}).
+ Conclua que $C$ tem um colisor.
+ Assim, $C$ está marginalmente bloqueado
+ (\cref{def:caminho-bloq}).
+\end{proof}
+
+\begin{lemma}
+ \label{lemma:backdoor_5}
+ Se $(\sG^*, f^*)$ é tal qual em \cref{def:scm_star} e
+ $\Z$ satisfaz o critério backdoor para
+ medir o efeito causal de $X$ em $Y$, então $I \dsep Y | X, \Z$.
+\end{lemma}
+
+\begin{proof}
+ Tome um caminho arbitrário de
+ $I$ em $Y$, $C = (I, C_2, \ldots, C_{n-1}, Y)$.
+ Por definição de $I$, $C_2 = X$ e 
+ $I \rightarrow X$. 
+ Se $X \rightarrow C_3$, então
+ $X$ é um mediador em $C$ e 
+ $C$ está bloqueado dado $X$ e $\Z$.
+ Se $X \leftarrow C_3$, então
+ $(X, C_3, \ldots, C_{n-1}, Y)$ está bloqueado
+ dado $\Z$, uma vez que $\Z$ satisfaz
+ o critério backdoor.
+ Conclua que $C$ está bloqueado dado $X$ e $\Z$.
+\end{proof}
+
+\begin{proof}[Prova do \cref{thm:backdoor}]
+ \begin{align*}
+  f(y|do(X=x))
+  &= f_*(y|I=1) 
+  & \text{\cref{lemma:backdoor_1}} \\
+  &= \int \int f_*(y,X,\z|I=1)d\X d\z \\
+  &= \int \int f_*(\z|I=1)f_*(X|\z,I=1)f_*(y|X,\z,I=1) d\x d\z \\
+  &= \int \int f_*(\z|I=1) \I(X=x) f_*(y|X,\z,I=1) d\x d\z \\
+  &= \int f_*(\z|I=1)f_*(y|x,\z,I=1) d\z \\
+  &= \int f_*(\z)f_*(y|x,\z,I=0)d\z
+  & \text{\cref{lemma:backdoor_4,lemma:backdoor_5}} \\
+  &= \int f(\z)f(y|x,\z)d\z
+  & \text{\cref{lemma:backdoor_2,lemma:backdoor_3}}
+ \end{align*}
+\end{proof}
+
+\begin{proof}[Prova do \cref{thm:backdoor_est_1}]
+ \begin{align*}
+  \E[\E[g(Y)|X=x,\Z]]
+  &= \E\left[\int g(y) f(y|x,\Z)dy \right] \\
+  &= \int \int g(y) f(y|x,\z) dy f(\z) d\z \\
+  &= \int \int g(y) f(y|x,\z)f(\z) d\z dy \\
+  &= \int g(y) f(y|do(x))
+  & \text{\cref{thm:backdoor}} \\ 
+  &= \E[g(Y)|do(x)] 
+  & \text{\cref{def:exp_inter}}
+ \end{align*}
+\end{proof}
+
+\begin{proof}[Prova do \cref{thm:backdoor_est_2}]
+ \begin{align*}
+  \E[g(Y)|do(x)]
+  &= \int g(y) f(y|do(x))
+  & \text{\cref{def:exp_inter}} \\
+  &= \int \int g(y) f(y|x,\z)f(\z) d\z dy
+  & \text{\cref{thm:backdoor}} \\
+  &= \int \int g(y) \frac{f(x,y,\z)}{f(x,\z)} f(\z) d\z dy
+  &= \int \int \frac{g(y)}{f(x|\z)} f(x,y,\z) d\z dy \\
+  &= \int \frac{g(y)\I(x_*=x)}{f(x|\z)} f(x_*,y,z) d(x_*,y,\z) \\
+  &= \E\left[\frac{g(Y)\I(X=x)}{f(x|Z)}\right]
+ \end{align*}
+\end{proof}

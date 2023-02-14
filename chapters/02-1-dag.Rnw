@@ -114,6 +114,12 @@ formalizada a seguir:
  $(V_i, V_{i+1}) \in \sE$.
 \end{definition}
 
+\begin{definition}
+ \label{def:descendente}
+ Dizemos que $V_2$ é descendente de $V_1$ se
+ existe um caminho direcionado de $V_1$ em $V_2$.
+\end{definition}
+
 Um \textit{caminho} é uma generalização 
 de caminho direcionado.
 Em um caminho, começamos em um vértice e,
@@ -725,6 +731,12 @@ será fundamental nos capítulos posteriores.
 
 \begin{exercise} 
  Prove o \cref{lem:anc}.
+\end{exercise}
+
+\begin{exercise}
+ \label{lemma:anc_fact}
+ Prove que se $\Z$ é ancestral, então
+ $f(\Z) = \prod_{Z \in \Z}f(Z|Pa(Z))$. 
 \end{exercise}
 
 \begin{exercise}

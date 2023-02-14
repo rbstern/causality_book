@@ -258,6 +258,14 @@ ggdag(grafo, layout = "circle") +
 \end{exercise}
 
 \begin{exercise}
+ Prove que se um caminho,
+ $C = (C_1, \ldots, C_n)$, está bloqueado
+ dado $\V$, então sempre que $C$ é um sub-caminho de $C^*$,
+ isto é, $C^* = (A_1, \ldots, A_m, C_1, \ldots, C_n, B_1, \ldots, B_l)$,
+ temos que $C^*$ está bloqueado dado $\V$.
+\end{exercise}
+
+\begin{exercise}
  Prove que se $\V_1 \perp \V_3 | \V_4$ e
  $\V_2 \perp \V_3 | \V_4$, então
  $\V_1 \cup \V_2 \perp \V_3 | \V_4$.

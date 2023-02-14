@@ -10,7 +10,6 @@
 
 \newpage
 
-
 \epigraph{
 ``Teaching is giving opportunities to students to discover things by themselves.''
 }
@@ -336,6 +335,12 @@ formalizada a seguir:
  $C = \{V_1, \ldots, V_n\}$ tal que, 
  para cada $1 \leq i < n$,
  $(V_i, V_{i+1}) \in \sE$.
+\end{definition}
+
+\begin{definition}
+ \label{def:descendente}
+ Dizemos que $V_2$ é descendente de $V_1$ se
+ existe um caminho direcionado de $V_1$ em $V_2$.
 \end{definition}
 
 Um \textit{caminho} é uma generalização 
@@ -934,6 +939,12 @@ será fundamental nos capítulos posteriores.
 \end{exercise}
 
 \begin{exercise}
+ \label{lemma:anc_fact}
+ Prove que se $\Z$ é ancestral, então
+ $f(\Z) = \prod_{Z \in \Z}f(Z|Pa(Z))$. 
+\end{exercise}
+
+\begin{exercise}
  Sejam $\sG_1 = (\sV, \sE_1)$ e
  $\sG_2 = (\sV, \sE_2)$ grafos
  tais que $\sE_1 \subseteq \sE_2$.
@@ -1247,6 +1258,14 @@ Esta conclusão é apresentada no
 \end{exercise}
 
 \begin{exercise}
+ Prove que se um caminho,
+ $C = (C_1, \ldots, C_n)$, está bloqueado
+ dado $\V$, então sempre que $C$ é um sub-caminho de $C^*$,
+ isto é, $C^* = (A_1, \ldots, A_m, C_1, \ldots, C_n, B_1, \ldots, B_l)$,
+ temos que $C^*$ está bloqueado dado $\V$.
+\end{exercise}
+
+\begin{exercise}
  Prove que se $\V_1 \perp \V_3 | \V_4$ e
  $\V_2 \perp \V_3 | \V_4$, então
  $\V_1 \cup \V_2 \perp \V_3 | \V_4$.
@@ -1262,10 +1281,12 @@ Esta conclusão é apresentada no
 \chapter{Intervenções}
 \label{cap:intervencao}
 
+\section{O modelo de probabilidade para intervenções}
+
 Com base no modelo estrutural causal discutido 
 no \cref{cap:dag}, agora estabeleceremos
 um significado para o efeito causal
-de uma variável em outra. 
+de uma variável em outra.
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{figure}
@@ -1395,6 +1416,10 @@ podemos definir o modelo de probabilidade sob intervenção:
  \begin{align*}
   f(\V_2|do(\V_1))
   &:= \prod_{V_2 \in \V_2} f(V_2|Pa(V_2))
+  &\text{, ou equivalentemente} \\
+  f(\V_2|do(\V_1 = \bv_1))
+  &:= \left(\prod_{(v_1,V_1) \in (\bv_1,\V_1)} \I(V_1 = v_1)\right)
+  \cdot \left(\prod_{V_2 \in \V_2} f(V_2|Pa(V_2))\right)
  \end{align*}
 \end{definition}
 Para compreender a \cref{def:intervencao}, 
@@ -1565,6 +1590,239 @@ assim trazendo clareza ao Paradoxo.
  a discussão qualitativa desenvolvida na \cref{sec:simpson}.
  Não há paradoxo!
 \end{example}
+
+Uma vez estabelecido o modelo de probabilidade
+utilizado quando estudamos intervenções,
+agora podemos fazer inferência sobre o efeito causal.
+Para realizar tal inferência, 
+em geral teremos de abordar duas questões:
+
+\begin{enumerate}
+ \item \textbf{Identificação causal}: Temos acesso a dados que 
+ são gerados segundo a distribuição observacional.
+ Como é possível determinar o efeito causal
+ em termos da distribuição observacional?
+ 
+ \item \textbf{Estimação}: Uma vez estabelecida 
+ uma ligação entre a distribuição observacional dos dados e
+ o efeito causal, como é possível estimá-lo?
+\end{enumerate}
+
+Nas próximas seções estudaremos 
+algumas estratégias gerais para 
+a resolução destas questões.
+Consideraremos que desejamos medir
+o efeito causal de $X$ em $Y$, 
+onde $X, Y \in \sV$.
+
+\section{Controlando confundidores (critério \textit{backdoor})}
+\label{sec:backdoor}
+
+Um confundidor é uma causa comum, 
+direta ou indireta, de $X$ em $Y$.
+Na existência de confundidores,
+a regressão de $Y$ em $X$ no modelo observacional, 
+$\E[Y|X]$, é diferente desta regressão
+no modelo de intervenção, $\E[Y|do(X)]$.
+Isto ocorre pois, quando calculamos $\E[Y|X]$,
+utilizamos toda a informação em $X$ para prever $Y$.
+Esta informação inclui não apenas 
+o efeito causal de $X$ em $Y$, como 
+também a informação que $X$ traz indiretamente sobre $Y$ 
+pelo fato de ambas estarem associados aos seus confundidores.
+
+Para ilustrar este raciocínio, 
+podemos revisitar o \cref{ex:simpson_fim}.
+uma vez que Sexo (Z) é causa comum do Tratamento (X) e
+da Cura (Y), Z é um confundidor.
+Quando calculamos $f(y|x)$ (\cref{eq:prob_causa_1}), 
+utilizamos não só o efeito direto de $X$ em $Y$, 
+expresso em $f(y|x,z)$, como também 
+a informação que indireta que $X$ traz sobre $Y$
+por meio do confundidor $Z$,
+expressa pela combinação de $f(z|x)$ com $f(y|x,z)$.
+
+Esta seção desenvolve uma estratégia para
+medir o efeito causal chamada de 
+critério \textit{backdoor}, que
+consiste em bloquear 
+todos os caminhos de informação que passam por confundidores.
+
+\begin{definition}
+ \label{def:backdoor}
+ Seja $\sG = (\sV, \sE)$ um grafo causal e $X, Y \in \sV$.
+ Dizemos que $\Z \subseteq \sV - \{X,Y\}$ satisfaz 
+ o critério ``backdoor'' se:
+ \begin{itemize}
+  \item $X \notin Anc(\Z)$,
+  \item Para todo caminho de $X$ em $Y$, 
+  $C = (X, C_2, \ldots, C_{n-1}, Y)$ tal que
+  $(C_2, X) \in \sE$, $C$ está bloqueado dado $\Z$.
+ \end{itemize}
+\end{definition}
+
+\begin{example}
+ Exemplos backdoor criterion
+\end{example}
+
+\begin{theorem}
+ \label{thm:backdoor}
+ Se $\Z$ satisfaz 
+ o critério backdoor para medir
+ o efeito causal de $X$ em $Y$, então
+ \begin{align*}
+  f(y|do(x))
+  &= \int f(y|x,\z)f(\z)d\z
+ \end{align*}
+\end{theorem}
+
+\begin{theorem}
+ \label{thm:backdoor_est_1}
+ Se $\Z$ satisfaz 
+ o critério backdoor para medir
+ o efeito causal de $X$ em $Y$, então
+ \begin{align*}
+  \E[g(Y)|do(X=x)] 
+  &= \E[\E[g(Y)|X=x,\Z]]
+ \end{align*}
+\end{theorem}
+
+\begin{theorem}
+ \label{thm:backdoor_est_2}
+ Se $\Z$ satisfaz 
+ o critério backdoor para medir
+ o efeito causal de $X$ em $Y$ e
+ $X$ é discreto, então
+ \begin{align*}
+  \E[g(Y)|do(X=x)] 
+  &= \E\left[\frac{g(Y)\I(X=x)}{f(x|Z)}\right]
+ \end{align*}
+\end{theorem}
+
+\begin{lemma}
+ \label{lemma:backdoor_pais}
+ $\Z = Pa(X)$ satisfaz o critério backdoor para
+ medir o efeito causal de $X$ em $Y$.
+\end{lemma}
+
+\begin{definition}
+ \label{def:aleatorizacao}
+ Dizemos que $X$ é um experimento aleatorizado simples 
+ se $X$ é ancestral.
+\end{definition}
+
+\begin{lemma}
+ Se $X$ é um experimento aleatorizado simples, então
+ $\emptyset$ satisfaz o critério backdoor.
+ Assim, $f(y|do(x)) = f(y|x)$ e
+ $\E[Y|do(X)] = \E[Y|X]$.
+\end{lemma}
+
+\section{Exercícios}
+
+\begin{exercise}
+ Prove o \cref{lemma:backdoor_pais}.
+\end{exercise}
+
+\begin{exercise}
+ Considere que $X_1$ e $X_2$ são variáveis binárias.
+ Também considere as seguintes definições:
+ \textbf{ACE} := $\P(X_2=1|do(X_1=1))-\P(X_2=1|do(X_1=0))$, e
+ \textbf{RD} := $\P(X_2=1|X_1=1)-\P(X_2=1|X_1=0)$.
+ Explique em palavras a diferença entre ACE e RD e
+ apresente um exemplo em que essa diferença ocorre.
+\end{exercise}
+
+\begin{exercise}[{\citet{Glymour2016}[p.32]}]
+ $(X_1,X_2,X_3,X_4)$ são 
+ variáveis binárias tais que
+ $X_{i-1}$ é a única causa imediata de $X_i$.
+ Além disso, $\P(X_1=1)=0.5$,
+ $\P(X_i=1|X_{i-1}=1)=p_{11}$ e
+ $\P(X_i=1|X_{i-1}=0)=p_{01}$.
+ Calcule:
+ \begin{enumerate}[label=(\alph*)]
+  \item $\P(X_1=1,X_2=0,X_3=1,X_4=0)$,
+  \item $\P(X_4=1|X_1=1)$, $\P(X_4=1|do(X_1=1)$, 
+  \item $\P(X_1=1|X_4=1)$, $\P(X_1=1|do(X_4=1)$, e
+  \item $\P(X_3=1|X_1=0,X_4=1)$
+ \end{enumerate}
+\end{exercise}
+
+\begin{exercise}[{\citet{Glymour2016}[p.29]}]
+ Considere que $(U_1, U_2, U_3)$ são independentes e
+ tais que $U_i \sim N(0,1)$. Também,
+ $X_1 \equiv U_1$,
+ $X_2 \equiv 3^{-1}X_1 + U_2$, e
+ $X_3 \equiv 2^{-4}X_2 + U_3$.
+ Considere que $X_1$ é 
+ a causa imediata de $X_2$,
+ que por sua vez é a causa imediata de $X_3$.
+ Além disso, cada $U_i$ influencia diretamente somente $X_i$.
+ \begin{enumerate}[label=(\alph*)]
+  \item Desenhe o DAG que representa 
+  a estrutura causal indicada no enunciado. 
+  \item Calcule $\E[X_2|X_1 = 3]$ e $\E[X_2|do(X_1 = 3)]$.
+  \item Calcule $\E[X_3|X_1 = 6]$ e $\E[X_3|do(X_1 = 6)]$.
+  \item Calcule $\E[X_1|X_2 = 1]$ e $\E[X_1|do(X_2 = 1)]$.
+  \item Calcule $\E[X_2|X_1 = 1, X_3 = 3]$,
+  $\E[X_2|X_1 = 1, do(X_3 = 3)]$, e
+  $\E[X_2|do(X_1 = 1), X_3 = 3]$.
+ \end{enumerate}
+\end{exercise}
+
+\begin{exercise}[{\citet{Glymour2016}[p.48]}]
+ \label{ex:d-sep}
+ Considere o modelo estrutural causal
+ em \cref{fig:d-sep}.
+ \begin{enumerate}[label=(\alph*)]
+  \item Para cada um dos pares de variáveis a seguir,
+  determine um conjunto de outras variáveis que
+  as d-separa: $(Z_1,W)$, $(Z_1,Z_2)$, $(Z_1,Y)$, 
+  $(Z_3,W)$, e $(X,Y)$.
+  \item Para cada par de variáveis no item anterior,
+  determine se elas são d-separadas dado
+  todas as demais variáveis.
+  \item Determine conjuntos de variáveis que
+  satisfazem, respectivamente, 
+  o ``backdoor criterion'' e 
+   o ``frontdoor criterion'' para
+  estimar o efeito causal de $X$ em $Y$.
+  \item Considere que para cada variável, $V$, temos que
+  $V \equiv \beta_V \cdot Pa(V) + \epsilon_V$,
+  onde os $\epsilon$ são i.i.d. e normais padrão e
+  $\beta_V$ são vetores conhecidos. Isto é,
+  a distribuição de cada variável é 
+  determinada através de 
+  uma regressão linear simples em seus pais.
+  Determine $f(Y|do(X=x))$ utilizando a fórmula do ajuste
+  nos $2$ casos abordados no item anterior.
+ \end{enumerate}
+\begin{figure}
+ \centering
+ \tikz{
+    \node (z1) {$Z_1$};
+    \node (z3) [below right = of z1] {$Z_3$};
+    \node (z2) [above right = of z3] {$Z_2$};
+    \node (x) [below left = of z3] {$X$};
+    \node (w1) [right = of x] {$W_1$};
+    \node (w2) [below = of w1] {$W_2$};
+    \node (y) [right = of w1] {$Y$};
+    \path (z1) edge (z3);
+    \path (z1) edge (x);
+    \path (z2) edge (z3);
+    \path (z2) edge (y);
+    \path (z3) edge (x);
+    \path (z3) edge (y);
+    \path (x) edge (w1);
+    \path (w1) edge (y);
+    \path (x) edge (w2);
+    \path (w2) edge (y);
+}
+ \caption{Modelo estrutural causal do \cref{ex:d-sep}}
+ \label{fig:d-sep}
+\end{figure}
+\end{exercise}
 
 \bibliographystyle{apalike}
 \bibliography{book}
@@ -1802,6 +2060,213 @@ Como $\V^*_1 \ind^f \V^*_2 | \V_3$,
 \end{proof}
 
 \begin{proof}[Prova do \cref{lem:d-sep}]
+\end{proof}
+
+\section{Relativas à \cref{sec:backdoor}}
+
+Para realizar as demonstrações da \cref{sec:backdoor},
+consideraremos um SCM aumentado, 
+em que existe uma variável que representa
+a ocorrência de uma intervenção em X.
+Uma consequência interessante desta construção será
+a de que o modelo intervencional é equivalente
+ao condicionamento usual no SCM aumentado.
+
+\begin{definition}
+ \label{def:scm_star}
+ Seja $(\sG_*, f_*)$ um SCM expandido tal que
+ $\sG_* = (\sV \cup \{I\}, \sE_*)$, e
+ $\sE_* = \sE \cup \{(I \rightarrow X)\}$.
+ Isto é, $\sG_*$ é uma cópia de $\sG$ em que
+ adicionamos o vértice $I \in \{0,1\}$ e 
+ uma única aresta de $I$ para $X$.
+ 
+ $\sG^*$ admite uma interpretação intuitiva.
+ $I$ é a indicadora de que fazemos uma intervenção em $X$,
+ fazendo que esta assuma o valor $x$.
+ Se $I = 0$, não há uma intervenção e, assim,
+ $X$ segue a sua distribuição observacional.
+ Se $I = 1$, $X$ assume o valor $x$ com probabilidade $1$.
+ 
+ Finalmente, considerando $Pa(X)$ como os
+ pais de $X$ segundo $\sG$, definimos que:
+ \begin{align*}
+  f_*(X|Pa(X), I) 
+  &= \begin{cases}
+   f(X|Pa(X)) & \text{, se $I = 0$, e} \\
+   \I(X = x) & \text{, caso contrário.}
+  \end{cases}
+ \end{align*}
+\end{definition}
+
+\begin{lemma}
+ \label{lemma:backdoor_1}
+ Se $(\sG^*, f^*)$ é tal qual em \cref{def:scm_star}, então:
+ \begin{align*}
+  f(y|do(X=x)) &= f_*(y|I=1)
+ \end{align*}
+\end{lemma}
+
+\begin{proof}
+ Tomando $\V_2 = \sV - \{X\}$:
+ \begin{align*}
+  f_*(\V_2|I = 1) 
+  &= \frac{f_*(\V_2, I=1)}{f(I=1)} \\
+  &= \frac{\int f_*(\V_2, X, I=1)dX}{f(I=1)} \\
+  &= \frac{f(I=1)\I(X = x)\prod_{V_2 \in \V_2}f(V_2|Pa(V_2))}{f(I=1)}
+  & \text{\cref{def:scm_star}} \\
+  &= \I(X = x) \cdot \prod_{V_2 \in \V_2}f(V_2|Pa(V_2)) \\
+  &= f(\V_2|do(X=x)) 
+  & \text{\cref{def:intervencao}}
+ \end{align*}
+\end{proof}
+
+\begin{lemma}
+ \label{lemma:backdoor_2}
+ Se $(\sG^*, f^*)$ é tal qual em \cref{def:scm_star}, então:
+ \begin{align*}
+  f_*(\sV|I=0) &= f(\sV).
+ \end{align*}
+\end{lemma}
+
+\begin{proof}
+ \begin{align*}
+  f_*(\sV|I=0) 
+  &= \frac{f_*(\sV, I=0)}{f_*(I=0)} \\
+  &= \frac{f_*(I=0)f_*(X|Pa(X),I=0)
+  \prod_{V \in \sV-\{X\}} f(V|Pa(V))}{f_*(I=0)}
+  & \text{\cref{def:scm_star}} \\
+  &= f(X|Pa(X))\prod_{V \in \sV-\{X\}} f(V|Pa(V))
+  & \text{\cref{def:scm_star}} \\
+  &= \prod_{V \in \sV} f(V|Pa(V)) \\
+  &= f(\sV) 
+  & \text{\cref{def:compativel}}
+ \end{align*}
+\end{proof}
+
+\begin{lemma}
+ \label{lemma:backdoor_3}
+ Se $(\sG^*, f^*)$ é tal qual em \cref{def:scm_star} e
+ $\X \notin Anc(\Z)$, então:
+ \begin{align*}
+  f_*(\z) &= f(\z)
+ \end{align*}
+\end{lemma}
+
+\begin{proof}
+ Seja $\Z_* = Anc(\Z)$ e
+ $\V = \sV - (\{X\} \cup \Z_*)$.
+ Como $X \notin \Z_*$, decorre 
+ da \cref{def:scm_star} que $I \notin \Z_*$.
+ Portanto,
+ \begin{align*}
+  f_*(\z_*) 
+  &= \int f_*(\z_*, I,X,\bv) d(I,X,\bv) \\
+  &= \int \left(\prod_{z \in \z_*} f(z|Pa(z))\right)
+  \left(f_*(I)f_*(X|I,Pa(X))
+  \prod_{v \in \bv} f(v|Pa(v))\right)d(I,X,\bv)
+  & \text{\cref{def:scm_star}} \\
+  &= \left(\prod_{z \in \z_*} f(z|Pa(z))\right) 
+  \int \left(f_*(I)f_*(X|I,Pa(X)) 
+  \prod_{v \in \bv} f(v|Pa(v))\right)d(I,X,\bv) 
+  & \Z_* \cap (\V \cup \{I,X\}) = \emptyset \\
+  &\propto \prod_{z \in \z_*} f(z|Pa(z)) 
+  & \Z_* \cap (\V \cup \{I,X\}) = \emptyset \\
+  &= f(\z_*) 
+  & \text{\cref{lemma:anc_fact}}
+ \end{align*}
+ Assim, decorre da Lei da Probabilidade Total que
+ $f_*(\z) = f(\z)$.
+\end{proof}
+
+\begin{lemma}
+ \label{lemma:backdoor_4}
+ Se $(\sG^*, f^*)$ é tal qual em \cref{def:scm_star} e
+ $\Z$ satisfaz o critério backdoor para
+ medir o efeito causal de $X$ em $Y$, então $I \dsep \Z$.
+\end{lemma}
+
+\begin{proof}
+ Tome arbitrariamente um $Z \in \Z$ e
+ um caminho de $I$ em $Z$, 
+ $C = (I, C_2, \ldots, C_{n-1}, Z)$.
+ Por definição de $I$, $C_2 = X$ e
+ $I \rightarrow X$. 
+ Suponha por absurdo que $C$ não tem colisor.
+ Como, $I \rightarrow X$, decorre que
+ $C = I \rightarrow X \rightarrow \ldots 
+ \rightarrow C_{n-1} \rightarrow Z$.
+ Assim, $Z$ é um descendente de $X$,
+ uma contradição com 
+ o critério backdoor (\cref{def:backdoor}).
+ Conclua que $C$ tem um colisor.
+ Assim, $C$ está marginalmente bloqueado
+ (\cref{def:caminho-bloq}).
+\end{proof}
+
+\begin{lemma}
+ \label{lemma:backdoor_5}
+ Se $(\sG^*, f^*)$ é tal qual em \cref{def:scm_star} e
+ $\Z$ satisfaz o critério backdoor para
+ medir o efeito causal de $X$ em $Y$, então $I \dsep Y | X, \Z$.
+\end{lemma}
+
+\begin{proof}
+ Tome um caminho arbitrário de
+ $I$ em $Y$, $C = (I, C_2, \ldots, C_{n-1}, Y)$.
+ Por definição de $I$, $C_2 = X$ e 
+ $I \rightarrow X$. 
+ Se $X \rightarrow C_3$, então
+ $X$ é um mediador em $C$ e 
+ $C$ está bloqueado dado $X$ e $\Z$.
+ Se $X \leftarrow C_3$, então
+ $(X, C_3, \ldots, C_{n-1}, Y)$ está bloqueado
+ dado $\Z$, uma vez que $\Z$ satisfaz
+ o critério backdoor.
+ Conclua que $C$ está bloqueado dado $X$ e $\Z$.
+\end{proof}
+
+\begin{proof}[Prova do \cref{thm:backdoor}]
+ \begin{align*}
+  f(y|do(X=x))
+  &= f_*(y|I=1) 
+  & \text{\cref{lemma:backdoor_1}} \\
+  &= \int \int f_*(y,X,\z|I=1)d\X d\z \\
+  &= \int \int f_*(\z|I=1)f_*(X|\z,I=1)f_*(y|X,\z,I=1) d\x d\z \\
+  &= \int \int f_*(\z|I=1) \I(X=x) f_*(y|X,\z,I=1) d\x d\z \\
+  &= \int f_*(\z|I=1)f_*(y|x,\z,I=1) d\z \\
+  &= \int f_*(\z)f_*(y|x,\z,I=0)d\z
+  & \text{\cref{lemma:backdoor_4,lemma:backdoor_5}} \\
+  &= \int f(\z)f(y|x,\z)d\z
+  & \text{\cref{lemma:backdoor_2,lemma:backdoor_3}}
+ \end{align*}
+\end{proof}
+
+\begin{proof}[Prova do \cref{thm:backdoor_est_1}]
+ \begin{align*}
+  \E[\E[g(Y)|X=x,\Z]]
+  &= \E\left[\int g(y) f(y|x,\Z)dy \right] \\
+  &= \int \int g(y) f(y|x,\z) dy f(\z) d\z \\
+  &= \int \int g(y) f(y|x,\z)f(\z) d\z dy \\
+  &= \int g(y) f(y|do(x))
+  & \text{\cref{thm:backdoor}} \\ 
+  &= \E[g(Y)|do(x)] 
+  & \text{\cref{def:exp_inter}}
+ \end{align*}
+\end{proof}
+
+\begin{proof}[Prova do \cref{thm:backdoor_est_2}]
+ \begin{align*}
+  \E[g(Y)|do(x)]
+  &= \int g(y) f(y|do(x))
+  & \text{\cref{def:exp_inter}} \\
+  &= \int \int g(y) f(y|x,\z)f(\z) d\z dy
+  & \text{\cref{thm:backdoor}} \\
+  &= \int \int g(y) \frac{f(x,y,\z)}{f(x,\z)} f(\z) d\z dy
+  &= \int \int \frac{g(y)}{f(x|\z)} f(x,y,\z) d\z dy \\
+  &= \int \frac{g(y)\I(x_*=x)}{f(x|\z)} f(x_*,y,z) d(x_*,y,\z) \\
+  &= \E\left[\frac{g(Y)\I(X=x)}{f(x|Z)}\right]
+ \end{align*}
 \end{proof}
 
 \end{document}

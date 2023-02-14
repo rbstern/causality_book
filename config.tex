@@ -41,6 +41,21 @@
 \graphicspath{{figures/}{../figures/}}
 \renewcommand{\floatpagefraction}{.9}
 
+\usepackage{tikz}
+\usetikzlibrary{positioning}
+\definecolor{offwhite}{HTML}{F2EDED}
+\tikzset{
+    > = stealth,
+    every node/.append style = {
+        text = black
+    },
+    every path/.append style = {
+        arrows = ->,
+        draw = black,
+        fill = black
+    }
+}
+
 \usepackage{ifthen}
 \newboolean{noShowSolutions}
 \setboolean{noShowSolutions}{true}
@@ -63,6 +78,7 @@
 \def\sV{{\mathcal V}}
 
 \def\ACE{{ACE}}
+\def\hACE{{\widehat{\ACE}}}
 
 \def\I{{\mathbb I}}
 \def\P{{\mathbb P}}
@@ -71,6 +87,7 @@
 \def\N{{\mathbb N}}
 \def\R{{\mathbb R}}
 \def\seqn{{_{n \in N}}}
+\def\bv{{\vec v}}
 \def\X{{\vec{X}}}
 \def\x{{\vec{x}}}
 \def\Y{{\vec{Y}}}
@@ -78,7 +95,8 @@
 \def\Z{{\vec{Z}}}
 \def\z{{\vec{z}}}
 
-\newcommand{\ind}{\perp\!\!\!\!\perp} 
+\newcommand{\ind}{\perp\!\!\!\!\perp}
+\newcommand{\dsep}{\perp^d}
 
 \usepackage{epigraph}
 
