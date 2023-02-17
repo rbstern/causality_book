@@ -1,6 +1,9 @@
 \chapter{Intervenções}
 \label{cap:intervencao}
 
+% Add: Fórmula do ajuste com score de propensidade
+% Add: Demonstração IPW
+
 \section{O modelo de probabilidade para intervenções}
 
 Com base no modelo estrutural causal discutido 
@@ -386,7 +389,7 @@ Esta seção desenvolve uma estratégia para
 medir o efeito causal chamada de 
 critério \textit{backdoor}, que
 consiste em bloquear 
-todos os caminhos de informação que passam por confundidores.
+todos os caminhos de informação que passam por confundidores:
 
 \begin{definition}
  \label{def:backdoor}
@@ -402,8 +405,145 @@ todos os caminhos de informação que passam por confundidores.
 \end{definition}
 
 \begin{example}
- Exemplos backdoor criterion
+ No \cref{ex:simpson_fim} o único caminho de $X$ em $Y$ em que
+ o vértice ligado a $X$ é pai de $X$ é $X \leftarrow Z \rightarrow Y$.
+ Como $Z$ é um confudidor neste caminho, ele o bloqueia.
+ Assim, $Z$ satisfaz o critério backdoor.
 \end{example}
+
+\begin{example}
+ <<backdoor_ex_1, fig.pos="t", fig.height=2.5, fig.width=4, fig.cap="Para medir o efeito causal de X em Y, podemos aplicar o critério backdoor. Neste grafo o único caminho aplicável ao critério backdoor é (X, Z, W, Y). Neste caminho, $Z$ é uma cadeia e $W$ é um confundidor. Assim, todas as possibilidades dentre Z, W, (Z,W) bloqueiam o caminho e satisfazem o critério backdoor.", fig.align="center", echo = FALSE, message = FALSE, warning = FALSE>>==
+library(dagitty)
+library(ggdag)
+library(ggplot2)
+
+# Especificar o grafo
+grafo <- dagitty("dag {
+    W -> { Z Y };
+    Z -> X;
+    X -> { A Y };
+    A -> Y
+}")
+coordinates(grafo) <- list( 
+  x=c(W=2, Z=0, X=0, Y=2, A= 1),
+  y=c(W=1, Z=1, X=0, Y=0, A= -1))
+
+# Exibir a figura do grafo
+ggdag(grafo, layout = "circle") +
+  theme(axis.text.x=element_blank(),
+      axis.ticks.x=element_blank(),
+      axis.text.y=element_blank(),
+      axis.ticks.y=element_blank()) +
+  xlab("") + ylab("")
+@
+
+ Considere o grafo causal na \cref{fig:backdoor_ex_1}.
+ Para aplicar o critério backdoor, devemos identificar
+ todos os caminhos de $X$ em $Y$ em que
+ o vértice ligado a $X$ é pai de $X$, isto é,
+ temos $X \leftarrow$. O único caminho deste tipo é:
+ $X \leftarrow Z \leftarrow W \rightarrow Y$.
+ Neste caminho, $Z$ é uma cadeia e $W$ é um confudidor.
+ Assim, é possível bloquear este caminho condicionando
+ em $Z$, em $W$, e em $(Z,W)$.
+ Isto é, todos estas combinações 
+ satisfazem o critério backdoor.
+\end{example}
+
+\begin{example}
+ <<backdoor_ex_2, fig.pos="t", fig.height=3, fig.width=4, fig.cap="Para medir o efeito causal de X em Y, podemos aplicar o critério backdoor. Neste grafo existem dois caminhos aplicáveis ao critério backdoor: (X, A, B, Y) e (X, C, Y). No primeiro, A é um confundidor. No segundo caminho, C é um confudidor. Assim, (A,C) bloqueia ambos os caminhos e satisfaz o critério backdoor.", fig.align="center", echo = FALSE, message = FALSE, warning = FALSE>>==
+library(dagitty)
+library(ggdag)
+library(ggplot2)
+
+# Especificar o grafo
+grafo <- dagitty("dag {
+    A -> { X B };
+    B -> { Y }
+    C -> { X Y };
+    X -> { D Y };
+    D -> Y
+}")
+coordinates(grafo) <- list( 
+  x=c(A=0, B=1, C=2, D=1, X=0, Y=2),
+  y=c(A=3, B=2, C=2, D=0, X=1, Y=1))
+
+# Exibir a figura do grafo
+ggdag(grafo, layout = "circle") +
+  theme(axis.text.x=element_blank(),
+      axis.ticks.x=element_blank(),
+      axis.text.y=element_blank(),
+      axis.ticks.y=element_blank()) +
+  xlab("") + ylab("")
+@
+
+ Considere o grafo causal na \cref{fig:backdoor_ex_2}.
+ Para aplicar o critério backdoor,
+ encontramos todos os caminhos de $X$ em $Y$ em que
+ o vértice ligado a $X$ é pai de $X$. 
+ Há dois caminhos deste tipo:
+ $X \leftarrow A \rightarrow B \rightarrow Y$ e
+ $X \leftarrow C \rightarrow Y$.
+ Como $A$ e $C$ são confudidores, respectivamente,
+ no primeiro e segundo caminhos, 
+ $(A,C)$ bloqueia ambos eles.
+ Assim $(A,C)$ satisfaz o critério backdoor.
+ Você consegue encontrar outro conjunto de variáveis que
+ satisfaz o critério backdoor?
+\end{example}
+
+O critério backdoor generaliza duas condições especiais que
+são muito utilizadas.
+Em uma primeira condição, 
+o valor de $X$ é gerado integralmente por
+um aleatorizador, independente de todas as demais variáveis.
+Esta ideia é captada pela 
+\cref{def:aleatorizacao}, abaixo:
+
+\begin{definition}
+ \label{def:aleatorizacao}
+ Dizemos que $X$ é um experimento aleatorizado simples 
+ se $X$ é ancestral.
+\end{definition}
+
+Em um experimento aleatorizado simples não há confundidores.
+Assim, $\emptyset$ satisfaz o critério backdoor:
+
+\begin{lemma}
+ \label{lemma:backdoor_random}
+ Se $X$ é um experimento aleatorizado simples, então
+ $\emptyset$ satisfaz o critério backdoor.
+\end{lemma}
+
+Veremos que em um experimento aleatorizado simples a
+distribuição intervencional é igual 
+à distribuição observacional.
+Assim, $\E[Y|do(X)] = \E[Y|X]$ e
+a inferência causal é reduzida 
+à inferência comumente usadas para
+a distribuição observacional.
+
+Além disso, o conjunto de todos os pais de $X$
+também satisfaz o critério backdoor:
+
+\begin{lemma}
+ \label{lemma:backdoor_pais}
+ $\Z = Pa(X)$ satisfaz o critério backdoor para
+ medir o efeito causal de $X$ em $Y$.
+\end{lemma}
+
+A seguir, veremos como o critério backdoor permite
+a identificação causal, isto é,
+uma equivalência entre quantidades de interesse
+obtidas pelo modelo de intervenção e
+quantidades obtidas pelo modelo observacional.
+
+\subsection{Identificação causal usando o critério backdoor}
+
+A seguir, o \cref{thm:backdoor} mostra que,
+se $\Z$ satisfaz o critério backdoor, então
+$f(y|do(x))$ pode ser obtido diretamente a partir de
+$f(y|x,\z)$ e $f(\z)$:
 
 \begin{theorem}
  \label{thm:backdoor}
@@ -415,6 +555,31 @@ todos os caminhos de informação que passam por confundidores.
   &= \int f(y|x,\z)f(\z)d\z
  \end{align*}
 \end{theorem}
+
+Para compreender intuitivamente o \cref{thm:backdoor},
+podemos retornar ao \cref{ex:simpson_fim}.
+Considere o caso em que $X, Y, Z$ são as indicadoras de que,
+respectivamente, o paciente foi submetido ao tratamento,
+se curou e, é de sexo masculino.
+Similarmente ao \cref{thm:backdoor},
+vimos em \cref{ex:simpson_fim} que $f(y|do(x))$ é
+a média de $f(y|x,z)$ ponderada por $f(z)$.
+Nesta ponderação, utilizamos $f(z)$ 
+ao invés de $f(z|x)$ pois $Z$ é um confundidor e,
+assim, no modelo intervencional não propagamos
+a informação em $X$ por esta variável.
+A mesma lógica se aplica 
+às variáveis que satisfazem o critério backdoor.
+
+Para calcular quantidades 
+como o $\ACE$ (\cref{def:ace}), 
+utilizamos $\E[Y|do(X)]$.
+Por meio do \cref{thm:backdoor},
+é possível obter equivalências entre
+$\E[Y|do(X)]$ e esperanças obtidas
+no modelo observacional.
+Estas equivalências são descritas
+nos \cref{thm:backdoor_est_1,thm:backdoor_est_2}.
 
 \begin{theorem}
  \label{thm:backdoor_est_1}
@@ -435,30 +600,151 @@ todos os caminhos de informação que passam por confundidores.
  $X$ é discreto, então
  \begin{align*}
   \E[g(Y)|do(X=x)] 
-  &= \E\left[\frac{g(Y)\I(X=x)}{f(x|Z)}\right]
+  &= \E\left[\frac{g(Y)\I(X=x)}{f(x|\Z)}\right]
  \end{align*}
 \end{theorem}
 
-\begin{lemma}
- \label{lemma:backdoor_pais}
- $\Z = Pa(X)$ satisfaz o critério backdoor para
- medir o efeito causal de $X$ em $Y$.
-\end{lemma}
+A seguir, veremos como os
+\cref{thm:backdoor_est_1,thm:backdoor_est_2} podem
+ser usados para estimar o efeito causal.
+
+\subsection{Estimação usando o critério backdoor}
+\label{sec:backdoor_est}
+
+\subsubsection{Fórmula do ajuste}
+
+O \cref{thm:backdoor_est_1} determina que, 
+se $\Z$ satisfaz o critério backdoor, então
+$\E[Y|do(X=x) = \E[\E[Y|X=x,\Z]]$.
+Para criar um estimador baseado nesta expressão,
+analisaremos o segundo termo com mais detalhe.
+
+Primeiramente, note que 
+$\mu(X,Z) := \E[Y|X,\Z]$ é
+a função de regressão de $Y$ 
+em $X$ e $Z$. Assim, inicialmente
+podemos utilizar quaisquer métodos
+para estimação de regressão.
+Por exemplo, se $Y$ é contínua,
+possíveis métodos são:
+regressão linear, Nadaraya-Watson, 
+floresta aleatória de regressão, redes neurais, \ldots
+Por outro lado, se $Y$ é discreta,
+então a função de regressão é estimada por
+métodos de classificação como:
+regressão logística, k-NN, 
+floresta aleatória de classificação,
+redes neurais, \ldots
+Para qualquer opção escolhida,
+denotamos o estimador de $\mu$ por $\hmu$.
+Tendo ajustado um estimador, 
+podemos argumentar que:
+\begin{align*}
+ \E[\E[Y|X=x,\Z]] &= \E[\mu(x,\Z)] \approx \E[\hmu(x,\Z)]
+\end{align*}
+Finalmente, $\E[\hmu(x,\Z)]$ é simplesmente uma média,
+que podemos aproximar usando a Lei dos Grandes Números:
+\begin{align*}
+ \E[\hmu(x,\Z)] &\approx \frac{\sum_{i=1}^n \hmu(x,\Z_i)}{n}
+\end{align*}
+Combinando estas conclusões, 
+obtemos o estimador pela fórmula do ajuste, $\hdoy$:
 
 \begin{definition}
- \label{def:aleatorizacao}
- Dizemos que $X$ é um experimento aleatorizado simples 
- se $X$ é ancestral.
+ \label{def:ajuste}
+ Considere que $\Z$ satisfaz o critério backdoor para
+ medir o efeito causal de $X$ em $Y$ e
+ $\hmu(x,\z)$ é uma estimativa 
+ da regressão $\E[Y|X=x,\Z=\z]$.
+ O estimador de $\E[Y|do(X=x)]$ pela
+ fórmula do ajuste é:
+\begin{align*}
+ \hdoy &:= \frac{\sum_{i=1}^n \hmu(x,\Z_i)}{n}
+\end{align*}
 \end{definition}
 
-\begin{lemma}
- Se $X$ é um experimento aleatorizado simples, então
- $\emptyset$ satisfaz o critério backdoor.
- Assim, $f(y|do(x)) = f(y|x)$ e
- $\E[Y|do(X)] = \E[Y|X]$.
-\end{lemma}
+\begin{theorem}
+ \label{thm:conv_ajuste}
+ Seja $\mu(X,\Z) := \E[Y|X,\Z]$.
+ Se $\Z$ satisfaz o critério backdoor para
+ medir o efeito causal de $X$ em $Y$,
+ $\E[|\mu(x,\Z)|] < \infty$, e
+ $\E[(\hat{\mu}(x,\Z)-\mu(x,\Z)^2] = o(1)$, então
+ $\hdoy \convp \E[Y|do(X=x)]$.
+\end{theorem}
+
+\subsubsection{Ponderação pelo inverso do escore de propensidade (IPW)}
+
+Uma outra forma de estimar $\E[Y|do(X=x)]$ é
+motivada pelo \cref{thm:backdoor_est_2}.
+Este resultado determina que, 
+se $\Z$ satisfaz o critério backdoor, então
+\begin{align*}
+ \E[Y|do(X=x)] 
+ &= \E\left[\frac{Y \I(X=x)}{f(x|\Z)}\right].
+\end{align*}
+Na segunda expressão, $f(x|\z)$ é 
+usualmente chamado de \textit{escore de propensidade}.
+Este escore captura a forma como 
+os confundidores atuam sobre $X$
+nos dados observacionais.
+Como $f$ em geral é desconhecido,
+$f(x|\z)$ também o é.
+Contudo, quando $X$ é discreto,
+podemos estimar $f(x|\z)$ utilizando
+algum algoritmo arbitrário de classificação.
+Denotaremos esta estimativa por $\hf(x|\z)$.
+Se a estimativa for boa, temos
+\begin{align*}
+ \E\left[\frac{Y \I(X=x)}{f(x|\Z)}\right]
+ &\approx \E\left[\frac{Y \I(X=x)}{\hf(x|\Z)}\right].
+\end{align*}
+Finalmente, observe novamente que 
+podemos aproximar a esperança por
+uma média empírica, isto é,
+\begin{align*}
+ \E\left[\frac{Y \I(X=x)}{\hf(x|Z)}\right]
+ &\approx n^{-1} \sum_{i=1}^n \frac{Y_i \I(X_i=x)}{\hf(x|\Z_i)}.
+\end{align*}
+Combinando estas aproximações, obtemos:
+\begin{definition}
+ \label{def:ipw}
+ Considere que $\Z$ satisfaz o critério backdoor para
+ medir o efeito causal de $X$ em $Y$ e
+ $\hf(x|\z)$ é uma estimativa de $f(x|\z)$.
+ O estimador de $\E[Y|do(X=x)]$ por IPW é:
+\begin{align*}
+ \hdoyb &:= n^{-1} \sum_{i=1}^n \frac{Y_i \I(X_i=x)}{\hf(x|\Z_i)}.
+\end{align*}
+\end{definition}
+
+\begin{theorem}
+ \label{thm:conv_ipw}
+ Se $\E[|\hf(x|\Z)-f(x|\Z)|] = o(1)$, e
+ existe $M > 0$ tal que
+ $\sup_\z \E[|Y| \I(X=x)|\Z=\z] < M$, e
+ existe $\delta > 0$ tal que
+ $\inf_\z \hf(x|\z) > \epsilon$ e
+ $\inf_\z f(x|\z) > \epsilon$, então
+ $\hdoyb \convp \E[Y|do(X=x)]$.
+\end{theorem}
+
+\subsubsection{Estimador duplamente robusto}
+
+
+
+\subsubsection{Exemplos de estimação causal com o critério backdoor}
+
+\section{Controlando mediadores (critério frontdoor)}
+\label{sec:frontdoor}
+
+\section{Do-calculus}
 
 \section{Exercícios}
+
+\begin{exercise}
+ Prove o \cref{lemma:backdoor_random}.
+\end{exercise}
 
 \begin{exercise}
  Prove o \cref{lemma:backdoor_pais}.

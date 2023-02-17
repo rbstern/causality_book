@@ -417,14 +417,14 @@ Se aumentarmos a temperatura corporal do indivíduo,
 não aumentará a probabilidade de que ele tenha dor atrás dos olhos.
 A dengue que causa febre, não o contrário.
 
-\subsubsection{Mediador (Mediator)}
+\subsubsection{Cadeia (Chain)}
 
-No modelo de mediador, 
+No modelo de cadeia, 
 as únicas duas arestas são 
 $(V_1, V_2)$ e $(V_2, V_3)$.
-Uma ilustração de um mediador
+Uma ilustração de uma cadeia
 pode ser encontrada 
-na \cref{fig:mediador}.
+na \cref{fig:cadeia}.
 Neste modelo, acreditamos que 
 $V_1$ é causa de $V_2$ que,
 por sua vez, é causa de $V_3$.
@@ -433,7 +433,7 @@ isto é, o primeiro é
 causa indireta do segundo.
 
 
-<<mediador, fig.pos="t", fig.height=3, fig.width=4, fig.cap="Ilustração de mediador.", fig.align="center", echo = FALSE, message = FALSE, warning = FALSE>>==
+<<cadeia, fig.pos="t", fig.height=3, fig.width=4, fig.cap="Ilustração de cadeia.", fig.align="center", echo = FALSE, message = FALSE, warning = FALSE>>==
 library(dagitty)
 library(ggdag)
 library(ggplot2)
@@ -451,7 +451,7 @@ ggdag(grafo, layout = "circle") +
   xlab("") + ylab("")
 @
 
-Em um modelo de mediador 
+Em um modelo de cadeia 
 a relação de dependência entre 
 $V_1$ e $V_3$ é explicada pelos
 resultados a seguir:
@@ -459,7 +459,7 @@ resultados a seguir:
 \begin{lemma}
  \label{lem:med-ind}
  Para qualquer probabilidade compatível com 
- o DAG na \cref{fig:mediador},
+ o DAG na \cref{fig:cadeia},
  $V_1 \ind V_3 | V_2$.
 \end{lemma}
 
@@ -476,7 +476,7 @@ resultados a seguir:
 \begin{lemma}
  \label{lem:med-dep}
  Existe ao menos uma probabilidade compatível com
- o DAG na \cref{fig:mediador} tal que
+ o DAG na \cref{fig:cadeia} tal que
  $V_1 \not\ind V_3$.
 \end{lemma}
 
@@ -486,7 +486,7 @@ resultados a seguir:
  $\P(V_3=1|V_2=1,V_1)=0.9$, e $\P(V_3=1|V_2=0,V_1)=0.05$.
  Note que $(V_1,V_2,V_3)$ formam uma Cadeia de Markov.
  Note que, por construção, $\P$ é 
- compatível com \cref{fig:mediador}.
+ compatível com \cref{fig:cadeia}.
  Isto é, $P(v_1,v_2,v_3) = \P(v_1)\P(v_2|v_1)\P(v_3|v_2)$.
  Além disso,
  \begin{align*}
@@ -511,9 +511,9 @@ resultados a seguir:
 
 Combinando os \cref{lem:med-ind,lem:med-dep} é 
 possível compreender melhor como 
-usaremos mediadores num contexto causal.
+usaremos cadeias num contexto causal.
 Nestes casos, $V_2$ será uma consequência de $V_1$ e
-uma causa de $V_3$. Assim, o mediador torna
+uma causa de $V_3$. Assim, a cadeia torna
 $V_1$ e $V_3$ e associados, 
 ainda que nenhum seja causa direta do outro.
 Contudo, ao contrário do confundidor,
@@ -526,7 +526,8 @@ $V_2$ é a indicadora de pressão alta, e
 $V_3$ é a indicadora de ocorrência de um derrame.
 Como consumo elevado de sal causa pressão alta e
 pressão alta tem influência causal sobre a ocorrência de um derrame,
-pressão alta é um mediador entre consumo elevado de sal e
+pressão alta é uma cadeia que é
+um mediador entre consumo elevado de sal e
 ocorrência de derrame. Assim,
 consumo elevado de sal tem influência causal sobre
 a ocorrência de derrame.
@@ -579,10 +580,10 @@ resultados a seguir:
 \begin{proof}
  \begin{align*}
   f(v_1,v_3) 
-  &= \sum_{v_2} f(v_1, v_2, v_3) \\
-  &= \sum_{v_2} f(v_1)f(v_3)f(v_2|v_1,v_3) 
+  &= \int f(v_1, v_2, v_3) dv_2 \\
+  &= \int f(v_1)f(v_3)f(v_2|v_1,v_3) dv_2 
   & \text{\cref{def:compativel}} \\
-  &= f(v_1)f(v_3) \sum_{v_2}f(v_2|v_1,v_3) \\
+  &= f(v_1)f(v_3) \int f(v_2|v_1,v_3) dv_2 \\
   &= f(v_1)f(v_3)
  \end{align*}
 \end{proof}
@@ -769,7 +770,7 @@ será fundamental nos capítulos posteriores.
 \end{exercise}
 
 \begin{exercise}
- Para cada um dos modelos de confundidor, mediador e colisor,
+ Para cada um dos modelos de confundidor, cadeia e colisor,
  dê exemplos de situações práticas em que este modelo é razoável.
 \end{exercise}
 
@@ -804,4 +805,11 @@ será fundamental nos capítulos posteriores.
  Seja $f$ uma densidade arbitrária sobre $\sV = (V_1,\ldots,V_n)$.
  Exiba um DAG sobre $\sV$, $\sG$,
  tal que $f$ é compatível com $\sG$.
+\end{exercise}
+
+\begin{exercise}
+ Exiba um exemplo em que $V_2$ é um colisor 
+ entre $V_1$ e $V_2$, 
+ $V_4$ tem como único pai $V_2$ e
+ $V_1$ e $V_3$ são dependentes dado $V_4$.
 \end{exercise}

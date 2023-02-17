@@ -81,7 +81,7 @@ classificaremos a seguir os vértices que o constituem.
   isto é, existem arestas apontando de $C_i$ para
   $C_{i-1}$ e $C_{i+1}$. Neste caso, desenhamos
   $C_{i-1} \leftarrow C_i \rightarrow C_{i+1}$.
-  \item $C_i$ é um \textbf{mediador} em $C$ se
+  \item $C_i$ é uma \textbf{cadeia} em $C$ se
   $(C_{i-1},C_{i}) \in \sE$ e $(C_i,C_{i+1}) \in \sE$, ou
   $(C_{i+1},C_{i}) \in \sE$ e $(C_i,C_{i-1}) \in \sE$,
   isto é, $(C_{i-1},C_i,C_{i+1})$ ou $(C_{i+1},C_i,C_{i-1})$ é 
@@ -107,14 +107,14 @@ $V_1 \rightarrow V_2 \leftarrow V_4$ e
 $V_1 \rightarrow V_2 \rightarrow V_3 \leftarrow V_4$.
 No primeiro caminho $V_2$ é um colisor, pois
 o caminho passa por duas arestas que apontam para $V_2$.
-Já no segundo caminho $V_2$ é um mediador e
+Já no segundo caminho $V_2$ é uma cadeia e
 $V_3$ é um colisor.
 Note que a classificação do vértice depende 
 do caminho analisado.
 Enquanto que no primeiro caminho $V_2$ é um colisor,
-no segundo $V_2$ é um mediador.
+no segundo $V_2$ é uma cadeia
 
-<<caminho-cat, fig.pos="t", fig.height=3, fig.width=4, fig.cap="Ilustração do conceito de bloqueio de um caminho. No caminho (V1, V2, V4), V2 é um colisor. Isto ocorre pois, para chegar de V1 a V4 passando apenas por V2, as duas arestas apontam para V2. Já no caminho (V1, V2, V3, V4) temos que V2 é um mediador. Para chegar de V1 a V3 passando por V2, passa-se por duas arestas, uma entrando e outra saindo de V2. Como V2 é um colisor em (V1, V2, V4), este caminho está bloqueado se e somente se o valor de V2 é desconhecido. Como V2 é um mediador em (V1, V2, V3, V4), esse caminho está bloqueado quando o valor de V2 é conhecido.", fig.align="center", echo = FALSE, message = FALSE, warning = FALSE>>==
+<<caminho-cat, fig.pos="t", fig.height=3, fig.width=4, fig.cap="Ilustração do conceito de bloqueio de um caminho. No caminho (V1, V2, V4), V2 é um colisor. Isto ocorre pois, para chegar de V1 a V4 passando apenas por V2, as duas arestas apontam para V2. Já no caminho (V1, V2, V3, V4) temos que V2 é uma cadeia. Para chegar de V1 a V3 passando por V2, passa-se por duas arestas, uma entrando e outra saindo de V2. Como V2 é um colisor em (V1, V2, V4), este caminho está bloqueado se e somente se o valor de V2 é desconhecido. Como V2 é uma cadeia em (V1, V2, V3, V4), esse caminho está bloqueado quando o valor de V2 é conhecido.", fig.align="center", echo = FALSE, message = FALSE, warning = FALSE>>==
 library(dagitty)
 library(ggdag)
 library(ggplot2)
@@ -137,11 +137,11 @@ Com base na \cref{def:caminho-cat}, é
 possível compreender se um caminho permite a
 passagem de informação.
 Na \cref{sec:dag-ex} vimos que,
-se $V_2$ é um confundidor ou um mediador entre
+se $V_2$ é um confundidor ou uma cadeia entre
 $V_1$ e $V_3$, então
 $V_1$ e $V_3$ são independentes dado $V_2$.
 Por analogia, podemos intuir que um vértice que
-é um confundidor ou um mediador num caminho
+é um confundidor ou uma cadeia num caminho
 não permite a passagem de informação
 quando seu valor é conhecido.
 Similarmente, na \cref{sec:dag-ex},
@@ -162,7 +162,7 @@ Neste caso, dizemos que o caminho está \textit{bloqueado}:
  Dizemos que $C$ está bloqueado dado $\Z \subset \sV$, se
  \begin{enumerate}
   \item Existe algum $2 \leq i \leq n-1$ tal que
-  $C_i$ é um confundidor ou mediador em $C$ e $C_{i} \in \Z$, ou
+  $C_i$ é um confundidor ou cadeia em $C$ e $C_{i} \in \Z$, ou
   \item Existe algum $2 \leq i \leq n-1$ tal que 
   $C_i$ é um colisor em $C$ e $C_{i} \notin Anc(\Z)$.
  \end{enumerate}
@@ -202,23 +202,110 @@ Esta conclusão é apresentada no
 \end{theorem}
 
 \begin{example}
- Ilustração manual de d-separação e
- com o uso de dagitty.
+ \label{ex:dsep}
+ Considere o DAG na \cref{fig:caminho-cat}.
+ Para avaliar se $V_1$ e $V_3$ são d-separados,
+ precisamos analisar todos os caminhos de um para o outro.
+ Estes caminhos são: $V_1 \rightarrow V_2 \rightarrow V_3$, e
+ $V_1 \rightarrow V_2 \leftarrow V_4 \rightarrow V_3$.
+ No primeiro caminho $V_2$ é um confundidor e, assim,
+ o caminho não está bloqueado marginalmente.
+ Portanto, $V_1$ e $V_3$ não são d-separados marginalmente.
+ Por outro lado, no segundo caminho $V_2$ é um colisor e
+ $V_4$ é um confundidor. Assim,
+ condicionando em $V_2$, este caminho não está bloqueado.
+ Portanto, $V_1$ e $V_3$ não são d-separados dado $V_2$.
+ Finalmente, dado $V_2$ e $V_4$, 
+ ambos os caminhos estão bloqueados, 
+ pois $V_2$ é um confundidor no primeiro e
+ $V_4$ é um confundidor no segundo.
+ Assim, $V_1$ e $V_3$ são d-separados dado $(V_2,V_4)$.
+ Para treinar este raciocínio,
+ continue analisando a d-separação entre $V_1$ e $V_4$.
+ 
+ O algoritmo para testar d-separação está
+ implementado em diversos pacotes.
+ Além disso, é possível utilizar o
+ \cref{thm:d-sep} para enunciar 
+ todas as relações de independência condicional que
+ são necessárias em um grafo.
+ Estas implementações estão ilustradas abaixo:
+ <<dsep_ex, message = FALSE, warning = FALSE>>==
+
+# Especificar o grafo
+grafo <- "dag{
+    V1 -> V2 <- V4;
+    V2 -> V3 <- V4
+}"
+
+dseparated(grafo, "V1", "V3", c("V2"))
+dseparated(grafo, "V1", "V3", c("V4"))
+dseparated(grafo, "V1", "V3", c("V2", "V4"))
+
+impliedConditionalIndependencies(grafo)
+@
 \end{example}
 
-\begin{lemma}
- \label{lem:d-sep}
- Seja $\sG = (\sV, \sE)$ um DAG e
- $\sV$ um conjunto de variáveis aleatórias.
- Se $\V_1$ não está d-separado de $\V_2$ dado $\V_3$,
- então existe $f$ compatível com $\sG$ tal que
- $\V_1$ e $\V_2$ são condicionalmente dependentes dado $\V_3$.
-\end{lemma}
-
 \begin{example}
- Restrições para que $V_1$ e $V_3$ sejam
- independentes sem condicionar em $V_2$, 
- um confundidor.
+ Considere que $\V_1$ e $\V_2$ 
+ não são d-separados dado $\V_3$.
+ O \cref{thm:d-sep} garante apenas que existe
+ algum $f$ compatível com o DAG tal que
+ $\V_1$ e $\V_2$ são 
+ condicionalmente dependentes dado $\V_3$
+ segundo $f$.
+ É possível mostrar que
+ o conjunto de $f$'s compatíveis com o grafo
+ em que $\V_1$ e $\V_2$ são 
+ condicionalmente independentes dado $\V_3$ é
+ relativamente pequeno àquele em que
+ $\V_1$ e $\V_2$ são condicionalmente dependentes.
+ Estudaremos um caso em que
+ é possível observar esta relação em mais detalhe.
+ 
+ Considere que $V_1, V_2$, e $Z$ são binárias e
+ formam o grafo $V_1 \leftarrow Z \rightarrow V_2$,
+ isto é, $Z$ é um confundidor.
+ Além disso, $\P(Z = 1) = 0.5$,
+ $\P(V_i = 1|Z = j) =: p_j$.
+ Como $V_3$ é um confundidor,
+ $V_1$ e $V_2$ não são d-separados marginalmente.
+ Para quais valores de $p$ temos que 
+ $V_1$ e $V_2$ são marginalmente independentes?
+ Para que $V_1$ e $V_2$ sejam independentes,
+ é necessário que $Cov[V_1,V_2] = 0$.
+ Note que
+ \begin{align*}
+  \E[V_i] 
+  &= \E[\E[V_i|Z]]
+  = 0.5 p_1 + 0.5 p_0 \\
+  \E[V_1 V_2]
+  &= \E[|E[V_1 V_2|Z]]
+  = 0.5 p_1^2 + 0.5 p_0^2
+ \end{align*}
+ Assim, para que $Cov[V_1,V_2] = 0$, temos:
+ \begin{align*}
+  0.5 p^2_1 + 0.5 p^2_0
+  &= (0.5 p_1 + 0.5 p_0)(0.5 p_1 + 0.5 p_0) \\
+  0.5 p^2_1 + 0.5 p^2_0
+  &= 0.25 p_1^2 + +0.5p_1p_0 0.25 p_0^2 \\
+  0.25 p^2_1 - 0.5 p_1 p_0 + 0.25 p^2_0 &= 0 \\
+  0.25(p_1 - p_0)^2 &= 0 \\
+  p_1 &= p_0
+ \end{align*}
+ Em outras palavras, dentre todos $(p_0,p_1)$
+ no quadrado $[0,1]^2$, 
+ somente os valores no segmento $p_1 = p_0$
+ tem alguma chance de levarem à 
+ independência entre $V_1$ e $V_2$.
+ Se imaginarmos que $(p_0,p_1)$ são
+ equidistribuídos em $[0,1]^2$, então
+ a probabilidade de sortearmos valores em que
+ $V_1$ e $V_2$ são independentes é 0.
+ 
+ Em conclusão, como $V_1$ e $V_2$ não são d-separados,
+ somente para um conjunto pequeno de possíveis $f$'s
+ temos que $V_1$ e $V_2$ são independentes.
 \end{example}
 
 \section{Exercícios}

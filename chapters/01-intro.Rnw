@@ -17,7 +17,6 @@ Para tal, a seguir estudaremos um exemplo de \citet{Glymour2016}.
 \begin{table}
 <<simpson, echo = FALSE, message = FALSE, warning = FALSE>>==
 library(tidyverse)
-library(pander)
 library(memisc)
 library(knitr)
 library(magrittr)
