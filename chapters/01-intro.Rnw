@@ -16,6 +16,9 @@ Para tal, a seguir estudaremos um exemplo de \citet{Glymour2016}.
 
 \begin{table}
 <<simpson, echo = FALSE, message = FALSE, warning = FALSE>>==
+list.of.packages <- c("tidyverse", "pander", "memisc", "knitr", "magrittr")
+new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+if(length(new.packages)) install.packages(new.packages)
 library(tidyverse)
 library(memisc)
 library(knitr)
@@ -33,14 +36,14 @@ data = c(
   )
 dt = matrix(data, ncol = 3, byrow = TRUE) %>% 
   as_tibble()
-colnames(dt) = c("Z", "X", "Y")
+colnames(dt) = c("Z", "T", "C")
 dt %>%  
-  dplyr::select(Z, X, Y) %>% 
+  dplyr::select(Z, T, C) %>% 
   ftable() %>% 
   print()
 @
  \caption{Tabela de frequência conjunta 
- das variáveis binárias $X$, $Y$, e $Z$.}
+ das variáveis binárias $T$, $C$, e $Z$.}
  \label{tabs:simpson}
 \end{table}
 
@@ -68,10 +71,10 @@ Isso nos traz informação de que
 o tratamento é efetivo na recuperação do paciente?
 
 Em uma segunda análise, podemos considerar
-apenas as contagens para as variáveis $X$ e $Y$,
+apenas as contagens para as variáveis $T$ e $C$,
 sem estratificar por $Z$.
 Dentre os pacientes que receberam e não receberam o tratamento
-as taxa de recuperação são, respectivamente:
+as taxas de recuperação são, respectivamente:
 $\frac{81+192}{6+71+81+192} \approx 0.78$ e
 $\frac{234+55}{36+25+234+55} \approx 0.83$. Isto é,
 sem estratificar por $Z$, a frequência de recuperação é
@@ -91,7 +94,7 @@ Contudo, se a conclusão ingênua é paradoxal e incorreta,
 então qual conclusão pode ser obtida destes dados?
 A primeira lição que verificaremos é que não é possível obter
 uma conclusão sobre o \textbf{efeito causal} do tratamento usando
-apenas a informação na tabela, isto é associações.
+apenas a informação na tabela, isto é, associações.
 Para tal, analisaremos a tabela dando 
 dois nomes distintos para a variável $Z$.
 Veremos que, usando exatamente os mesmos dados,
@@ -167,8 +170,8 @@ podemos ver que a mera apresentação da tabela é
 insuficiente para determinar a eficiência do tratamento.
 Observando com cuidado os cenários,
 identificamos uma explicação geral para
-as diferentes as conclusões.
-Na primeiro cenário, quando $Z$ é sexo,
+as diferentes conclusões.
+No primeiro cenário, quando $Z$ é sexo,
 $Z$ é uma causa do indivíduo receber ou não o tratamento.
 Já no segundo cenário, quando $Z$ é pressão elevada,
 o tratamento é causa de $Z$. Isto é,
@@ -177,7 +180,7 @@ explica as diferenças entre as conclusões obtidas.
 
 Ao longo do curso, desenvolveremos ferramentas para
 formalizar a diferença entre estes cenários e, com base nisso,
-conseguir estimar o efeito causal que $X$ tem sobre $Y$.
+conseguir estimar o efeito causal que uma variável $X$ tem sobre outra variável $Y$.
 Contudo, para tal, será necessário desenvolver
 um modelo em que seja possível descrever relações causais.
 Esta questão será tratada no \cref{cap:dag}.
