@@ -1,0 +1,127 @@
+\section{Controlando mediadores (critério frontdoor)}
+\label{sec:frontdoor}
+
+\section{Do-calculus}
+
+\section{Exercícios}
+
+\begin{exercise}
+ Prove o \cref{lemma:backdoor_random}.
+\end{exercise}
+
+\begin{exercise}
+ Prove o \cref{lemma:backdoor_pais}.
+\end{exercise}
+
+\begin{exercise}
+ Considere que $X_1$ e $X_2$ são variáveis binárias.
+ Também considere as seguintes definições:
+ \textbf{ACE} := $\P(X_2=1|do(X_1=1))-\P(X_2=1|do(X_1=0))$, e
+ \textbf{RD} := $\P(X_2=1|X_1=1)-\P(X_2=1|X_1=0)$.
+ Explique em palavras a diferença entre ACE e RD e
+ apresente um exemplo em que essa diferença ocorre.
+\end{exercise}
+
+\begin{exercise}[{\citet{Glymour2016}[p.32]}]
+ $(X_1,X_2,X_3,X_4)$ são 
+ variáveis binárias tais que
+ $X_{i-1}$ é a única causa imediata de $X_i$.
+ Além disso, $\P(X_1=1)=0.5$,
+ $\P(X_i=1|X_{i-1}=1)=p_{11}$ e
+ $\P(X_i=1|X_{i-1}=0)=p_{01}$.
+ Calcule:
+ \begin{enumerate}[label=(\alph*)]
+  \item $\P(X_1=1,X_2=0,X_3=1,X_4=0)$,
+  \item $\P(X_4=1|X_1=1)$, $\P(X_4=1|do(X_1=1)$, 
+  \item $\P(X_1=1|X_4=1)$, $\P(X_1=1|do(X_4=1)$, e
+  \item $\P(X_3=1|X_1=0,X_4=1)$
+ \end{enumerate}
+\end{exercise}
+
+\begin{exercise}[{\citet{Glymour2016}[p.29]}]
+ Considere que $(U_1, U_2, U_3)$ são independentes e
+ tais que $U_i \sim N(0,1)$. Também,
+ $X_1 \equiv U_1$,
+ $X_2 \equiv 3^{-1}X_1 + U_2$, e
+ $X_3 \equiv 2^{-4}X_2 + U_3$.
+ Considere que $X_1$ é 
+ a causa imediata de $X_2$,
+ que por sua vez é a causa imediata de $X_3$.
+ Além disso, cada $U_i$ influencia diretamente somente $X_i$.
+ \begin{enumerate}[label=(\alph*)]
+  \item Desenhe o DAG que representa 
+  a estrutura causal indicada no enunciado. 
+  \item Calcule $\E[X_2|X_1 = 3]$ e $\E[X_2|do(X_1 = 3)]$.
+  \item Calcule $\E[X_3|X_1 = 6]$ e $\E[X_3|do(X_1 = 6)]$.
+  \item Calcule $\E[X_1|X_2 = 1]$ e $\E[X_1|do(X_2 = 1)]$.
+  \item Calcule $\E[X_2|X_1 = 1, X_3 = 3]$,
+  $\E[X_2|X_1 = 1, do(X_3 = 3)]$, e
+  $\E[X_2|do(X_1 = 1), X_3 = 3]$.
+ \end{enumerate}
+\end{exercise}
+
+\begin{exercise}[{\citet{Glymour2016}[p.48]}]
+ \label{ex:d-sep}
+ Considere o modelo estrutural causal
+ em \cref{fig:d-sep}.
+ \begin{enumerate}[label=(\alph*)]
+  \item Para cada um dos pares de variáveis a seguir,
+  determine um conjunto de outras variáveis que
+  as d-separa: $(Z_1,W)$, $(Z_1,Z_2)$, $(Z_1,Y)$, 
+  $(Z_3,W)$, e $(X,Y)$.
+  \item Para cada par de variáveis no item anterior,
+  determine se elas são d-separadas dado
+  todas as demais variáveis.
+  \item Determine conjuntos de variáveis que
+  satisfazem, respectivamente, 
+  o ``backdoor criterion'' e 
+   o ``frontdoor criterion'' para
+  estimar o efeito causal de $X$ em $Y$.
+  \item Considere que para cada variável, $V$, temos que
+  $V \equiv \beta_V \cdot Pa(V) + \epsilon_V$,
+  onde os $\epsilon$ são i.i.d. e normais padrão e
+  $\beta_V$ são vetores conhecidos. Isto é,
+  a distribuição de cada variável é 
+  determinada através de 
+  uma regressão linear simples em seus pais.
+  Determine $f(Y|do(X=x))$ utilizando a fórmula do ajuste
+  nos $2$ casos abordados no item anterior.
+ \end{enumerate}
+\begin{figure}
+ \centering
+ \tikz{
+    \node (z1) {$Z_1$};
+    \node (z3) [below right = of z1] {$Z_3$};
+    \node (z2) [above right = of z3] {$Z_2$};
+    \node (x) [below left = of z3] {$X$};
+    \node (w1) [right = of x] {$W_1$};
+    \node (w2) [below = of w1] {$W_2$};
+    \node (y) [right = of w1] {$Y$};
+    \path (z1) edge (z3);
+    \path (z1) edge (x);
+    \path (z2) edge (z3);
+    \path (z2) edge (y);
+    \path (z3) edge (x);
+    \path (z3) edge (y);
+    \path (x) edge (w1);
+    \path (w1) edge (y);
+    \path (x) edge (w2);
+    \path (w2) edge (y);
+}
+ \caption{Modelo estrutural causal do \cref{ex:d-sep}}
+ \label{fig:d-sep}
+\end{figure}
+\end{exercise}
+
+\begin{exercise}
+ Prove que a variância amostral satisfaz
+ o \cref{def:perm}.
+\end{exercise}
+
+\begin{exercise}
+ Utilizando como referência o grafo e
+ o código no \cref{ex:backdoor_est_1},
+ simule dados tais que a estimativa do $\ACE$ é
+ diferente quando um método de regressão linear e
+ um de regressão não-paramétrica são usados.
+\end{exercise}

@@ -48,8 +48,9 @@ $\sE = \{(V_1, V_2), (V_1, V_3), (V_2, V_3)\}$.
 Neste caso, teremos os $3$ pontos como vértices e,
 além disso, traçaremos setas de $V_1$ para $V_2$ e para $V_3$ e,
 também, de $V_2$ para $V_3$.
-Podemos desenhar este grafo utilizando o
-pacote \textit{dagitty} \citep{Textor2016}:
+Podemos desenhar este grafo utilizando os
+pacotes \textit{dagitty} e \textit{ggdag}
+\citep{Barrett2022,Textor2016}:
 
 <<grafo1, fig.pos="t", fig.height=3, fig.width=4, fig.cap="Exemplo de grafo.", fig.align="center", message = FALSE, warning = FALSE>>==
 library(dagitty)

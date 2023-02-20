@@ -32,6 +32,8 @@ opts_chunk$set(cache=TRUE,fig.path="./figures/")
 \Sexpr{knit_child("chapters/02-1-dag.Rnw")}
 \Sexpr{knit_child("chapters/02-2-d-sep.Rnw")}
 \Sexpr{knit_child("chapters/03-intervencoes.Rnw")}
+\Sexpr{knit_child("chapters/03-01-backdoor.Rnw")}
+\Sexpr{knit_child("chapters/03-02-frontdoor.Rnw")}
 
 \bibliographystyle{apalike}
 \bibliography{book}

@@ -438,6 +438,21 @@ ao condicionamento usual no SCM aumentado.
  \end{align*}
 \end{proof}
 
+\begin{lemma}
+ \label{lemma:conv_l1_to_p}
+ Se $(W_n)_{n \in \mathbb{N}}$ é uma sequência de
+ variáveis aleatórias tais que $\E[|W_n|] = o(1)$,
+ então $W_n \convp 0$.
+\end{lemma}
+
+\begin{proof}
+ \begin{align*}
+  \P(|W_n| > \epsilon)
+  &\leq \frac{\E[|W_n|]}{\epsilon} & \text{Markov} \\
+  &= o(1)
+ \end{align*}
+\end{proof}
+
 \begin{proof}[Prova do \cref{thm:conv_ajuste}]
  Como $\E[|\mu(x,\Z)|] < \infty$,
  pela Lei dos Grandes Números,
@@ -448,27 +463,19 @@ ao condicionamento usual no SCM aumentado.
  Portanto, pelo \cref{thm:backdoor_est_1},
  é suficiente provar que
  $\hdoy - \frac{\sum_{i=1}^n \mu(x,\Z_i)}{n} \convp 0$.
+ Usando o \cref{lemma:conv_l1_to_p}, é suficiente provar que 
+ $\E\left[\bigg|\hdoy - \frac{\sum_{i=1}^n \mu(x,\Z_i)}{n}\bigg|\right] 
+ = o(1)$.
  \begin{align*}
-  \P\left(\bigg|\hdoy - \frac{\sum_{i=1}^n \mu(x,\Z_i)}{n}\bigg|
-  > \epsilon \right)
-  &= \P\left(\bigg|\frac{\sum_{i=1}^n 
-  (\hat{\mu}(x,\Z_i)-\mu(x,\Z_i))}{n}\bigg|
-  > \epsilon \right) \\
-  &= \P\left(\left(\sum_{i=1}^n 
-  (\hat{\mu}(x,\Z_i)-\mu(x,\Z_i))\right)^2
-  > n^2 \epsilon^2 \right) \\
-  &\leq \frac{\E\left[\left(\sum_{i=1}^n 
-  (\hat{\mu}(x,\Z_i)-\mu(x,\Z_i))\right)^2
-  \right]}
-  {n^2 \epsilon^2}
-  & \text{Markov} \\
-  &\leq \frac{n^2 \E[(\hat{\mu}(x,\Z_1)-\mu(x,\Z_1))^2]}
-  {n^2 \epsilon^2}
-  & \text{Cauchy-Schwarz} \\
-  &= o(1)
+  \E\left[\bigg|\hdoy - \frac{\sum_{i=1}^n \mu(x,\Z_i)}{n}\bigg|\right]
+  &= \E\left[\bigg|\frac{\sum_{i=1}^n 
+  (\hat{\mu}(x,\Z_i)-\mu(x,\Z_i))}{n}\bigg|\right] \\
+  &\leq n^{-1}\sum_{i=1}^n \E\left[| 
+  \hat{\mu}(x,\Z_i)-\mu(x,\Z_i)|\right] \\
+  &= \E\left[|\hat{\mu}(x,\Z)-\mu(x,\Z)|\right] 
+  & \text{\cref{def:perm}} \\
+  &= o(1)]
  \end{align*}
- A última conclusão decorre da suposição de que
- $\E[(\hat{\mu}(x,\Z)-\mu(x,\Z))^2] = o(1)$.
 \end{proof}
 
 \begin{proof}[Prova do \cref{thm:conv_ipw}]
@@ -477,35 +484,121 @@ ao condicionamento usual no SCM aumentado.
  \convp \E\left[\frac{Y \I(X = x)}{f(x|\Z)}\right]$. Como
  pelo \cref{thm:backdoor_est_2} temos que
  $\E\left[\frac{Y \I(X = x)}{f(x|\Z)}\right] = \E[Y|do(X=x)]$,
- é suficiente provar que
+ usando o \cref{lemma:conv_l1_to_p} é suficiente provar que 
  \begin{align*}
-  n^{-1} \sum_{i=1}^n \frac{Y_i \I(X_i = x)}{\hf(x|\Z_i)} 
-  - n^{-1} \sum_{i=1}^n \frac{Y_i \I(X_i = x)}{f(x|\Z_i)}
-  &\convp 0
+ \E\left[\bigg|n^{-1} \sum_{i=1}^n \frac{Y_i \I(X_i = x)}{\hf(x|\Z_i)} 
+  - n^{-1} \sum_{i=1}^n \frac{Y_i \I(X_i = x)}{f(x|\Z_i)}\bigg|\right]
+  &= o(1).
  \end{align*}
  \begin{align*}
-  &\P\left(\bigg| n^{-1} \sum_{i=1}^n \frac{Y_i \I(X_i = x)}{\hf(x|\Z_i)}
-  - n^{-1} \sum_{i=1}^n \frac{Y_i \I(X_i = x)}{f(x|\Z_i)}
-  \bigg| > \epsilon \right) \\
-  =& \P\left(\bigg| \sum_{i=1}^n \frac{Y_i \I(X_i = x)
-  (\hf(x|\Z_i)-f(x|\Z_i))}{\hf(x|\Z_i)f(x|\Z_i)} \bigg| 
-  > n\epsilon \right) \\
-  \leq& \P\left(\bigg| \sum_{i=1}^n Y_i \I(X_i = x)
-  (\hf(x|\Z_i)-f(x|\Z_i)) \bigg| 
-  > n\delta^2\epsilon \right) 
-  & \sup_\z \hf(x|\z) f(x|\z) > \delta^2 \\
-  \leq& \frac{\E\left[\bigg| \sum_{i=1}^n Y_i \I(X_i = x)
-  (\hf(x|\Z_i)-f(x|\Z_i)) \bigg|\right]} 
-  {n\delta^2\epsilon} 
-  & \text{Markov} \\
-  \leq& \frac{n\E\left[|Y \I(X = x)(\hf(x|\Z)-f(x|\Z))|\right]} 
-  {n\delta^2\epsilon} 
-  & \text{i.i.d.} \\
-  \leq& \frac{\E\left[|\hf(x|\Z)-f(x|\Z)|\E[|Y| \I(X = x)|\Z]\right]} 
-  {\delta^2\epsilon} \\
-  \leq& \frac{M\E\left[|\hf(x|\Z)-f(x|\Z)|\right]} 
-  {\delta^2\epsilon} 
-  & \sup_\z \E[|Y| \I(X = x)|\Z=\z] < M \\
+  &\E\left[\bigg|n^{-1} \sum_{i=1}^n \frac{Y_i \I(X_i = x)}{\hf(x|\Z_i)} 
+  - n^{-1} \sum_{i=1}^n \frac{Y_i \I(X_i = x)}{f(x|\Z_i)}\bigg|\right] \\
+  \leq& n^{-1}\sum_{i=1}^n
+  \E\left[\bigg|\frac{Y_i \I(X_i = x)}{\hf(x|\Z_i)} 
+  -\frac{Y_i \I(X_i = x)}{f(x|\Z_i)}\bigg|\right] \\
+  =& \E\left[\bigg|\frac{Y_1 \I(X_1 = x)}{\hf(x|\Z_1)} 
+  -\frac{Y_1 \I(X_1 = x)}{f(x|\Z_1)}\bigg|\right]
+  & \text{\cref{def:perm}} \\
+  =& \E\left[\bigg|\frac{Y_i \I(X_i = x)(\hf(x|\Z_i)-f(x|\Z_i))}
+  {\hf(x|\Z_i)f(x|\Z_i)}\bigg|\right] \\
+  \leq& \delta^{-2}\E\left[|Y_i \I(X_i = x)(\hf(x|\Z_i)-f(x|\Z_i))|\right] 
+  & \inf_z \min\{f(x|\Z_1), \hf(x|\Z_1)\} > \delta \\
+  =& \delta^{-2}\E\left[|
+  \hf(x|\Z_i)-f(x|\Z_i)|\cdot \E[|Y_i \I(X_i = x)|\big|\Z]\right] 
+  & \text{Lei da esperança total} \\
+  \leq& M\delta^{-2} \E\left[|\hf(x|\Z_i)-f(x|\Z_i)|\right]
+  & \sup_z \E[|Y_i \I(X_i = x)|\Z=\z] < M \\
   =& o(1)
+ \end{align*}
+\end{proof}
+
+\begin{proof}[Prova do \cref{thm:conv_duplo_robusto}]
+ Se as condições do \cref{thm:conv_ajuste} estão satisfeitas,
+ então decorre deste resultado que 
+ $\hdoy \convp \E[Y|do(X=x)]$. Portanto, 
+ usando \cref{lemma:conv_l1_to_p}, 
+ resta demonstrar que
+ \begin{align*}
+  \E\left[\bigg|\hdoyb 
+  -\sum_{i=1}^n \frac{\I(X_i=x)\hat{\mu}(x,\Z_i)}
+  {n\hat{f}(x|\Z_i)}\bigg|\right]
+  &= o(1)
+ \end{align*}
+ \begin{align*}
+  &\E\left[\bigg|\hdoyb 
+  -\sum_{i=1}^n \frac{\I(X_i=x)\hat{\mu}(x,\Z_i)}
+  {n\hat{f}(x|\Z_i)}\bigg|\right] \\
+  =& \E\left[\bigg|\sum_{i=1}^n \frac{\I(X_i=x)(Y_i-\hat{\mu}(x,\Z_i))}
+  {n\hat{f}(x|\Z_i)}\bigg|\right]
+  & \text{\cref{def:ipw}} \\
+  \leq& n{-1}\sum_{i=1}^n
+  \E\left[\bigg|\frac{\I(X_i=x)(Y_i-\hat{\mu}(x,\Z_i))}
+  {\hat{f}(x|\Z_i)}\bigg|\right] \\
+  =& \E\left[\bigg|\frac{\I(X_1=x)(Y_1-\hat{\mu}(x,\Z_1))}
+  {\hat{f}(x|\Z_1)}\bigg|\right]
+  & \text{\cref{def:perm}} \\
+  \leq& \delta^{-1}
+  \E\left[\big|\I(X_1=x)(Y_1-\hat{\mu}(x,\Z_1))
+  \big|\right]
+  & \inf_\z \hf(x|\z) > \delta \\
+  \leq& \delta^{-1}
+  \E\left[\big|\I(X_1=x)(\E[Y_1|X_1,\Z_1]-\hat{\mu}(x,\Z_1))
+  \big|\right]
+  & \text{Lei da esperança total} \\
+  =& \delta^{-1}
+  \E\left[\big|\I(X_1=x)(\E[Y_1|X_1=x,\Z_1]-\hat{\mu}(x,\Z_1))
+  \big|\right]
+  & \I(X_1=x)\E[Y_1|X_1,\Z_1] 
+  \equiv \I(X_1=x)\E[Y_1|X_1=x,\Z_1] \\
+  \leq&\delta^{-1}
+  \E\left[\big|\E[Y_1|X_1=x,\Z_1]-\hat{\mu}(x,\Z_1)
+  \big|\right] \\
+  =& \E\left[\big|\mu(x,\Z_1)-\hat{\mu}(x,\Z_1)
+  \big|\right] = o(1)
+ \end{align*}
+ A seguir, se as condições do 
+ \cref{thm:conv_ipw} estão satisfeitas,
+ então decorre deste resultado que 
+ $\hdoyb \convp \E[Y|do(X=x)]$.
+ Portanto, 
+ usando \cref{lemma:conv_l1_to_p}, 
+ resta demonstrar que
+ \begin{align*}
+  \E\left[\bigg|\hdoy 
+  -\sum_{i=1}^n \frac{\I(X_i=x)\hat{\mu}(x,\Z_i)}
+  {n\hat{f}(x|\Z_i)}\bigg|\right]
+  &= o(1)
+ \end{align*}
+ \begin{align*}
+  &\E\left[\bigg|\hdoy 
+  -\sum_{i=1}^n \frac{\I(X_i=x)\hat{\mu}(x,\Z_i)}
+  {n\hat{f}(x|\Z_i)}\bigg|\right] \\
+  =& \E\left[\bigg|\sum_{i=1}^n 
+  \frac{(\hf(x|\Z_i)-\I(X_i=x))
+  \hat{\mu}(x,\Z_i)}
+  {n\hf(x|\Z_i)}\bigg|\right]
+  & \text{\cref{def:ajuste}} \\
+  \leq& n^{-1}\sum_{i=1}^n\E\left[\bigg| 
+  \frac{(\hf(x|\Z_i)-\I(X_i=x))
+  \hat{\mu}(x,\Z_i)}
+  {\hf(x|\Z_i)}\bigg|\right] \\
+  =& \E\left[\bigg| 
+  \frac{(\hf(x|\Z_1)-\I(X_1=x))
+  \hat{\mu}(x,\Z_1)}
+  {\hf(x|\Z_1)}\bigg|\right] 
+  & \text{\cref{def:perm}} \\
+  \leq& \delta^{-1} \E\left[\big| 
+  (\hf(x|\Z_1)-\I(X_1=x))
+  \hat{\mu}(x,\Z_1)\big|\right] 
+  & \inf_\z \hf(x|\Z_1) > \delta \\
+  \leq& \delta^{-1}M \E\left[\big| 
+  \hf(x|\Z_1)-\I(X_1=x)\big|\right] 
+  & \sup_\z \hat{\mu}(x,\z) < M \\
+  =& \delta^{-1}M \E\left[\big| 
+  \hf(x|\Z_1)-\E[\I(X_1=x)|\Z_1]\big|\right] 
+  & \text{Lei da esperança total} \\
+  =& \delta^{-1}M \E\left[\big| 
+  \hf(x|\Z_1)-f(x|\Z_1)\big|\right]
+  = o(1)
  \end{align*}
 \end{proof}

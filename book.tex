@@ -45,8 +45,8 @@ Para tal, a seguir estudaremos um exemplo de \citet{Glymour2016}.
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{verbatim}
-##     Y   0   1
-## Z X          
+##     C   0   1
+## Z T          
 ## 0 0    36 234
 ##   1     6  81
 ## 1 0    25  55
@@ -55,7 +55,7 @@ Para tal, a seguir estudaremos um exemplo de \citet{Glymour2016}.
 \end{kframe}
 \end{knitrout}
  \caption{Tabela de frequência conjunta 
- das variáveis binárias $X$, $Y$, e $Z$.}
+ das variáveis binárias $T$, $C$, e $Z$.}
  \label{tabs:simpson}
 \end{table}
 
@@ -83,10 +83,10 @@ Isso nos traz informação de que
 o tratamento é efetivo na recuperação do paciente?
 
 Em uma segunda análise, podemos considerar
-apenas as contagens para as variáveis $X$ e $Y$,
+apenas as contagens para as variáveis $T$ e $C$,
 sem estratificar por $Z$.
 Dentre os pacientes que receberam e não receberam o tratamento
-as taxa de recuperação são, respectivamente:
+as taxas de recuperação são, respectivamente:
 $\frac{81+192}{6+71+81+192} \approx 0.78$ e
 $\frac{234+55}{36+25+234+55} \approx 0.83$. Isto é,
 sem estratificar por $Z$, a frequência de recuperação é
@@ -106,7 +106,7 @@ Contudo, se a conclusão ingênua é paradoxal e incorreta,
 então qual conclusão pode ser obtida destes dados?
 A primeira lição que verificaremos é que não é possível obter
 uma conclusão sobre o \textbf{efeito causal} do tratamento usando
-apenas a informação na tabela, isto é associações.
+apenas a informação na tabela, isto é, associações.
 Para tal, analisaremos a tabela dando 
 dois nomes distintos para a variável $Z$.
 Veremos que, usando exatamente os mesmos dados,
@@ -182,8 +182,8 @@ podemos ver que a mera apresentação da tabela é
 insuficiente para determinar a eficiência do tratamento.
 Observando com cuidado os cenários,
 identificamos uma explicação geral para
-as diferentes as conclusões.
-Na primeiro cenário, quando $Z$ é sexo,
+as diferentes conclusões.
+No primeiro cenário, quando $Z$ é sexo,
 $Z$ é uma causa do indivíduo receber ou não o tratamento.
 Já no segundo cenário, quando $Z$ é pressão elevada,
 o tratamento é causa de $Z$. Isto é,
@@ -192,7 +192,7 @@ explica as diferenças entre as conclusões obtidas.
 
 Ao longo do curso, desenvolveremos ferramentas para
 formalizar a diferença entre estes cenários e, com base nisso,
-conseguir estimar o efeito causal que $X$ tem sobre $Y$.
+conseguir estimar o efeito causal que uma variável $X$ tem sobre outra variável $Y$.
 Contudo, para tal, será necessário desenvolver
 um modelo em que seja possível descrever relações causais.
 Esta questão será tratada no \cref{cap:dag}.
@@ -257,8 +257,9 @@ $\sE = \{(V_1, V_2), (V_1, V_3), (V_2, V_3)\}$.
 Neste caso, teremos os $3$ pontos como vértices e,
 além disso, traçaremos setas de $V_1$ para $V_2$ e para $V_3$ e,
 também, de $V_2$ para $V_3$.
-Podemos desenhar este grafo utilizando o
-pacote \textit{dagitty} \citep{Textor2016}:
+Podemos desenhar este grafo utilizando os
+pacotes \textit{dagitty} e \textit{ggdag}
+\citep{Barrett2022,Textor2016}:
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -1837,6 +1838,32 @@ todos os caminhos de informação que passam por confundidores:
  Assim $(A,C)$ satisfaz o critério backdoor.
  Você consegue encontrar outro conjunto de variáveis que
  satisfaz o critério backdoor?
+ 
+ Também é possível identificar 
+ os conjuntos de variáveis que satisfazem
+ o critério backdoor por meio
+ do pacote \textit{dagitty},
+ como ilustrado a seguir:
+ 
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{library}\hlstd{(dagitty)}
+\hlcom{# Especificar o grafo}
+\hlstd{grafo} \hlkwb{<-} \hlkwd{dagitty}\hlstd{(}\hlstr{"dag\{
+    A -> \{ X B \}; B -> \{ Y \}; C -> \{ X Y \};
+    X -> \{ D Y \}; D -> Y \}"}\hlstd{)}
+
+\hlkwd{adjustmentSets}\hlstd{(grafo,} \hlstr{"X"}\hlstd{,} \hlstr{"Y"}\hlstd{,}
+               \hlkwc{type} \hlstd{=} \hlstr{"all"}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+## { A, C }
+## { B, C }
+## { A, B, C }
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
 \end{example}
 
 O critério backdoor generaliza duas condições especiais que
@@ -1929,7 +1956,7 @@ Estas equivalências são descritas
 nos \cref{thm:backdoor_est_1,thm:backdoor_est_2}.
 
 \begin{theorem}
- \label{thm:backdoor_est_1}
+ \label{thm:backdoor_ajuste}
  Se $\Z$ satisfaz 
  o critério backdoor para medir
  o efeito causal de $X$ em $Y$, então
@@ -1940,7 +1967,7 @@ nos \cref{thm:backdoor_est_1,thm:backdoor_est_2}.
 \end{theorem}
 
 \begin{theorem}
- \label{thm:backdoor_est_2}
+ \label{thm:backdoor_ipw}
  Se $\Z$ satisfaz 
  o critério backdoor para medir
  o efeito causal de $X$ em $Y$ e
@@ -1954,13 +1981,38 @@ nos \cref{thm:backdoor_est_1,thm:backdoor_est_2}.
 A seguir, veremos como os
 \cref{thm:backdoor_est_1,thm:backdoor_est_2} podem
 ser usados para estimar o efeito causal.
+Para provar resultados sobre os estimadores obtidos,
+a seguinte definição será útil
+
+\begin{definition}
+ \label{def:perm}
+ Seja $\hat{g}$ um estimador treinado com
+ os dados $(\sV_1,\ldots,\sV_n)$.
+ Dizemos que $\hat{g}$ é 
+ invariante a permutações se
+ o estimador não depende da ordem dos dados.
+ Isto é, para qualquer permutações dos índices,
+ $\pi: \{1,\ldots,n\} \rightarrow \{1,\ldots,n\}$,
+ $\hat{g}(\sV_1,\ldots,\sV_n) \equiv 
+ \hat{g}(\sV_{\pi(1)},\ldots,\sV_{\pi(n)})$
+\end{definition}
+
+\begin{example}
+ \label{ex:perm}
+ A média amostral é invariante a permutações pois,
+ para qualquer permutação $\pi$,
+ \begin{align*}
+  \frac{\sum_{i=1}^n X_i}{n} 
+  = \frac{\sum_{i=1}^n X_{\pi(i)}}{n}.
+ \end{align*} 
+\end{example}
 
 \subsection{Estimação usando o critério backdoor}
 \label{sec:backdoor_est}
 
 \subsubsection{Fórmula do ajuste}
 
-O \cref{thm:backdoor_est_1} determina que, 
+O \cref{thm:backdoor_ajuste} determina que, 
 se $\Z$ satisfaz o critério backdoor, então
 $\E[Y|do(X=x) = \E[\E[Y|X=x,\Z]]$.
 Para criar um estimador baseado nesta expressão,
@@ -2010,20 +2062,28 @@ obtemos o estimador pela fórmula do ajuste, $\hdoy$:
 \end{align*}
 \end{definition}
 
+A seguir mostraremos que,
+se $\hmu$ converge para $\mu$, então
+$\hdoy$ converge para $\E[Y|do(X=x)]$.
+Em outras palavras, é possível utilizar
+$\hdoy$ para estimar o efeito causal de $X$ em $Y$
+por meio de expressões como o $\ACE$.
+
 \begin{theorem}
  \label{thm:conv_ajuste}
  Seja $\mu(X,\Z) := \E[Y|X,\Z]$.
  Se $\Z$ satisfaz o critério backdoor para
  medir o efeito causal de $X$ em $Y$,
- $\E[|\mu(x,\Z)|] < \infty$, e
- $\E[(\hat{\mu}(x,\Z)-\mu(x,\Z)^2] = o(1)$, então
+ $\E[|\mu(x,\Z_1)|] < \infty$,
+ $\E[|\hmu(x,\Z_1)-\mu(x,\Z_1)|] = o(1)$, 
+ e $\hmu$ é invariante a permutações (\cref{def:perm}), então
  $\hdoy \convp \E[Y|do(X=x)]$.
 \end{theorem}
 
 \subsubsection{Ponderação pelo inverso do escore de propensidade (IPW)}
 
 Uma outra forma de estimar $\E[Y|do(X=x)]$ é
-motivada pelo \cref{thm:backdoor_est_2}.
+motivada pelo \cref{thm:backdoor_ipw}.
 Este resultado determina que, 
 se $\Z$ satisfaz o critério backdoor, então
 \begin{align*}
@@ -2067,20 +2127,240 @@ Combinando estas aproximações, obtemos:
 
 \begin{theorem}
  \label{thm:conv_ipw}
- Se $\E[|\hf(x|\Z)-f(x|\Z)|] = o(1)$, e
+ Se $\hf$ é invariante a permutações (\cref{def:perm}),
+ $\E[|\hf(x|\Z_1)-f(x|\Z_1)|] = o(1)$, e
  existe $M > 0$ tal que
  $\sup_\z \E[|Y| \I(X=x)|\Z=\z] < M$, e
  existe $\delta > 0$ tal que
- $\inf_\z \hf(x|\z) > \epsilon$ e
- $\inf_\z f(x|\z) > \epsilon$, então
+ $\inf_z \min\{f(x|\Z_1), \hf(x|\Z_1)\} > \delta$, então
  $\hdoyb \convp \E[Y|do(X=x)]$.
 \end{theorem}
 
 \subsubsection{Estimador duplamente robusto}
 
+Os \cref{thm:conv_ajuste,thm:conv_ipw} mostram que,
+sob suposições diferentes, 
+$\hdoy$ e $\hdoyb$ convergem para $\E[Y|do(X=x)]$.
+A ideia do estimador duplamente robusto é
+combinar ambos os estimadores de forma
+a garantir esta convergência sob 
+suposições mais fracas.
+Para tal, a ideia por trás do 
+estimador duplamente é que
+este convirja junto a $\hdoy$ 
+quando este é consistente e
+para $\hdoyb$ quando aquele o é.
 
+\begin{definition}
+ Sejam $\Z$ variáveis que satisfazem o critério backdoor
+ para medir o efeito causal de $X$ em $Y$ e 
+ sejam $\hf$ e $\hmu$ tais quais nas
+ \cref{def:ajuste,def:ipw}.
+ O estimador duplamente robusto para
+ $\E[Y|do(X=x)]$, $\hdoyc$ é tal que
+ \label{def:duplo_robusto}
+ \begin{align*}
+  \hdoyc 
+  &= \hdoy + \hdoyb 
+  - \sum_{i=1}^n \frac{\I(X_i=x)\hmu(x,\Z_i)}{n\hat{f}(x|\Z_i)}
+ \end{align*}
+\end{definition}
+
+O estimador duplamente robusto é consistente para
+$\E[Y|do(X=x)]$ tanto sob as condições do
+\cref{thm:conv_ajuste} quanto sob as do
+\cref{thm:conv_ipw}. A ideia básica é que,
+sob as condições do \cref{thm:conv_ajuste},
+$\hdoy$ é consistente para $\E[Y|do(X=x)]$ e
+$\hdoyb - \sum_{i=1}^n \frac{\I(X_i=x)\hmu(x,\Z_i)}{n\hat{f}(x|\Z_i)}$
+converge para $0$. Isto é,
+quando $\hdoy$ é consistente,
+o estimador duplamente robusto seleciona este termo.
+Similarmente, sob as condições do \cref{thm:conv_ipw},
+$\hdoyb$ é consistente para $\E[Y|do(X=x)]$ e
+$\hdoy - \sum_{i=1}^n \frac{\I(X_i=x)\hmu(x,\Z_i)}{n\hat{f}(x|\Z_i)}$
+converge para $0$.
+
+\begin{theorem}
+ \label{thm:conv_duplo_robusto}
+ Suponha que existe $\epsilon > 0$ tal que
+ $\inf_\z \hf(x|\z) > \epsilon$,
+ existe $M > 0$ tal que 
+ $\sup_\z \hmu(x,\z) < M$, e
+ $\hmu$ e $\hf$ são invariantes 
+ a permutações (\cref{def:perm}).
+ Se as condições do \cref{thm:conv_ajuste} ou
+ do \cref{thm:conv_ipw} estão satisfeitas, então
+ \begin{align*}
+  \hdoyc \convp \E[Y|do(X=x)].
+ \end{align*}
+\end{theorem}
 
 \subsubsection{Exemplos de estimação causal com o critério backdoor}
+
+Nesta seção veremos exemplos de 
+como estimar o efeito causal de $X$ em $Y$
+utilizando o critério backdoor.
+
+\begin{example}[Fórmula do ajuste]
+ \label{ex:backdoor_est_1}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{figure}[t]
+
+{\centering \includegraphics[width=\maxwidth]{./figures/backdoor_est_ex-1} 
+
+}
+
+\caption[DAG usado como exemplo para estimar efeito de X em Y]{DAG usado como exemplo para estimar efeito de X em Y.}\label{fig:backdoor_est_ex}
+\end{figure}
+
+\end{knitrout}
+
+Considere que o grafo causal é
+dado pela \cref{fig:backdoor_est_ex}.
+Vamos supor que os dados são gerados da seguinte forma:
+$\sigma^2 = 0.01$,
+$A \sim N(0, \sigma^2)$, 
+$B \sim N(0, \sigma^2)$,
+$X \equiv \I(A + B > 0)$,
+$C \sim N(X, \sigma^2)$, e
+$Y \sim N(A + B + C + X, \sigma^2)$:
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{# Especificar o grafo}
+\hlstd{grafo} \hlkwb{<-} \hlstd{dagitty}\hlopt{::}\hlkwd{dagitty}\hlstd{(}\hlstr{"dag \{
+    \{A B\} -> \{ X Y \}; X -> \{C Y\}; C -> Y \}"}\hlstd{)}
+
+\hlcom{# Simular os dados}
+\hlstd{n} \hlkwb{<-} \hlnum{10}\hlopt{^}\hlnum{5}
+\hlstd{sd} \hlkwb{=} \hlnum{0.1}
+\hlstd{A} \hlkwb{<-} \hlkwd{rnorm}\hlstd{(n,} \hlnum{0}\hlstd{, sd)}
+\hlstd{B} \hlkwb{<-} \hlkwd{rnorm}\hlstd{(n,} \hlnum{0}\hlstd{, sd)}
+\hlstd{X} \hlkwb{<-} \hlkwd{as.numeric}\hlstd{((A} \hlopt{+} \hlstd{B)} \hlopt{>} \hlnum{0}\hlstd{)}
+\hlstd{C} \hlkwb{<-} \hlkwd{rnorm}\hlstd{(n, X, sd)}
+\hlstd{Y} \hlkwb{<-} \hlkwd{rnorm}\hlstd{(n, A} \hlopt{+} \hlstd{B} \hlopt{+} \hlstd{C} \hlopt{+} \hlstd{X, sd)}
+\hlstd{data} \hlkwb{<-} \hlstd{dplyr}\hlopt{::}\hlkwd{tibble}\hlstd{(A, B, C, X, Y)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+A seguir, estimaremos o efeito causal pela
+fórmula do ajuste (\cref{def:ajuste}).
+Iniciaremos a análise utilizando $\hmu$ como
+sendo uma regressão linear simples:
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{# Sejam Z variáveis que satisfazem o critério backdoor para}
+\hlcom{# estimar o efeito causal de causa em efeito em grafo.}
+\hlcom{# Retorna uma fórmula do tipo Y ~ X + Z_1 + ... + Z_d}
+\hlstd{fm_ajuste} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{grafo}\hlstd{,} \hlkwc{causa}\hlstd{,} \hlkwc{efeito}\hlstd{)}
+\hlstd{\{}
+  \hlstd{var_backdoor} \hlkwb{<-} \hlstd{dagitty}\hlopt{::}\hlkwd{adjustmentSets}\hlstd{(grafo, causa, efeito)[[}\hlnum{1}\hlstd{]]}
+  \hlstd{regressores} \hlkwb{=} \hlkwd{c}\hlstd{(causa, var_backdoor)}
+  \hlstd{fm} \hlkwb{=} \hlkwd{paste}\hlstd{(regressores,} \hlkwc{collapse} \hlstd{=} \hlstr{"+"}\hlstd{)}
+  \hlstd{fm} \hlkwb{=} \hlkwd{paste}\hlstd{(}\hlkwd{c}\hlstd{(efeito, fm),} \hlkwc{collapse} \hlstd{=} \hlstr{"~"}\hlstd{)}
+  \hlkwd{as.formula}\hlstd{(fm)}
+\hlstd{\}}
+
+\hlcom{# Estima E[Efeito|do(causa = x)] pela }
+\hlcom{# formula do ajuste usando mu_chapeu como regressao }
+\hlstd{est_do_x_lm} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{data}\hlstd{,} \hlkwc{mu_chapeu}\hlstd{,} \hlkwc{causa}\hlstd{,} \hlkwc{x}\hlstd{)}
+\hlstd{\{}
+  \hlstd{data} \hlopt{%>%}
+    \hlstd{dplyr}\hlopt{::}\hlkwd{mutate}\hlstd{(\{\{causa\}\}} \hlkwb{:=} \hlstd{x)} \hlopt{%>%}
+    \hlkwd{predict}\hlstd{(mu_chapeu,} \hlkwc{newdata} \hlstd{= .)} \hlopt{%>%}
+    \hlkwd{mean}\hlstd{()}
+\hlstd{\}}
+
+\hlcom{# Estimação do ACE com regressão linear simples}
+\hlstd{fm} \hlkwb{<-} \hlkwd{fm_ajuste}\hlstd{(grafo,} \hlstr{"X"}\hlstd{,} \hlstr{"Y"}\hlstd{)}
+\hlstd{mu_chapeu} \hlkwb{<-} \hlkwd{lm}\hlstd{(fm,} \hlkwc{data} \hlstd{= data)}
+\hlstd{ace_est} \hlkwb{=} \hlkwd{est_do_x_lm}\hlstd{(data, mu_chapeu,} \hlstr{"X"}\hlstd{,} \hlnum{1}\hlstd{)} \hlopt{-}
+  \hlkwd{est_do_x_lm}\hlstd{(data, mu_chapeu,} \hlstr{"X"}\hlstd{,} \hlnum{0}\hlstd{)}
+\hlkwd{round}\hlstd{(ace_est)}
+\end{alltt}
+\begin{verbatim}
+## [1] 2
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+Em alguns casos, não é razoável supor que 
+$\E[Y|X,\Z]$ é linear. Nestas situações,
+é fácil adaptar o código anterior para
+algum método não-paramétrico arbitrário.
+Exibimos uma implementação usando XGBoost 
+\citep{Chen2023}:
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{library}\hlstd{(xgboost)}
+\hlstd{mu_chapeu} \hlkwb{<-} \hlkwd{xgboost}\hlstd{(}
+  \hlkwc{data} \hlstd{= data} \hlopt{%>%} \hlstd{dplyr}\hlopt{::}\hlkwd{select}\hlstd{(A, B, X)} \hlopt{%>%} \hlkwd{as.matrix}\hlstd{(),}
+  \hlkwc{label} \hlstd{= data} \hlopt{%>%} \hlstd{dplyr}\hlopt{::}\hlkwd{select}\hlstd{(Y)} \hlopt{%>%} \hlkwd{as.matrix}\hlstd{(),}
+  \hlkwc{nrounds} \hlstd{=} \hlnum{100}\hlstd{,}
+  \hlkwc{objective} \hlstd{=} \hlstr{"reg:squarederror"}\hlstd{,}
+  \hlkwc{early_stopping_rounds} \hlstd{=} \hlnum{3}\hlstd{,}
+  \hlkwc{max_depth} \hlstd{=} \hlnum{2}\hlstd{,}
+  \hlkwc{eta} \hlstd{=} \hlnum{.25}\hlstd{,}
+  \hlkwc{verbose} \hlstd{=} \hlnum{FALSE}
+\hlstd{)}
+
+\hlstd{est_do_x_xgb} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{data}\hlstd{,} \hlkwc{mu_chapeu}\hlstd{,} \hlkwc{causa}\hlstd{,} \hlkwc{x}\hlstd{)}
+\hlstd{\{}
+  \hlstd{data} \hlopt{%>%}
+    \hlstd{dplyr}\hlopt{::}\hlkwd{mutate}\hlstd{(\{\{causa\}\}} \hlkwb{:=} \hlstd{x)} \hlopt{%>%}
+    \hlstd{dplyr}\hlopt{::}\hlkwd{select}\hlstd{(A, B, X)} \hlopt{%>%}
+    \hlkwd{as.matrix}\hlstd{()} \hlopt{%>%}
+    \hlkwd{predict}\hlstd{(mu_chapeu,} \hlkwc{newdata} \hlstd{= .)} \hlopt{%>%}
+    \hlkwd{mean}\hlstd{()}
+\hlstd{\}}
+
+\hlstd{ace_est_xgb} \hlkwb{=} \hlkwd{est_do_x_xgb}\hlstd{(data, mu_chapeu,} \hlstr{"X"}\hlstd{,} \hlnum{1}\hlstd{)} \hlopt{-}
+  \hlkwd{est_do_x_xgb}\hlstd{(data, mu_chapeu,} \hlstr{"X"}\hlstd{,} \hlnum{0}\hlstd{)}
+\hlkwd{round}\hlstd{(ace_est_xgb,} \hlnum{2}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+## [1] 2
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+ Como o modelo linear era adequado para $\E[Y|X,\Z]$,
+ não vemos diferença entre a estimativa obtida
+ pela regressão linear simples e pelo XGBoost.
+ Mas será que as estimativas estão adequadas?
+ Como simulamos os dados,
+ é possível calcular diretamente $\E[Y|do(X=x)]$:
+ \begin{align}
+  \label{eq:ex_backdoor_1}
+  \E[Y|do(X=x)]
+  &= \E[\E[Y|X=x, A, B]]
+  & \text{\cref{thm:backdoor_ajuste}} \nonumber \\
+  &= \E[\E[\E[Y|X=x, A, B, C]|X=x, A, B]]
+  & \text{Lei da esperança total} \nonumber \\
+  &= \E[\E[A+B+C+X|X=x, A, B]]
+  & Y \sim N(A+B+C+X, \sigma^2) \nonumber \\
+  &= \E[A + B + 2x]
+  & C \sim N(X, \sigma^2) \nonumber \\
+  &= 2x
+  & \E[A] = \E[B] = 0
+ \end{align}
+ Portanto,
+ \begin{align*}
+  \ACE
+  &= \E[Y|do(X=1)] - \E[Y|do(X=0)] \\
+  &= 2 \cdot 1 - 2 \cdot 0 = 2
+  & \text{\cref{eq:ex_backdoor_1}}
+ \end{align*}
+ Portanto, as estimativas obtidas do ACE
+ estão adequadas.
+\end{example}
 
 \section{Controlando mediadores (critério frontdoor)}
 \label{sec:frontdoor}
@@ -2195,6 +2475,19 @@ Combinando estas aproximações, obtemos:
  \caption{Modelo estrutural causal do \cref{ex:d-sep}}
  \label{fig:d-sep}
 \end{figure}
+\end{exercise}
+
+\begin{exercise}
+ Prove que a variância amostral satisfaz
+ o \cref{def:perm}.
+\end{exercise}
+
+\begin{exercise}
+ Utilizando como referência o grafo e
+ o código no \cref{ex:backdoor_est_1},
+ simule dados tais que a estimativa do $\ACE$ é
+ diferente quando um método de regressão linear e
+ um de regressão não-paramétrica são usados.
 \end{exercise}
 
 \bibliographystyle{apalike}
@@ -2641,6 +2934,21 @@ ao condicionamento usual no SCM aumentado.
  \end{align*}
 \end{proof}
 
+\begin{lemma}
+ \label{lemma:conv_l1_to_p}
+ Se $(W_n)_{n \in \mathbb{N}}$ é uma sequência de
+ variáveis aleatórias tais que $\E[|W_n|] = o(1)$,
+ então $W_n \convp 0$.
+\end{lemma}
+
+\begin{proof}
+ \begin{align*}
+  \P(|W_n| > \epsilon)
+  &\leq \frac{\E[|W_n|]}{\epsilon} & \text{Markov} \\
+  &= o(1)
+ \end{align*}
+\end{proof}
+
 \begin{proof}[Prova do \cref{thm:conv_ajuste}]
  Como $\E[|\mu(x,\Z)|] < \infty$,
  pela Lei dos Grandes Números,
@@ -2651,27 +2959,19 @@ ao condicionamento usual no SCM aumentado.
  Portanto, pelo \cref{thm:backdoor_est_1},
  é suficiente provar que
  $\hdoy - \frac{\sum_{i=1}^n \mu(x,\Z_i)}{n} \convp 0$.
+ Usando o \cref{lemma:conv_l1_to_p}, é suficiente provar que 
+ $\E\left[\bigg|\hdoy - \frac{\sum_{i=1}^n \mu(x,\Z_i)}{n}\bigg|\right] 
+ = o(1)$.
  \begin{align*}
-  \P\left(\bigg|\hdoy - \frac{\sum_{i=1}^n \mu(x,\Z_i)}{n}\bigg|
-  > \epsilon \right)
-  &= \P\left(\bigg|\frac{\sum_{i=1}^n 
-  (\hat{\mu}(x,\Z_i)-\mu(x,\Z_i))}{n}\bigg|
-  > \epsilon \right) \\
-  &= \P\left(\left(\sum_{i=1}^n 
-  (\hat{\mu}(x,\Z_i)-\mu(x,\Z_i))\right)^2
-  > n^2 \epsilon^2 \right) \\
-  &\leq \frac{\E\left[\left(\sum_{i=1}^n 
-  (\hat{\mu}(x,\Z_i)-\mu(x,\Z_i))\right)^2
-  \right]}
-  {n^2 \epsilon^2}
-  & \text{Markov} \\
-  &\leq \frac{n^2 \E[(\hat{\mu}(x,\Z_1)-\mu(x,\Z_1))^2]}
-  {n^2 \epsilon^2}
-  & \text{Cauchy-Schwarz} \\
-  &= o(1)
+  \E\left[\bigg|\hdoy - \frac{\sum_{i=1}^n \mu(x,\Z_i)}{n}\bigg|\right]
+  &= \E\left[\bigg|\frac{\sum_{i=1}^n 
+  (\hat{\mu}(x,\Z_i)-\mu(x,\Z_i))}{n}\bigg|\right] \\
+  &\leq n^{-1}\sum_{i=1}^n \E\left[| 
+  \hat{\mu}(x,\Z_i)-\mu(x,\Z_i)|\right] \\
+  &= \E\left[|\hat{\mu}(x,\Z)-\mu(x,\Z)|\right] 
+  & \text{\cref{def:perm}} \\
+  &= o(1)]
  \end{align*}
- A última conclusão decorre da suposição de que
- $\E[(\hat{\mu}(x,\Z)-\mu(x,\Z))^2] = o(1)$.
 \end{proof}
 
 \begin{proof}[Prova do \cref{thm:conv_ipw}]
@@ -2680,36 +2980,122 @@ ao condicionamento usual no SCM aumentado.
  \convp \E\left[\frac{Y \I(X = x)}{f(x|\Z)}\right]$. Como
  pelo \cref{thm:backdoor_est_2} temos que
  $\E\left[\frac{Y \I(X = x)}{f(x|\Z)}\right] = \E[Y|do(X=x)]$,
- é suficiente provar que
+ usando o \cref{lemma:conv_l1_to_p} é suficiente provar que 
  \begin{align*}
-  n^{-1} \sum_{i=1}^n \frac{Y_i \I(X_i = x)}{\hf(x|\Z_i)} 
-  - n^{-1} \sum_{i=1}^n \frac{Y_i \I(X_i = x)}{f(x|\Z_i)}
-  &\convp 0
+ \E\left[\bigg|n^{-1} \sum_{i=1}^n \frac{Y_i \I(X_i = x)}{\hf(x|\Z_i)} 
+  - n^{-1} \sum_{i=1}^n \frac{Y_i \I(X_i = x)}{f(x|\Z_i)}\bigg|\right]
+  &= o(1).
  \end{align*}
  \begin{align*}
-  &\P\left(\bigg| n^{-1} \sum_{i=1}^n \frac{Y_i \I(X_i = x)}{\hf(x|\Z_i)}
-  - n^{-1} \sum_{i=1}^n \frac{Y_i \I(X_i = x)}{f(x|\Z_i)}
-  \bigg| > \epsilon \right) \\
-  =& \P\left(\bigg| \sum_{i=1}^n \frac{Y_i \I(X_i = x)
-  (\hf(x|\Z_i)-f(x|\Z_i))}{\hf(x|\Z_i)f(x|\Z_i)} \bigg| 
-  > n\epsilon \right) \\
-  \leq& \P\left(\bigg| \sum_{i=1}^n Y_i \I(X_i = x)
-  (\hf(x|\Z_i)-f(x|\Z_i)) \bigg| 
-  > n\delta^2\epsilon \right) 
-  & \sup_\z \hf(x|\z) f(x|\z) > \delta^2 \\
-  \leq& \frac{\E\left[\bigg| \sum_{i=1}^n Y_i \I(X_i = x)
-  (\hf(x|\Z_i)-f(x|\Z_i)) \bigg|\right]} 
-  {n\delta^2\epsilon} 
-  & \text{Markov} \\
-  \leq& \frac{n\E\left[|Y \I(X = x)(\hf(x|\Z)-f(x|\Z))|\right]} 
-  {n\delta^2\epsilon} 
-  & \text{i.i.d.} \\
-  \leq& \frac{\E\left[|\hf(x|\Z)-f(x|\Z)|\E[|Y| \I(X = x)|\Z]\right]} 
-  {\delta^2\epsilon} \\
-  \leq& \frac{M\E\left[|\hf(x|\Z)-f(x|\Z)|\right]} 
-  {\delta^2\epsilon} 
-  & \sup_\z \E[|Y| \I(X = x)|\Z=\z] < M \\
+  &\E\left[\bigg|n^{-1} \sum_{i=1}^n \frac{Y_i \I(X_i = x)}{\hf(x|\Z_i)} 
+  - n^{-1} \sum_{i=1}^n \frac{Y_i \I(X_i = x)}{f(x|\Z_i)}\bigg|\right] \\
+  \leq& n^{-1}\sum_{i=1}^n
+  \E\left[\bigg|\frac{Y_i \I(X_i = x)}{\hf(x|\Z_i)} 
+  -\frac{Y_i \I(X_i = x)}{f(x|\Z_i)}\bigg|\right] \\
+  =& \E\left[\bigg|\frac{Y_1 \I(X_1 = x)}{\hf(x|\Z_1)} 
+  -\frac{Y_1 \I(X_1 = x)}{f(x|\Z_1)}\bigg|\right]
+  & \text{\cref{def:perm}} \\
+  =& \E\left[\bigg|\frac{Y_i \I(X_i = x)(\hf(x|\Z_i)-f(x|\Z_i))}
+  {\hf(x|\Z_i)f(x|\Z_i)}\bigg|\right] \\
+  \leq& \delta^{-2}\E\left[|Y_i \I(X_i = x)(\hf(x|\Z_i)-f(x|\Z_i))|\right] 
+  & \inf_z \min\{f(x|\Z_1), \hf(x|\Z_1)\} > \delta \\
+  =& \delta^{-2}\E\left[|
+  \hf(x|\Z_i)-f(x|\Z_i)|\cdot \E[|Y_i \I(X_i = x)|\big|\Z]\right] 
+  & \text{Lei da esperança total} \\
+  \leq& M\delta^{-2} \E\left[|\hf(x|\Z_i)-f(x|\Z_i)|\right]
+  & \sup_z \E[|Y_i \I(X_i = x)|\Z=\z] < M \\
   =& o(1)
+ \end{align*}
+\end{proof}
+
+\begin{proof}[Prova do \cref{thm:conv_duplo_robusto}]
+ Se as condições do \cref{thm:conv_ajuste} estão satisfeitas,
+ então decorre deste resultado que 
+ $\hdoy \convp \E[Y|do(X=x)]$. Portanto, 
+ usando \cref{lemma:conv_l1_to_p}, 
+ resta demonstrar que
+ \begin{align*}
+  \E\left[\bigg|\hdoyb 
+  -\sum_{i=1}^n \frac{\I(X_i=x)\hat{\mu}(x,\Z_i)}
+  {n\hat{f}(x|\Z_i)}\bigg|\right]
+  &= o(1)
+ \end{align*}
+ \begin{align*}
+  &\E\left[\bigg|\hdoyb 
+  -\sum_{i=1}^n \frac{\I(X_i=x)\hat{\mu}(x,\Z_i)}
+  {n\hat{f}(x|\Z_i)}\bigg|\right] \\
+  =& \E\left[\bigg|\sum_{i=1}^n \frac{\I(X_i=x)(Y_i-\hat{\mu}(x,\Z_i))}
+  {n\hat{f}(x|\Z_i)}\bigg|\right]
+  & \text{\cref{def:ipw}} \\
+  \leq& n{-1}\sum_{i=1}^n
+  \E\left[\bigg|\frac{\I(X_i=x)(Y_i-\hat{\mu}(x,\Z_i))}
+  {\hat{f}(x|\Z_i)}\bigg|\right] \\
+  =& \E\left[\bigg|\frac{\I(X_1=x)(Y_1-\hat{\mu}(x,\Z_1))}
+  {\hat{f}(x|\Z_1)}\bigg|\right]
+  & \text{\cref{def:perm}} \\
+  \leq& \delta^{-1}
+  \E\left[\big|\I(X_1=x)(Y_1-\hat{\mu}(x,\Z_1))
+  \big|\right]
+  & \inf_\z \hf(x|\z) > \delta \\
+  \leq& \delta^{-1}
+  \E\left[\big|\I(X_1=x)(\E[Y_1|X_1,\Z_1]-\hat{\mu}(x,\Z_1))
+  \big|\right]
+  & \text{Lei da esperança total} \\
+  =& \delta^{-1}
+  \E\left[\big|\I(X_1=x)(\E[Y_1|X_1=x,\Z_1]-\hat{\mu}(x,\Z_1))
+  \big|\right]
+  & \I(X_1=x)\E[Y_1|X_1,\Z_1] 
+  \equiv \I(X_1=x)\E[Y_1|X_1=x,\Z_1] \\
+  \leq&\delta^{-1}
+  \E\left[\big|\E[Y_1|X_1=x,\Z_1]-\hat{\mu}(x,\Z_1)
+  \big|\right] \\
+  =& \E\left[\big|\mu(x,\Z_1)-\hat{\mu}(x,\Z_1)
+  \big|\right] = o(1)
+ \end{align*}
+ A seguir, se as condições do 
+ \cref{thm:conv_ipw} estão satisfeitas,
+ então decorre deste resultado que 
+ $\hdoyb \convp \E[Y|do(X=x)]$.
+ Portanto, 
+ usando \cref{lemma:conv_l1_to_p}, 
+ resta demonstrar que
+ \begin{align*}
+  \E\left[\bigg|\hdoy 
+  -\sum_{i=1}^n \frac{\I(X_i=x)\hat{\mu}(x,\Z_i)}
+  {n\hat{f}(x|\Z_i)}\bigg|\right]
+  &= o(1)
+ \end{align*}
+ \begin{align*}
+  &\E\left[\bigg|\hdoy 
+  -\sum_{i=1}^n \frac{\I(X_i=x)\hat{\mu}(x,\Z_i)}
+  {n\hat{f}(x|\Z_i)}\bigg|\right] \\
+  =& \E\left[\bigg|\sum_{i=1}^n 
+  \frac{(\hf(x|\Z_i)-\I(X_i=x))
+  \hat{\mu}(x,\Z_i)}
+  {n\hf(x|\Z_i)}\bigg|\right]
+  & \text{\cref{def:ajuste}} \\
+  \leq& n^{-1}\sum_{i=1}^n\E\left[\bigg| 
+  \frac{(\hf(x|\Z_i)-\I(X_i=x))
+  \hat{\mu}(x,\Z_i)}
+  {\hf(x|\Z_i)}\bigg|\right] \\
+  =& \E\left[\bigg| 
+  \frac{(\hf(x|\Z_1)-\I(X_1=x))
+  \hat{\mu}(x,\Z_1)}
+  {\hf(x|\Z_1)}\bigg|\right] 
+  & \text{\cref{def:perm}} \\
+  \leq& \delta^{-1} \E\left[\big| 
+  (\hf(x|\Z_1)-\I(X_1=x))
+  \hat{\mu}(x,\Z_1)\big|\right] 
+  & \inf_\z \hf(x|\Z_1) > \delta \\
+  \leq& \delta^{-1}M \E\left[\big| 
+  \hf(x|\Z_1)-\I(X_1=x)\big|\right] 
+  & \sup_\z \hat{\mu}(x,\z) < M \\
+  =& \delta^{-1}M \E\left[\big| 
+  \hf(x|\Z_1)-\E[\I(X_1=x)|\Z_1]\big|\right] 
+  & \text{Lei da esperança total} \\
+  =& \delta^{-1}M \E\left[\big| 
+  \hf(x|\Z_1)-f(x|\Z_1)\big|\right]
+  = o(1)
  \end{align*}
 \end{proof}
 
