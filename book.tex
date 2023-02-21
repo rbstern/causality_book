@@ -1953,7 +1953,7 @@ Por meio do \cref{thm:backdoor},
 $\E[Y|do(X)]$ e esperanças obtidas
 no modelo observacional.
 Estas equivalências são descritas
-nos \cref{thm:backdoor_est_1,thm:backdoor_est_2}.
+nos \cref{thm:backdoor_ajuste,thm:backdoor_ipw}.
 
 \begin{theorem}
  \label{thm:backdoor_ajuste}
@@ -1979,7 +1979,7 @@ nos \cref{thm:backdoor_est_1,thm:backdoor_est_2}.
 \end{theorem}
 
 A seguir, veremos como os
-\cref{thm:backdoor_est_1,thm:backdoor_est_2} podem
+\cref{thm:backdoor_ajuste,thm:backdoor_ipw} podem
 ser usados para estimar o efeito causal.
 Para provar resultados sobre os estimadores obtidos,
 a seguinte definição será útil
@@ -2080,6 +2080,179 @@ por meio de expressões como o $\ACE$.
  $\hdoy \convp \E[Y|do(X=x)]$.
 \end{theorem}
 
+A seguir, utilizamos dados simulados para
+ilustrar a implementação da fórmula do ajuste.
+
+\begin{example}
+ \label{ex:backdoor_est_ajuste}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{figure}[t]
+
+{\centering \includegraphics[width=\maxwidth]{./figures/backdoor_est_ex-1} 
+
+}
+
+\caption[DAG usado como exemplo para estimar efeito de X em Y]{DAG usado como exemplo para estimar efeito de X em Y.}\label{fig:backdoor_est_ex}
+\end{figure}
+
+\end{knitrout}
+
+Considere que o grafo causal é
+dado pela \cref{fig:backdoor_est_ex}.
+Vamos supor que os dados são gerados da seguinte forma:
+$\sigma^2 = 0.01$,
+$A \sim N(0, \sigma^2)$, 
+$B \sim N(0, \sigma^2)$,
+$\epsilon \sim Bernoulli(0.95)$
+$X \equiv \I(A + B > 0)\epsilon + \I(A + B < 0)(1-\epsilon)$,
+$C \sim N(X, \sigma^2)$, e
+$Y \sim N(A + B + C + X, \sigma^2)$:
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{# Especificar o grafo}
+\hlstd{grafo} \hlkwb{<-} \hlstd{dagitty}\hlopt{::}\hlkwd{dagitty}\hlstd{(}\hlstr{"dag \{
+    \{A B\} -> \{ X Y \}; X -> \{C Y\}; C -> Y \}"}\hlstd{)}
+
+\hlcom{# Simular os dados}
+\hlstd{n} \hlkwb{<-} \hlnum{10}\hlopt{^}\hlnum{5}
+\hlstd{sd} \hlkwb{=} \hlnum{0.1}
+\hlstd{A} \hlkwb{<-} \hlkwd{rnorm}\hlstd{(n,} \hlnum{0}\hlstd{, sd)}
+\hlstd{B} \hlkwb{<-} \hlkwd{rnorm}\hlstd{(n,} \hlnum{0}\hlstd{, sd)}
+\hlstd{eps} \hlkwb{<-} \hlkwd{rbinom}\hlstd{(n,} \hlnum{1}\hlstd{,} \hlnum{0.8}\hlstd{)}
+\hlstd{X} \hlkwb{<-} \hlkwd{as.numeric}\hlstd{(eps}\hlopt{*}\hlstd{((A} \hlopt{+} \hlstd{B)} \hlopt{>} \hlnum{0}\hlstd{)} \hlopt{+}
+                  \hlstd{(}\hlnum{1}\hlopt{-}\hlstd{eps)}\hlopt{*}\hlstd{((A} \hlopt{+} \hlstd{B)} \hlopt{<=} \hlnum{0}\hlstd{))}
+\hlstd{C} \hlkwb{<-} \hlkwd{rnorm}\hlstd{(n, X, sd)}
+\hlstd{Y} \hlkwb{<-} \hlkwd{rnorm}\hlstd{(n, A} \hlopt{+} \hlstd{B} \hlopt{+} \hlstd{C} \hlopt{+} \hlstd{X, sd)}
+\hlstd{data} \hlkwb{<-} \hlstd{dplyr}\hlopt{::}\hlkwd{tibble}\hlstd{(A, B, C, X, Y)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+A seguir, estimaremos o efeito causal pela
+fórmula do ajuste (\cref{def:ajuste}).
+Iniciaremos a análise utilizando $\hmu$ como
+sendo uma regressão linear simples:
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{# Sejam Z variáveis que satisfazem o critério backdoor para}
+\hlcom{# estimar o efeito causal de causa em efeito em grafo.}
+\hlcom{# Retorna uma fórmula do tipo Y ~ X + Z_1 + ... + Z_d}
+\hlstd{fm_ajuste} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{grafo}\hlstd{,} \hlkwc{causa}\hlstd{,} \hlkwc{efeito}\hlstd{)}
+\hlstd{\{}
+  \hlstd{var_backdoor} \hlkwb{<-} \hlstd{dagitty}\hlopt{::}\hlkwd{adjustmentSets}\hlstd{(grafo, causa, efeito)[[}\hlnum{1}\hlstd{]]}
+  \hlstd{regressores} \hlkwb{=} \hlkwd{c}\hlstd{(causa, var_backdoor)}
+  \hlstd{fm} \hlkwb{=} \hlkwd{paste}\hlstd{(regressores,} \hlkwc{collapse} \hlstd{=} \hlstr{"+"}\hlstd{)}
+  \hlstd{fm} \hlkwb{=} \hlkwd{paste}\hlstd{(}\hlkwd{c}\hlstd{(efeito, fm),} \hlkwc{collapse} \hlstd{=} \hlstr{"~"}\hlstd{)}
+  \hlkwd{as.formula}\hlstd{(fm)}
+\hlstd{\}}
+
+\hlcom{# Estima E[Efeito|do(causa = x)] pela }
+\hlcom{# formula do ajuste usando mu_chapeu como regressao }
+\hlstd{est_do_x_lm} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{data}\hlstd{,} \hlkwc{mu_chapeu}\hlstd{,} \hlkwc{causa}\hlstd{,} \hlkwc{x}\hlstd{)}
+\hlstd{\{}
+  \hlstd{data} \hlopt{%>%}
+    \hlstd{dplyr}\hlopt{::}\hlkwd{mutate}\hlstd{(\{\{causa\}\}} \hlkwb{:=} \hlstd{x)} \hlopt{%>%}
+    \hlkwd{predict}\hlstd{(mu_chapeu,} \hlkwc{newdata} \hlstd{= .)} \hlopt{%>%}
+    \hlkwd{mean}\hlstd{()}
+\hlstd{\}}
+
+\hlcom{# Estimação do ACE com regressão linear simples}
+\hlstd{fm} \hlkwb{<-} \hlkwd{fm_ajuste}\hlstd{(grafo,} \hlstr{"X"}\hlstd{,} \hlstr{"Y"}\hlstd{)}
+\hlstd{mu_chapeu_lm} \hlkwb{<-} \hlkwd{lm}\hlstd{(fm,} \hlkwc{data} \hlstd{= data)}
+\hlstd{ace_ajuste_lm} \hlkwb{=} \hlkwd{est_do_x_lm}\hlstd{(data, mu_chapeu_lm,} \hlstr{"X"}\hlstd{,} \hlnum{1}\hlstd{)} \hlopt{-}
+  \hlkwd{est_do_x_lm}\hlstd{(data, mu_chapeu_lm,} \hlstr{"X"}\hlstd{,} \hlnum{0}\hlstd{)}
+\hlkwd{round}\hlstd{(ace_ajuste_lm)}
+\end{alltt}
+\begin{verbatim}
+## [1] 2
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+Em alguns casos, não é razoável supor que 
+$\E[Y|X,\Z]$ é linear. Nestas situações,
+é fácil adaptar o código anterior para
+algum método não-paramétrico arbitrário.
+Exibimos uma implementação usando XGBoost 
+\citep{Chen2023}:
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{library}\hlstd{(xgboost)}
+\hlstd{var_backdoor} \hlkwb{<-} \hlstd{dagitty}\hlopt{::}\hlkwd{adjustmentSets}\hlstd{(grafo,} \hlstr{"X"}\hlstd{,} \hlstr{"Y"}\hlstd{)[[}\hlnum{1}\hlstd{]]}
+\hlstd{mu_chapeu} \hlkwb{<-} \hlkwd{xgboost}\hlstd{(}
+  \hlkwc{data} \hlstd{= data} \hlopt{%>%}
+    \hlstd{dplyr}\hlopt{::}\hlkwd{select}\hlstd{(}\hlkwd{all_of}\hlstd{(}\hlkwd{c}\hlstd{(var_backdoor,} \hlstr{"X"}\hlstd{)))} \hlopt{%>%}
+    \hlkwd{as.matrix}\hlstd{(),}
+  \hlkwc{label} \hlstd{= data} \hlopt{%>%}
+    \hlstd{dplyr}\hlopt{::}\hlkwd{select}\hlstd{(Y)} \hlopt{%>%}
+    \hlkwd{as.matrix}\hlstd{(),}
+  \hlkwc{nrounds} \hlstd{=} \hlnum{100}\hlstd{,}
+  \hlkwc{objective} \hlstd{=} \hlstr{"reg:squarederror"}\hlstd{,}
+  \hlkwc{early_stopping_rounds} \hlstd{=} \hlnum{3}\hlstd{,}
+  \hlkwc{max_depth} \hlstd{=} \hlnum{2}\hlstd{,}
+  \hlkwc{eta} \hlstd{=} \hlnum{.25}\hlstd{,}
+  \hlkwc{verbose} \hlstd{=} \hlnum{FALSE}
+\hlstd{)}
+
+\hlstd{est_do_x_xgb} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{data}\hlstd{,} \hlkwc{mu_chapeu}\hlstd{,} \hlkwc{causa}\hlstd{,} \hlkwc{x}\hlstd{)}
+\hlstd{\{}
+  \hlstd{data} \hlopt{%>%}
+    \hlstd{dplyr}\hlopt{::}\hlkwd{mutate}\hlstd{(\{\{causa\}\}} \hlkwb{:=} \hlstd{x)} \hlopt{%>%}
+    \hlstd{dplyr}\hlopt{::}\hlkwd{select}\hlstd{(}\hlkwd{c}\hlstd{(var_backdoor, causa))} \hlopt{%>%}
+    \hlkwd{as.matrix}\hlstd{()} \hlopt{%>%}
+    \hlkwd{predict}\hlstd{(mu_chapeu,} \hlkwc{newdata} \hlstd{= .)} \hlopt{%>%}
+    \hlkwd{mean}\hlstd{()}
+\hlstd{\}}
+
+\hlstd{ace_est_xgb} \hlkwb{=} \hlkwd{est_do_x_xgb}\hlstd{(data, mu_chapeu,} \hlstr{"X"}\hlstd{,} \hlnum{1}\hlstd{)} \hlopt{-}
+  \hlkwd{est_do_x_xgb}\hlstd{(data, mu_chapeu,} \hlstr{"X"}\hlstd{,} \hlnum{0}\hlstd{)}
+\hlkwd{round}\hlstd{(ace_est_xgb,} \hlnum{2}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+## [1] 2
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+ Como o modelo linear era adequado para $\E[Y|X,\Z]$,
+ não vemos diferença entre a estimativa obtida
+ pela regressão linear simples e pelo XGBoost.
+ Mas será que as estimativas estão adequadas?
+ Como simulamos os dados,
+ é possível calcular diretamente $\E[Y|do(X=x)]$:
+ \begin{align}
+  \label{eq:ex_backdoor_1}
+  \E[Y|do(X=x)]
+  &= \E[\E[Y|X=x, A, B]]
+  & \text{\cref{thm:backdoor_ajuste}} \nonumber \\
+  &= \E[\E[\E[Y|X=x, A, B, C]|X=x, A, B]]
+  & \text{Lei da esperança total} \nonumber \\
+  &= \E[\E[A+B+C+X|X=x, A, B]]
+  & Y \sim N(A+B+C+X, \sigma^2) \nonumber \\
+  &= \E[A + B + 2x]
+  & C \sim N(X, \sigma^2) \nonumber \\
+  &= 2x
+  & \E[A] = \E[B] = 0
+ \end{align}
+ Uma vez calculado $\E[Y|do(X=x)]$,
+ podemos obter o $\ACE$:
+ \begin{align*}
+  \ACE
+  &= \E[Y|do(X=1)] - \E[Y|do(X=0)] \\
+  &= 2 \cdot 1 - 2 \cdot 0 = 2
+  & \text{\cref{eq:ex_backdoor_1}}
+ \end{align*}
+ Portanto, as estimativas do $\ACE$ obtidas 
+ pela regressão linear e pelo xgboost 
+ estão adequadas.
+\end{example}
+
 \subsubsection{Ponderação pelo inverso do escore de propensidade (IPW)}
 
 Uma outra forma de estimar $\E[Y|do(X=x)]$ é
@@ -2135,6 +2308,95 @@ Combinando estas aproximações, obtemos:
  $\inf_z \min\{f(x|\Z_1), \hf(x|\Z_1)\} > \delta$, então
  $\hdoyb \convp \E[Y|do(X=x)]$.
 \end{theorem}
+
+A seguir, utilizamos novamente dados simulados para
+ilustrar a implementação de IPW:
+
+\begin{example}
+\label{ex:backdoor_est_ipw}
+Considere que o grafo causal e
+o modelo de geração dos dados são 
+idênticos àqueles do \cref{ex:backdoor_est_ajuste}.
+ 
+Iniciaremos a análise utilizando 
+regressão logística para estimar $\hf$.
+ 
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{# Sejam Z variáveis que satisfazem o critério backdoor para}
+\hlcom{# estimar o efeito causal de causa em efeito em grafo.}
+\hlcom{# Retorna uma fórmula do tipo X ~ Z_1 + ... + Z_d}
+\hlstd{fm_ipw} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{grafo}\hlstd{,} \hlkwc{causa}\hlstd{,} \hlkwc{efeito}\hlstd{)}
+\hlstd{\{}
+ \hlstd{var_backdoor} \hlkwb{<-} \hlstd{dagitty}\hlopt{::}\hlkwd{adjustmentSets}\hlstd{(grafo, causa, efeito)[[}\hlnum{1}\hlstd{]]}
+ \hlstd{fm} \hlkwb{=} \hlkwd{paste}\hlstd{(var_backdoor,} \hlkwc{collapse} \hlstd{=} \hlstr{"+"}\hlstd{)}
+ \hlstd{fm} \hlkwb{=} \hlkwd{paste}\hlstd{(}\hlkwd{c}\hlstd{(causa, fm),} \hlkwc{collapse} \hlstd{=} \hlstr{"~"}\hlstd{)}
+ \hlkwd{as.formula}\hlstd{(fm)}
+\hlstd{\}}
+
+\hlcom{# Estimação do ACE por IPW onde}
+\hlcom{# Supomos X binário e}
+\hlcom{# f_1 é o vetor P(X_i=1|Z_i)}
+\hlstd{ACE_ipw} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{data}\hlstd{,} \hlkwc{causa}\hlstd{,} \hlkwc{efeito}\hlstd{,} \hlkwc{f_1}\hlstd{)}
+\hlstd{\{}
+ \hlstd{data} \hlopt{%>%}
+ \hlkwd{mutate}\hlstd{(}\hlkwc{f_1} \hlstd{= f_1,}
+        \hlkwc{est_1} \hlstd{= \{\{efeito\}\}}\hlopt{*}\hlstd{(\{\{causa\}\}}\hlopt{==}\hlnum{1}\hlstd{)}\hlopt{/}\hlstd{f_1,}
+        \hlkwc{est_0} \hlstd{= \{\{efeito\}\}}\hlopt{*}\hlstd{(\{\{causa\}\}}\hlopt{==}\hlnum{0}\hlstd{)}\hlopt{/}\hlstd{(}\hlnum{1}\hlopt{-}\hlstd{f_1)}
+ \hlstd{)} \hlopt{%>%}
+ \hlkwd{summarise}\hlstd{(}\hlkwc{do_1} \hlstd{=} \hlkwd{mean}\hlstd{(est_1),}
+           \hlkwc{do_0} \hlstd{=} \hlkwd{mean}\hlstd{(est_0))} \hlopt{%>%}
+ \hlkwd{mutate}\hlstd{(}\hlkwc{ACE} \hlstd{= do_1} \hlopt{-} \hlstd{do_0)} \hlopt{%>%}
+ \hlstd{dplyr}\hlopt{::}\hlkwd{select}\hlstd{(ACE)}
+\hlstd{\}}
+
+\hlstd{fm} \hlkwb{<-} \hlkwd{fm_ipw}\hlstd{(grafo,} \hlstr{"X"}\hlstd{,} \hlstr{"Y"}\hlstd{)}
+\hlstd{f_chapeu} \hlkwb{<-} \hlkwd{glm}\hlstd{(fm,} \hlkwc{family} \hlstd{=} \hlstr{"binomial"}\hlstd{,} \hlkwc{data} \hlstd{= data)}
+\hlstd{f_1_lm} \hlkwb{<-} \hlkwd{predict}\hlstd{(f_chapeu,} \hlkwc{type} \hlstd{=} \hlstr{"response"}\hlstd{)}
+\hlstd{ace_ipw_lm} \hlkwb{<-} \hlstd{data} \hlopt{%>%} \hlkwd{ACE_ipw}\hlstd{(X, Y, f_1_lm)} \hlopt{%>%} \hlkwd{as.numeric}\hlstd{()}
+\hlstd{ace_ipw_lm} \hlopt{%>%} \hlkwd{round}\hlstd{(}\hlnum{2}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+## [1] 2.09
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+Também é fácil adaptar o código acima para
+estimar $\ACE$ por IPW utilizando
+algum método não-paramétrico para estimar $\hf$.
+Abaixo há um exemplo utilizando o XGBoost:
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{var_backdoor} \hlkwb{<-} \hlstd{dagitty}\hlopt{::}\hlkwd{adjustmentSets}\hlstd{(grafo,} \hlstr{"X"}\hlstd{,} \hlstr{"Y"}\hlstd{)[[}\hlnum{1}\hlstd{]]}
+\hlstd{f_chapeu} \hlkwb{<-} \hlkwd{xgboost}\hlstd{(}
+ \hlkwc{data} \hlstd{= data} \hlopt{%>%}
+   \hlstd{dplyr}\hlopt{::}\hlkwd{select}\hlstd{(}\hlkwd{all_of}\hlstd{(var_backdoor))} \hlopt{%>%}
+   \hlkwd{as.matrix}\hlstd{(),}
+ \hlkwc{label} \hlstd{= data} \hlopt{%>%}
+   \hlstd{dplyr}\hlopt{::}\hlkwd{select}\hlstd{(X)} \hlopt{%>%}
+   \hlkwd{as.matrix}\hlstd{(),}
+ \hlkwc{nrounds} \hlstd{=} \hlnum{100}\hlstd{,}
+ \hlkwc{objective} \hlstd{=} \hlstr{"binary:logistic"}\hlstd{,}
+ \hlkwc{early_stopping_rounds} \hlstd{=} \hlnum{3}\hlstd{,}
+ \hlkwc{max_depth} \hlstd{=} \hlnum{2}\hlstd{,}
+ \hlkwc{eta} \hlstd{=} \hlnum{.25}\hlstd{,}
+ \hlkwc{verbose} \hlstd{=} \hlnum{FALSE}
+\hlstd{)}
+
+\hlstd{covs} \hlkwb{<-} \hlstd{data} \hlopt{%>%} \hlstd{dplyr}\hlopt{::}\hlkwd{select}\hlstd{(}\hlkwd{all_of}\hlstd{(var_backdoor))} \hlopt{%>%} \hlkwd{as.matrix}\hlstd{()}
+\hlstd{f_1} \hlkwb{<-} \hlkwd{predict}\hlstd{(f_chapeu,} \hlkwc{newdata} \hlstd{= covs)}
+\hlstd{data} \hlopt{%>%} \hlkwd{ACE_ipw}\hlstd{(X, Y, f_1)} \hlopt{%>%} \hlkwd{as.numeric}\hlstd{()} \hlopt{%>%} \hlkwd{round}\hlstd{(}\hlnum{2}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+## [1] 1.97
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+\end{example}
 
 \subsubsection{Estimador duplamente robusto}
 
@@ -2196,170 +2458,43 @@ converge para $0$.
  \end{align*}
 \end{theorem}
 
-\subsubsection{Exemplos de estimação causal com o critério backdoor}
-
-Nesta seção veremos exemplos de 
-como estimar o efeito causal de $X$ em $Y$
-utilizando o critério backdoor.
-
-\begin{example}[Fórmula do ajuste]
- \label{ex:backdoor_est_1}
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{figure}[t]
-
-{\centering \includegraphics[width=\maxwidth]{./figures/backdoor_est_ex-1} 
-
-}
-
-\caption[DAG usado como exemplo para estimar efeito de X em Y]{DAG usado como exemplo para estimar efeito de X em Y.}\label{fig:backdoor_est_ex}
-\end{figure}
-
-\end{knitrout}
-
-Considere que o grafo causal é
-dado pela \cref{fig:backdoor_est_ex}.
-Vamos supor que os dados são gerados da seguinte forma:
-$\sigma^2 = 0.01$,
-$A \sim N(0, \sigma^2)$, 
-$B \sim N(0, \sigma^2)$,
-$X \equiv \I(A + B > 0)$,
-$C \sim N(X, \sigma^2)$, e
-$Y \sim N(A + B + C + X, \sigma^2)$:
-
+\begin{example}[Estimador duplamente robusto]
+\label{ex:backdoor_est_robusto}
+Considere que o grafo causal e
+o modelo de geração dos dados são iguais
+àqueles descritos no \cref{ex:backdoor_est_ajuste}.
+Para implementar o estimador duplamente robusto
+combinaremos o estimador da fórmula do ajuste obtido 
+por regressão linear no \cref{ex:backdoor_est_ajuste} e
+aquele de IPW por regressão logística
+no \cref{ex:backdoor_est_ipw}.
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlcom{# Especificar o grafo}
-\hlstd{grafo} \hlkwb{<-} \hlstd{dagitty}\hlopt{::}\hlkwd{dagitty}\hlstd{(}\hlstr{"dag \{
-    \{A B\} -> \{ X Y \}; X -> \{C Y\}; C -> Y \}"}\hlstd{)}
-
-\hlcom{# Simular os dados}
-\hlstd{n} \hlkwb{<-} \hlnum{10}\hlopt{^}\hlnum{5}
-\hlstd{sd} \hlkwb{=} \hlnum{0.1}
-\hlstd{A} \hlkwb{<-} \hlkwd{rnorm}\hlstd{(n,} \hlnum{0}\hlstd{, sd)}
-\hlstd{B} \hlkwb{<-} \hlkwd{rnorm}\hlstd{(n,} \hlnum{0}\hlstd{, sd)}
-\hlstd{X} \hlkwb{<-} \hlkwd{as.numeric}\hlstd{((A} \hlopt{+} \hlstd{B)} \hlopt{>} \hlnum{0}\hlstd{)}
-\hlstd{C} \hlkwb{<-} \hlkwd{rnorm}\hlstd{(n, X, sd)}
-\hlstd{Y} \hlkwb{<-} \hlkwd{rnorm}\hlstd{(n, A} \hlopt{+} \hlstd{B} \hlopt{+} \hlstd{C} \hlopt{+} \hlstd{X, sd)}
-\hlstd{data} \hlkwb{<-} \hlstd{dplyr}\hlopt{::}\hlkwd{tibble}\hlstd{(A, B, C, X, Y)}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
-
-A seguir, estimaremos o efeito causal pela
-fórmula do ajuste (\cref{def:ajuste}).
-Iniciaremos a análise utilizando $\hmu$ como
-sendo uma regressão linear simples:
-
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlcom{# Sejam Z variáveis que satisfazem o critério backdoor para}
-\hlcom{# estimar o efeito causal de causa em efeito em grafo.}
-\hlcom{# Retorna uma fórmula do tipo Y ~ X + Z_1 + ... + Z_d}
-\hlstd{fm_ajuste} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{grafo}\hlstd{,} \hlkwc{causa}\hlstd{,} \hlkwc{efeito}\hlstd{)}
-\hlstd{\{}
-  \hlstd{var_backdoor} \hlkwb{<-} \hlstd{dagitty}\hlopt{::}\hlkwd{adjustmentSets}\hlstd{(grafo, causa, efeito)[[}\hlnum{1}\hlstd{]]}
-  \hlstd{regressores} \hlkwb{=} \hlkwd{c}\hlstd{(causa, var_backdoor)}
-  \hlstd{fm} \hlkwb{=} \hlkwd{paste}\hlstd{(regressores,} \hlkwc{collapse} \hlstd{=} \hlstr{"+"}\hlstd{)}
-  \hlstd{fm} \hlkwb{=} \hlkwd{paste}\hlstd{(}\hlkwd{c}\hlstd{(efeito, fm),} \hlkwc{collapse} \hlstd{=} \hlstr{"~"}\hlstd{)}
-  \hlkwd{as.formula}\hlstd{(fm)}
-\hlstd{\}}
-
-\hlcom{# Estima E[Efeito|do(causa = x)] pela }
-\hlcom{# formula do ajuste usando mu_chapeu como regressao }
-\hlstd{est_do_x_lm} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{data}\hlstd{,} \hlkwc{mu_chapeu}\hlstd{,} \hlkwc{causa}\hlstd{,} \hlkwc{x}\hlstd{)}
-\hlstd{\{}
-  \hlstd{data} \hlopt{%>%}
-    \hlstd{dplyr}\hlopt{::}\hlkwd{mutate}\hlstd{(\{\{causa\}\}} \hlkwb{:=} \hlstd{x)} \hlopt{%>%}
-    \hlkwd{predict}\hlstd{(mu_chapeu,} \hlkwc{newdata} \hlstd{= .)} \hlopt{%>%}
-    \hlkwd{mean}\hlstd{()}
-\hlstd{\}}
-
-\hlcom{# Estimação do ACE com regressão linear simples}
-\hlstd{fm} \hlkwb{<-} \hlkwd{fm_ajuste}\hlstd{(grafo,} \hlstr{"X"}\hlstd{,} \hlstr{"Y"}\hlstd{)}
-\hlstd{mu_chapeu} \hlkwb{<-} \hlkwd{lm}\hlstd{(fm,} \hlkwc{data} \hlstd{= data)}
-\hlstd{ace_est} \hlkwb{=} \hlkwd{est_do_x_lm}\hlstd{(data, mu_chapeu,} \hlstr{"X"}\hlstd{,} \hlnum{1}\hlstd{)} \hlopt{-}
-  \hlkwd{est_do_x_lm}\hlstd{(data, mu_chapeu,} \hlstr{"X"}\hlstd{,} \hlnum{0}\hlstd{)}
-\hlkwd{round}\hlstd{(ace_est)}
+\hlstd{mu_1_lm} \hlkwb{<-} \hlstd{data} \hlopt{%>%}
+  \hlstd{dplyr}\hlopt{::}\hlkwd{mutate}\hlstd{(}\hlkwc{X} \hlstd{=} \hlnum{1}\hlstd{)} \hlopt{%>%}
+  \hlkwd{predict}\hlstd{(mu_chapeu_lm,} \hlkwc{newdata} \hlstd{= .)}
+\hlstd{mu_0_lm} \hlkwb{<-} \hlstd{data} \hlopt{%>%}
+  \hlstd{dplyr}\hlopt{::}\hlkwd{mutate}\hlstd{(}\hlkwc{X} \hlstd{=} \hlnum{0}\hlstd{)} \hlopt{%>%}
+  \hlkwd{predict}\hlstd{(mu_chapeu_lm,} \hlkwc{newdata} \hlstd{= .)}
+\hlstd{corr} \hlkwb{<-} \hlstd{data} \hlopt{%>%}
+  \hlkwd{mutate}\hlstd{(}\hlkwc{mu_1} \hlstd{= mu_1_lm,}
+         \hlkwc{mu_0} \hlstd{= mu_0_lm,}
+         \hlkwc{f_1} \hlstd{= f_1_lm,}
+         \hlkwc{corr_1} \hlstd{= (X} \hlopt{==} \hlnum{1}\hlstd{)}\hlopt{*}\hlstd{mu_1}\hlopt{/}\hlstd{f_1,}
+         \hlkwc{corr_0} \hlstd{= (X} \hlopt{==} \hlnum{0}\hlstd{)}\hlopt{*}\hlstd{mu_0}\hlopt{/}\hlstd{(}\hlnum{1}\hlopt{-}\hlstd{f_1))} \hlopt{%>%}
+  \hlkwd{summarise}\hlstd{(}\hlkwc{corr_1} \hlstd{=} \hlkwd{mean}\hlstd{(corr_1),}
+            \hlkwc{corr_0} \hlstd{=} \hlkwd{mean}\hlstd{(corr_0))} \hlopt{%>%}
+  \hlkwd{mutate}\hlstd{(}\hlkwc{corr} \hlstd{= corr_1} \hlopt{-} \hlstd{corr_0)} \hlopt{%>%}
+  \hlstd{dplyr}\hlopt{::}\hlkwd{select}\hlstd{(corr)} \hlopt{%>%}
+  \hlkwd{as.numeric}\hlstd{()}
+\hlstd{ace_ajuste_lm} \hlopt{+} \hlstd{ace_ipw_lm} \hlopt{-} \hlstd{corr}
 \end{alltt}
 \begin{verbatim}
-## [1] 2
+## [1] 2.001334
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
-
-Em alguns casos, não é razoável supor que 
-$\E[Y|X,\Z]$ é linear. Nestas situações,
-é fácil adaptar o código anterior para
-algum método não-paramétrico arbitrário.
-Exibimos uma implementação usando XGBoost 
-\citep{Chen2023}:
-
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{library}\hlstd{(xgboost)}
-\hlstd{mu_chapeu} \hlkwb{<-} \hlkwd{xgboost}\hlstd{(}
-  \hlkwc{data} \hlstd{= data} \hlopt{%>%} \hlstd{dplyr}\hlopt{::}\hlkwd{select}\hlstd{(A, B, X)} \hlopt{%>%} \hlkwd{as.matrix}\hlstd{(),}
-  \hlkwc{label} \hlstd{= data} \hlopt{%>%} \hlstd{dplyr}\hlopt{::}\hlkwd{select}\hlstd{(Y)} \hlopt{%>%} \hlkwd{as.matrix}\hlstd{(),}
-  \hlkwc{nrounds} \hlstd{=} \hlnum{100}\hlstd{,}
-  \hlkwc{objective} \hlstd{=} \hlstr{"reg:squarederror"}\hlstd{,}
-  \hlkwc{early_stopping_rounds} \hlstd{=} \hlnum{3}\hlstd{,}
-  \hlkwc{max_depth} \hlstd{=} \hlnum{2}\hlstd{,}
-  \hlkwc{eta} \hlstd{=} \hlnum{.25}\hlstd{,}
-  \hlkwc{verbose} \hlstd{=} \hlnum{FALSE}
-\hlstd{)}
-
-\hlstd{est_do_x_xgb} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{data}\hlstd{,} \hlkwc{mu_chapeu}\hlstd{,} \hlkwc{causa}\hlstd{,} \hlkwc{x}\hlstd{)}
-\hlstd{\{}
-  \hlstd{data} \hlopt{%>%}
-    \hlstd{dplyr}\hlopt{::}\hlkwd{mutate}\hlstd{(\{\{causa\}\}} \hlkwb{:=} \hlstd{x)} \hlopt{%>%}
-    \hlstd{dplyr}\hlopt{::}\hlkwd{select}\hlstd{(A, B, X)} \hlopt{%>%}
-    \hlkwd{as.matrix}\hlstd{()} \hlopt{%>%}
-    \hlkwd{predict}\hlstd{(mu_chapeu,} \hlkwc{newdata} \hlstd{= .)} \hlopt{%>%}
-    \hlkwd{mean}\hlstd{()}
-\hlstd{\}}
-
-\hlstd{ace_est_xgb} \hlkwb{=} \hlkwd{est_do_x_xgb}\hlstd{(data, mu_chapeu,} \hlstr{"X"}\hlstd{,} \hlnum{1}\hlstd{)} \hlopt{-}
-  \hlkwd{est_do_x_xgb}\hlstd{(data, mu_chapeu,} \hlstr{"X"}\hlstd{,} \hlnum{0}\hlstd{)}
-\hlkwd{round}\hlstd{(ace_est_xgb,} \hlnum{2}\hlstd{)}
-\end{alltt}
-\begin{verbatim}
-## [1] 2
-\end{verbatim}
-\end{kframe}
-\end{knitrout}
-
- Como o modelo linear era adequado para $\E[Y|X,\Z]$,
- não vemos diferença entre a estimativa obtida
- pela regressão linear simples e pelo XGBoost.
- Mas será que as estimativas estão adequadas?
- Como simulamos os dados,
- é possível calcular diretamente $\E[Y|do(X=x)]$:
- \begin{align}
-  \label{eq:ex_backdoor_1}
-  \E[Y|do(X=x)]
-  &= \E[\E[Y|X=x, A, B]]
-  & \text{\cref{thm:backdoor_ajuste}} \nonumber \\
-  &= \E[\E[\E[Y|X=x, A, B, C]|X=x, A, B]]
-  & \text{Lei da esperança total} \nonumber \\
-  &= \E[\E[A+B+C+X|X=x, A, B]]
-  & Y \sim N(A+B+C+X, \sigma^2) \nonumber \\
-  &= \E[A + B + 2x]
-  & C \sim N(X, \sigma^2) \nonumber \\
-  &= 2x
-  & \E[A] = \E[B] = 0
- \end{align}
- Portanto,
- \begin{align*}
-  \ACE
-  &= \E[Y|do(X=1)] - \E[Y|do(X=0)] \\
-  &= 2 \cdot 1 - 2 \cdot 0 = 2
-  & \text{\cref{eq:ex_backdoor_1}}
- \end{align*}
- Portanto, as estimativas obtidas do ACE
- estão adequadas.
 \end{example}
 
 \section{Controlando mediadores (critério frontdoor)}
