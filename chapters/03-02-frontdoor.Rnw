@@ -1,64 +1,68 @@
 \section{Controlando mediadores (critério frontdoor)}
 \label{sec:frontdoor}
 
-\section{Do-calculus}
+ <<frontdoor_ex_1, fig.pos="t", fig.height=2.5, fig.width=4, fig.cap=".", fig.align="center", echo = FALSE, message = FALSE, warning = FALSE>>==
+library(dagitty)
+library(ggdag)
+library(ggplot2)
 
-\section{Exercícios}
+# Especificar o grafo
+grafo <- dagitty("dag {
+  X[e] Y[o] G[u]
+  G -> {X Y};
+  X -> P;
+  P -> Y
+}")
+coordinates(grafo) <- list( 
+  x=c(G=1, X=0, Y=2, P=1),
+  y=c(G=2, X=1, Y=1, P=0))
 
-\begin{exercise}
- Prove o \cref{lemma:backdoor_random}.
-\end{exercise}
+# Exibir a figura do grafo
+ggdag(grafo, layout = "circle") +
+  theme(axis.text.x=element_blank(),
+      axis.ticks.x=element_blank(),
+      axis.text.y=element_blank(),
+      axis.ticks.y=element_blank()) +
+  xlab("") + ylab("")
+@
 
-\begin{exercise}
- Prove o \cref{lemma:backdoor_pais}.
-\end{exercise}
+Há casos em que não existem variáveis observadas que 
+satisfazem o critério backdoor.
+Por exemplo, considere o grafo causal 
+na \cref{fig:frontdoor_ex_1} \citep{Glymour2016}.
+Neste grafo, estamos interessados em
+compreender o efeito causal
+do fumo ($X$) sobre a incidência de câncer ($Y$).
+Além disso, fatores genéticos não observáveis ($G$)
+são um potencial confundidor, uma vez que 
+podem ter influência tanto sobre o fumo quanto 
+sobre a incidência de câncer.
+Assim, como $G$ não é observado,
+não é possível implementar 
+os métodos de estimação vistos na última seção.
 
-\begin{exercise}
- Considere que $X_1$ e $X_2$ são variáveis binárias.
- Também considere as seguintes definições:
- \textbf{ACE} := $\P(X_2=1|do(X_1=1))-\P(X_2=1|do(X_1=0))$, e
- \textbf{RD} := $\P(X_2=1|X_1=1)-\P(X_2=1|X_1=0)$.
- Explique em palavras a diferença entre ACE e RD e
- apresente um exemplo em que essa diferença ocorre.
-\end{exercise}
+Apesar desta dificuldade, 
+ainda é possível medir o efeito causal de $X$ em $Y$
+na \cref{fig:frontdoor_ex_1}.
+Para tal, a estratégia é 
+mensurar o efeito de 
+todos os caminhos direcionados que 
+partem de $X$ e chegam a $Y$.
+Em outras palavras, 
+a estratégia é 
 
-\begin{exercise}[{\citet{Glymour2016}[p.32]}]
- $(X_1,X_2,X_3,X_4)$ são 
- variáveis binárias tais que
- $X_{i-1}$ é a única causa imediata de $X_i$.
- Além disso, $\P(X_1=1)=0.5$,
- $\P(X_i=1|X_{i-1}=1)=p_{11}$ e
- $\P(X_i=1|X_{i-1}=0)=p_{01}$.
- Calcule:
- \begin{enumerate}[label=(\alph*)]
-  \item $\P(X_1=1,X_2=0,X_3=1,X_4=0)$,
-  \item $\P(X_4=1|X_1=1)$, $\P(X_4=1|do(X_1=1)$, 
-  \item $\P(X_1=1|X_4=1)$, $\P(X_1=1|do(X_4=1)$, e
-  \item $\P(X_3=1|X_1=0,X_4=1)$
- \end{enumerate}
-\end{exercise}
+\begin{align*}
+ f(y|do(X)) 
+ &= \int f(y|do(W))f(W|do(X))dW
+\end{align*}
 
-\begin{exercise}[{\citet{Glymour2016}[p.29]}]
- Considere que $(U_1, U_2, U_3)$ são independentes e
- tais que $U_i \sim N(0,1)$. Também,
- $X_1 \equiv U_1$,
- $X_2 \equiv 3^{-1}X_1 + U_2$, e
- $X_3 \equiv 2^{-4}X_2 + U_3$.
- Considere que $X_1$ é 
- a causa imediata de $X_2$,
- que por sua vez é a causa imediata de $X_3$.
- Além disso, cada $U_i$ influencia diretamente somente $X_i$.
- \begin{enumerate}[label=(\alph*)]
-  \item Desenhe o DAG que representa 
-  a estrutura causal indicada no enunciado. 
-  \item Calcule $\E[X_2|X_1 = 3]$ e $\E[X_2|do(X_1 = 3)]$.
-  \item Calcule $\E[X_3|X_1 = 6]$ e $\E[X_3|do(X_1 = 6)]$.
-  \item Calcule $\E[X_1|X_2 = 1]$ e $\E[X_1|do(X_2 = 1)]$.
-  \item Calcule $\E[X_2|X_1 = 1, X_3 = 3]$,
-  $\E[X_2|X_1 = 1, do(X_3 = 3)]$, e
-  $\E[X_2|do(X_1 = 1), X_3 = 3]$.
- \end{enumerate}
-\end{exercise}
+\begin{align*}
+ \E[Y|do(X)]
+ &= \int y f(y|do(X)) \\
+ &= \int \int y f(y|do(W)) f(W|do(X)) dW dy
+\end{align*}
+
+\subsection{Exercícios}
 
 \begin{exercise}[{\citet{Glymour2016}[p.48]}]
  \label{ex:d-sep}
@@ -114,14 +118,15 @@
 \end{exercise}
 
 \begin{exercise}
- Prove que a variância amostral satisfaz
- o \cref{def:perm}.
+ Considere que $\sG = (\sV, \sE)$ é um grafo causal e
+ $\X,\W,\Y \subseteq \sV$. Além disso,
+ para todo caminho, $C = (C_1,\ldots,C_n)$,
+ com $C_1 = X \in \X$, $C_n = Y \in \Y$, e
+ com $X \rightarrow C_2$,
+ $C$ está bloqueado dado $\W$.
+ Prove que $f(\y|do(\X)) 
+ = \int f(\y|\w)f(\w|do(\X))d\w$ e
+ $\E[Y|do(\X)] = \E[\E[Y|\W]|do(\X)]$.
 \end{exercise}
 
-\begin{exercise}
- Utilizando como referência o grafo e
- o código no \cref{ex:backdoor_est_1},
- simule dados tais que a estimativa do $\ACE$ é
- diferente quando um método de regressão linear e
- um de regressão não-paramétrica são usados.
-\end{exercise}
+\section{Do-calculus}

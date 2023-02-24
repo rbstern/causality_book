@@ -276,10 +276,10 @@ pacotes \textit{dagitty} e \textit{ggdag}
 
 \hlcom{# Exibir a figura do grafo}
 \hlkwd{ggdag}\hlstd{(grafo,} \hlkwc{layout} \hlstd{=} \hlstr{"circle"}\hlstd{)} \hlopt{+}
-  \hlkwd{theme}\hlstd{(}\hlkwc{axis.text.x}\hlstd{=}\hlkwd{element_blank}\hlstd{(),}
-      \hlkwc{axis.ticks.x}\hlstd{=}\hlkwd{element_blank}\hlstd{(),}
-      \hlkwc{axis.text.y}\hlstd{=}\hlkwd{element_blank}\hlstd{(),}
-      \hlkwc{axis.ticks.y}\hlstd{=}\hlkwd{element_blank}\hlstd{())} \hlopt{+}
+  \hlkwd{theme}\hlstd{(}\hlkwc{axis.text.x} \hlstd{=} \hlkwd{element_blank}\hlstd{(),}
+        \hlkwc{axis.ticks.x} \hlstd{=} \hlkwd{element_blank}\hlstd{(),}
+        \hlkwc{axis.text.y} \hlstd{=} \hlkwd{element_blank}\hlstd{(),}
+        \hlkwc{axis.ticks.y} \hlstd{=} \hlkwd{element_blank}\hlstd{())} \hlopt{+}
   \hlkwd{xlab}\hlstd{(}\hlstr{""}\hlstd{)} \hlopt{+} \hlkwd{ylab}\hlstd{(}\hlstr{""}\hlstd{)}
 \end{alltt}
 \end{kframe}\begin{figure}[t]
@@ -295,8 +295,8 @@ pacotes \textit{dagitty} e \textit{ggdag}
 
 Grafos direcionados serão úteis para 
 representar causalidade pois 
-usaremos vértices para representar variáveis e
-arestas para apontar de 
+seus vértices serão variáveis e
+suas arestas irão apontar de 
 cada causa imediata para seu efeito.
 Por exemplo, no \Cref{cap:intro}
 consideramos um caso em que Sexo e Tratamento são
@@ -379,7 +379,7 @@ formalizado a seguir:
 \begin{definition}
  \label{def:dag}
  Um \textbf{grafo direcionado acíclico} (DAG) é
- um grafo direcionado, $\sG$,
+ um grafo direcionado, $\sG = (\sV, \sE)$,
  tal que, para todo
  vértice, $V \in \sV$, não existe um
  caminho direcionado, $C = \{V_1, \ldots, V_n\}$
@@ -413,9 +413,9 @@ conjunto de todos os pais de $V$:
 
 \begin{definition}
  \label{def:pais}
- Em um DAG, $\sG$,
- o conjunto de \textbf{pais} de $V \in \sV$, $Pa(V)$, é:
- $$Pa(V) = \{V^* \in \sV: (V^*, V) \in \sE\}.$$
+ O conjunto de \textbf{pais} de $V \in \sV$ 
+ em um DAG, $\sG = (\sV, \sE)$, é:
+ $$Pa(V) := \{V^* \in \sV: (V^*, V) \in \sE\}.$$
 \end{definition}
 
 Similarmente, dizemos que $V_1$ é um ancestral de $V_2$ em
@@ -427,14 +427,14 @@ todos os ancestrais de elementos de $\V$:
 
 \begin{definition}
  \label{def:ancestrais}
- Em um DAG, $\sG$,
+ Em um DAG, $\sG = (\sV, \sE)$,
  o conjunto de \textbf{ancestrais} de $\V \subseteq \sV$, 
  $Anc(\V)$, é tal que
  $Anc(\V) \subseteq \sV$ e
  $V^* \in Anc(\V)$ se e somente se existe
  $V \in \V$ e
- um caminho direcionado em $\sG$, C, tal que
- $C_1 = V^*$ e, para algum i, $C_i = V$.
+ um caminho direcionado, C, tal que
+ $C_1 = V^*$ e $C_i = V$.
 \end{definition}
 
 Note que podemos interpretar $Anc(\V)$ como
@@ -452,9 +452,9 @@ algum vértice em $\sA$:
 
 \begin{definition}
  \label{def:ancestral}
- Em um DAG, $\sG$,
- dizemos que $\sA \subseteq \sV$ é \textbf{ancestral} se,
- para todo $V \in \sA$, temos que
+ Dizemos que $\sA \subseteq \sV$ é 
+ \textbf{ancestral} em um DAG se,
+ para todo vértice $V \in \sA$, temos que
  $Pa(V) \subseteq \sA$.
 \end{definition}
 
@@ -889,7 +889,7 @@ a frequência daqueles que tem somente uma das doenças é
 maior do que seria caso as doenças não estivessem associadas.
 Quando fixamos o valor de uma consequência comum (hospitalização),
 as causas (doenças) passam a ser associadas.
-Esta associação não significa que,
+Esta associação não significa que
 infectar um indivíduo com uma das doenças
 reduz a probabilidade que ele tenha a outra.
 
@@ -1342,7 +1342,7 @@ Esta conclusão é apresentada no
  temos que $V_1$ e $V_2$ são independentes.
 \end{example}
 
-\section{Exercícios}
+\subsection{Exercícios}
 
 \begin{exercise}
  Considere que $f$ é uma densidade sobre 
@@ -1733,6 +1733,55 @@ Consideraremos que desejamos medir
 o efeito causal de $X$ em $Y$, 
 onde $X, Y \in \sV$.
 
+\subsection{Exercícios}
+
+\begin{exercise}
+ Considere que $X_1$ e $X_2$ são variáveis binárias.
+ Também considere as seguintes definições:
+ \textbf{ACE} := $\P(X_2=1|do(X_1=1))-\P(X_2=1|do(X_1=0))$, e
+ \textbf{RD} := $\P(X_2=1|X_1=1)-\P(X_2=1|X_1=0)$.
+ Explique em palavras a diferença entre ACE e RD e
+ apresente um exemplo em que essa diferença ocorre.
+\end{exercise}
+
+\begin{exercise}[{\citet{Glymour2016}[p.32]}]
+ $(X_1,X_2,X_3,X_4)$ são 
+ variáveis binárias tais que
+ $X_{i-1}$ é a única causa imediata de $X_i$.
+ Além disso, $\P(X_1=1)=0.5$,
+ $\P(X_i=1|X_{i-1}=1)=p_{11}$ e
+ $\P(X_i=1|X_{i-1}=0)=p_{01}$.
+ Calcule:
+ \begin{enumerate}[label=(\alph*)]
+  \item $\P(X_1=1,X_2=0,X_3=1,X_4=0)$,
+  \item $\P(X_4=1|X_1=1)$, $\P(X_4=1|do(X_1=1)$, 
+  \item $\P(X_1=1|X_4=1)$, $\P(X_1=1|do(X_4=1)$, e
+  \item $\P(X_3=1|X_1=0,X_4=1)$
+ \end{enumerate}
+\end{exercise}
+
+\begin{exercise}[{\citet{Glymour2016}[p.29]}]
+ Considere que $(U_1, U_2, U_3)$ são independentes e
+ tais que $U_i \sim N(0,1)$. Também,
+ $X_1 \equiv U_1$,
+ $X_2 \equiv 3^{-1}X_1 + U_2$, e
+ $X_3 \equiv 2^{-4}X_2 + U_3$.
+ Considere que $X_1$ é 
+ a causa imediata de $X_2$,
+ que por sua vez é a causa imediata de $X_3$.
+ Além disso, cada $U_i$ influencia diretamente somente $X_i$.
+ \begin{enumerate}[label=(\alph*)]
+  \item Desenhe o DAG que representa 
+  a estrutura causal indicada no enunciado. 
+  \item Calcule $\E[X_2|X_1 = 3]$ e $\E[X_2|do(X_1 = 3)]$.
+  \item Calcule $\E[X_3|X_1 = 6]$ e $\E[X_3|do(X_1 = 6)]$.
+  \item Calcule $\E[X_1|X_2 = 1]$ e $\E[X_1|do(X_2 = 1)]$.
+  \item Calcule $\E[X_2|X_1 = 1, X_3 = 3]$,
+  $\E[X_2|X_1 = 1, do(X_3 = 3)]$, e
+  $\E[X_2|do(X_1 = 1), X_3 = 3]$.
+ \end{enumerate}
+\end{exercise}
+
 \section{Controlando confundidores (critério \textit{backdoor})}
 \label{sec:backdoor}
 
@@ -1851,11 +1900,11 @@ todos os caminhos de informação que passam por confundidores:
 \hlkwd{library}\hlstd{(dagitty)}
 \hlcom{# Especificar o grafo}
 \hlstd{grafo} \hlkwb{<-} \hlkwd{dagitty}\hlstd{(}\hlstr{"dag\{
+    X[e] Y[o]
     A -> \{ X B \}; B -> \{ Y \}; C -> \{ X Y \};
     X -> \{ D Y \}; D -> Y \}"}\hlstd{)}
 
-\hlkwd{adjustmentSets}\hlstd{(grafo,} \hlstr{"X"}\hlstd{,} \hlstr{"Y"}\hlstd{,}
-               \hlkwc{type} \hlstd{=} \hlstr{"all"}\hlstd{)}
+\hlkwd{adjustmentSets}\hlstd{(grafo,} \hlkwc{type} \hlstd{=} \hlstr{"all"}\hlstd{)}
 \end{alltt}
 \begin{verbatim}
 ## { A, C }
@@ -2113,6 +2162,7 @@ $Y \sim N(A + B + C + X, \sigma^2)$:
 \begin{alltt}
 \hlcom{# Especificar o grafo}
 \hlstd{grafo} \hlkwb{<-} \hlstd{dagitty}\hlopt{::}\hlkwd{dagitty}\hlstd{(}\hlstr{"dag \{
+    X[e] Y[o]
     \{A B\} -> \{ X Y \}; X -> \{C Y\}; C -> Y \}"}\hlstd{)}
 
 \hlcom{# Simular os dados}
@@ -2143,7 +2193,7 @@ sendo uma regressão linear simples:
 \hlcom{# Retorna uma fórmula do tipo Y ~ X + Z_1 + ... + Z_d}
 \hlstd{fm_ajuste} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{grafo}\hlstd{,} \hlkwc{causa}\hlstd{,} \hlkwc{efeito}\hlstd{)}
 \hlstd{\{}
-  \hlstd{var_backdoor} \hlkwb{<-} \hlstd{dagitty}\hlopt{::}\hlkwd{adjustmentSets}\hlstd{(grafo, causa, efeito)[[}\hlnum{1}\hlstd{]]}
+  \hlstd{var_backdoor} \hlkwb{<-} \hlstd{dagitty}\hlopt{::}\hlkwd{adjustmentSets}\hlstd{(grafo)[[}\hlnum{1}\hlstd{]]}
   \hlstd{regressores} \hlkwb{=} \hlkwd{c}\hlstd{(causa, var_backdoor)}
   \hlstd{fm} \hlkwb{=} \hlkwd{paste}\hlstd{(regressores,} \hlkwc{collapse} \hlstd{=} \hlstr{"+"}\hlstd{)}
   \hlstd{fm} \hlkwb{=} \hlkwd{paste}\hlstd{(}\hlkwd{c}\hlstd{(efeito, fm),} \hlkwc{collapse} \hlstd{=} \hlstr{"~"}\hlstd{)}
@@ -2317,7 +2367,6 @@ ilustrar a implementação de IPW:
 Considere que o grafo causal e
 o modelo de geração dos dados são 
 idênticos àqueles do \cref{ex:backdoor_est_ajuste}.
- 
 Iniciaremos a análise utilizando 
 regressão logística para estimar $\hf$.
  
@@ -2329,7 +2378,7 @@ regressão logística para estimar $\hf$.
 \hlcom{# Retorna uma fórmula do tipo X ~ Z_1 + ... + Z_d}
 \hlstd{fm_ipw} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{grafo}\hlstd{,} \hlkwc{causa}\hlstd{,} \hlkwc{efeito}\hlstd{)}
 \hlstd{\{}
- \hlstd{var_backdoor} \hlkwb{<-} \hlstd{dagitty}\hlopt{::}\hlkwd{adjustmentSets}\hlstd{(grafo, causa, efeito)[[}\hlnum{1}\hlstd{]]}
+ \hlstd{var_backdoor} \hlkwb{<-} \hlstd{dagitty}\hlopt{::}\hlkwd{adjustmentSets}\hlstd{(grafo)[[}\hlnum{1}\hlstd{]]}
  \hlstd{fm} \hlkwb{=} \hlkwd{paste}\hlstd{(var_backdoor,} \hlkwc{collapse} \hlstd{=} \hlstr{"+"}\hlstd{)}
  \hlstd{fm} \hlkwb{=} \hlkwd{paste}\hlstd{(}\hlkwd{c}\hlstd{(causa, fm),} \hlkwc{collapse} \hlstd{=} \hlstr{"~"}\hlstd{)}
  \hlkwd{as.formula}\hlstd{(fm)}
@@ -2371,7 +2420,7 @@ Abaixo há um exemplo utilizando o XGBoost:
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{var_backdoor} \hlkwb{<-} \hlstd{dagitty}\hlopt{::}\hlkwd{adjustmentSets}\hlstd{(grafo,} \hlstr{"X"}\hlstd{,} \hlstr{"Y"}\hlstd{)[[}\hlnum{1}\hlstd{]]}
+\hlstd{var_backdoor} \hlkwb{<-} \hlstd{dagitty}\hlopt{::}\hlkwd{adjustmentSets}\hlstd{(grafo)[[}\hlnum{1}\hlstd{]]}
 \hlstd{f_chapeu} \hlkwb{<-} \hlkwd{xgboost}\hlstd{(}
  \hlkwc{data} \hlstd{= data} \hlopt{%>%}
    \hlstd{dplyr}\hlopt{::}\hlkwd{select}\hlstd{(}\hlkwd{all_of}\hlstd{(var_backdoor))} \hlopt{%>%}
@@ -2488,21 +2537,17 @@ no \cref{ex:backdoor_est_ipw}.
   \hlkwd{mutate}\hlstd{(}\hlkwc{corr} \hlstd{= corr_1} \hlopt{-} \hlstd{corr_0)} \hlopt{%>%}
   \hlstd{dplyr}\hlopt{::}\hlkwd{select}\hlstd{(corr)} \hlopt{%>%}
   \hlkwd{as.numeric}\hlstd{()}
-\hlstd{ace_ajuste_lm} \hlopt{+} \hlstd{ace_ipw_lm} \hlopt{-} \hlstd{corr}
+\hlstd{ace_rob_lm} \hlkwb{<-} \hlstd{ace_ajuste_lm} \hlopt{+} \hlstd{ace_ipw_lm} \hlopt{-} \hlstd{corr}
+\hlstd{ace_rob_lm} \hlopt{%>%} \hlkwd{round}\hlstd{(}\hlnum{2}\hlstd{)}
 \end{alltt}
 \begin{verbatim}
-## [1] 2.001334
+## [1] 2
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
 \end{example}
 
-\section{Controlando mediadores (critério frontdoor)}
-\label{sec:frontdoor}
-
-\section{Do-calculus}
-
-\section{Exercícios}
+\subsection{Exercícios}
 
 \begin{exercise}
  Prove o \cref{lemma:backdoor_random}.
@@ -2513,51 +2558,70 @@ no \cref{ex:backdoor_est_ipw}.
 \end{exercise}
 
 \begin{exercise}
- Considere que $X_1$ e $X_2$ são variáveis binárias.
- Também considere as seguintes definições:
- \textbf{ACE} := $\P(X_2=1|do(X_1=1))-\P(X_2=1|do(X_1=0))$, e
- \textbf{RD} := $\P(X_2=1|X_1=1)-\P(X_2=1|X_1=0)$.
- Explique em palavras a diferença entre ACE e RD e
- apresente um exemplo em que essa diferença ocorre.
+ Prove que a variância amostral satisfaz
+ o \cref{def:perm}.
 \end{exercise}
 
-\begin{exercise}[{\citet{Glymour2016}[p.32]}]
- $(X_1,X_2,X_3,X_4)$ são 
- variáveis binárias tais que
- $X_{i-1}$ é a única causa imediata de $X_i$.
- Além disso, $\P(X_1=1)=0.5$,
- $\P(X_i=1|X_{i-1}=1)=p_{11}$ e
- $\P(X_i=1|X_{i-1}=0)=p_{01}$.
- Calcule:
- \begin{enumerate}[label=(\alph*)]
-  \item $\P(X_1=1,X_2=0,X_3=1,X_4=0)$,
-  \item $\P(X_4=1|X_1=1)$, $\P(X_4=1|do(X_1=1)$, 
-  \item $\P(X_1=1|X_4=1)$, $\P(X_1=1|do(X_4=1)$, e
-  \item $\P(X_3=1|X_1=0,X_4=1)$
- \end{enumerate}
+\begin{exercise}
+ Utilizando como referência o grafo e
+ o código no \cref{ex:backdoor_est_ajuste},
+ simule dados tais que a estimativa do $\ACE$ é
+ diferente quando um método de regressão linear e
+ um de regressão não-paramétrica são usados.
 \end{exercise}
 
-\begin{exercise}[{\citet{Glymour2016}[p.29]}]
- Considere que $(U_1, U_2, U_3)$ são independentes e
- tais que $U_i \sim N(0,1)$. Também,
- $X_1 \equiv U_1$,
- $X_2 \equiv 3^{-1}X_1 + U_2$, e
- $X_3 \equiv 2^{-4}X_2 + U_3$.
- Considere que $X_1$ é 
- a causa imediata de $X_2$,
- que por sua vez é a causa imediata de $X_3$.
- Além disso, cada $U_i$ influencia diretamente somente $X_i$.
- \begin{enumerate}[label=(\alph*)]
-  \item Desenhe o DAG que representa 
-  a estrutura causal indicada no enunciado. 
-  \item Calcule $\E[X_2|X_1 = 3]$ e $\E[X_2|do(X_1 = 3)]$.
-  \item Calcule $\E[X_3|X_1 = 6]$ e $\E[X_3|do(X_1 = 6)]$.
-  \item Calcule $\E[X_1|X_2 = 1]$ e $\E[X_1|do(X_2 = 1)]$.
-  \item Calcule $\E[X_2|X_1 = 1, X_3 = 3]$,
-  $\E[X_2|X_1 = 1, do(X_3 = 3)]$, e
-  $\E[X_2|do(X_1 = 1), X_3 = 3]$.
- \end{enumerate}
-\end{exercise}
+\section{Controlando mediadores (critério frontdoor)}
+\label{sec:frontdoor}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{figure}[t]
+
+{\centering \includegraphics[width=\maxwidth]{./figures/frontdoor_ex_1-1} 
+
+}
+
+\caption[]{.}\label{fig:frontdoor_ex_1}
+\end{figure}
+
+\end{knitrout}
+
+Há casos em que não existem variáveis observadas que 
+satisfazem o critério backdoor.
+Por exemplo, considere o grafo causal 
+na \cref{fig:frontdoor_ex_1} \citep{Glymour2016}.
+Neste grafo, estamos interessados em
+compreender o efeito causal
+do fumo ($X$) sobre a incidência de câncer ($Y$).
+Além disso, fatores genéticos não observáveis ($G$)
+são um potencial confundidor, uma vez que 
+podem ter influência tanto sobre o fumo quanto 
+sobre a incidência de câncer.
+Assim, como $G$ não é observado,
+não é possível implementar 
+os métodos de estimação vistos na última seção.
+
+Apesar desta dificuldade, 
+ainda é possível medir o efeito causal de $X$ em $Y$
+na \cref{fig:frontdoor_ex_1}.
+Para tal, a estratégia é 
+mensurar o efeito de 
+todos os caminhos direcionados que 
+partem de $X$ e chegam a $Y$.
+Em outras palavras, 
+a estratégia é 
+
+\begin{align*}
+ f(y|do(X)) 
+ &= \int f(y|do(W))f(W|do(X))dW
+\end{align*}
+
+\begin{align*}
+ \E[Y|do(X)]
+ &= \int y f(y|do(X)) \\
+ &= \int \int y f(y|do(W)) f(W|do(X)) dW dy
+\end{align*}
+
+\subsection{Exercícios}
 
 \begin{exercise}[{\citet{Glymour2016}[p.48]}]
  \label{ex:d-sep}
@@ -2613,17 +2677,18 @@ no \cref{ex:backdoor_est_ipw}.
 \end{exercise}
 
 \begin{exercise}
- Prove que a variância amostral satisfaz
- o \cref{def:perm}.
+ Considere que $\sG = (\sV, \sE)$ é um grafo causal e
+ $\X,\W,\Y \subseteq \sV$. Além disso,
+ para todo caminho, $C = (C_1,\ldots,C_n)$,
+ com $C_1 = X \in \X$, $C_n = Y \in \Y$, e
+ com $X \rightarrow C_2$,
+ $C$ está bloqueado dado $\W$.
+ Prove que $f(\y|do(\X)) 
+ = \int f(\y|\w)f(\w|do(\X))d\w$ e
+ $\E[Y|do(\X)] = \E[\E[Y|\W]|do(\X)]$.
 \end{exercise}
 
-\begin{exercise}
- Utilizando como referência o grafo e
- o código no \cref{ex:backdoor_est_1},
- simule dados tais que a estimativa do $\ACE$ é
- diferente quando um método de regressão linear e
- um de regressão não-paramétrica são usados.
-\end{exercise}
+\section{Do-calculus}
 
 \bibliographystyle{apalike}
 \bibliography{book}
@@ -3042,7 +3107,7 @@ ao condicionamento usual no SCM aumentado.
  \end{align*}
 \end{proof}
 
-\begin{proof}[Prova do \cref{thm:backdoor_est_1}]
+\begin{proof}[Prova do \cref{thm:backdoor_ajuste}]
  \begin{align*}
   \E[\E[g(Y)|X=x,\Z]]
   &= \E\left[\int g(y) f(y|x,\Z)dy \right] \\
@@ -3055,7 +3120,7 @@ ao condicionamento usual no SCM aumentado.
  \end{align*}
 \end{proof}
 
-\begin{proof}[Prova do \cref{thm:backdoor_est_2}]
+\begin{proof}[Prova do \cref{thm:backdoor_ipw}]
  \begin{align*}
   \E[g(Y)|do(x)]
   &= \int g(y) f(y|do(x))
@@ -3091,7 +3156,7 @@ ao condicionamento usual no SCM aumentado.
   \frac{\sum_{i=1}^n \mu(x,\Z_i)}{n}
   &\convp \E[\mu(x,\Z)]
  \end{align*}
- Portanto, pelo \cref{thm:backdoor_est_1},
+ Portanto, pelo \cref{thm:backdoor_ajuste},
  é suficiente provar que
  $\hdoy - \frac{\sum_{i=1}^n \mu(x,\Z_i)}{n} \convp 0$.
  Usando o \cref{lemma:conv_l1_to_p}, é suficiente provar que 
@@ -3113,7 +3178,7 @@ ao condicionamento usual no SCM aumentado.
  Pela Lei dos Grandes números,
  $n^{-1} \sum_{i=1}^n \frac{Y_i \I(X_i = x)}{f(x|\Z_i)} 
  \convp \E\left[\frac{Y \I(X = x)}{f(x|\Z)}\right]$. Como
- pelo \cref{thm:backdoor_est_2} temos que
+ pelo \cref{thm:backdoor_ipw} temos que
  $\E\left[\frac{Y \I(X = x)}{f(x|\Z)}\right] = \E[Y|do(X=x)]$,
  usando o \cref{lemma:conv_l1_to_p} é suficiente provar que 
  \begin{align*}

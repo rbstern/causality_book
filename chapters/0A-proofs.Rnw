@@ -411,7 +411,7 @@ ao condicionamento usual no SCM aumentado.
  \end{align*}
 \end{proof}
 
-\begin{proof}[Prova do \cref{thm:backdoor_est_1}]
+\begin{proof}[Prova do \cref{thm:backdoor_ajuste}]
  \begin{align*}
   \E[\E[g(Y)|X=x,\Z]]
   &= \E\left[\int g(y) f(y|x,\Z)dy \right] \\
@@ -424,7 +424,7 @@ ao condicionamento usual no SCM aumentado.
  \end{align*}
 \end{proof}
 
-\begin{proof}[Prova do \cref{thm:backdoor_est_2}]
+\begin{proof}[Prova do \cref{thm:backdoor_ipw}]
  \begin{align*}
   \E[g(Y)|do(x)]
   &= \int g(y) f(y|do(x))
@@ -460,7 +460,7 @@ ao condicionamento usual no SCM aumentado.
   \frac{\sum_{i=1}^n \mu(x,\Z_i)}{n}
   &\convp \E[\mu(x,\Z)]
  \end{align*}
- Portanto, pelo \cref{thm:backdoor_est_1},
+ Portanto, pelo \cref{thm:backdoor_ajuste},
  é suficiente provar que
  $\hdoy - \frac{\sum_{i=1}^n \mu(x,\Z_i)}{n} \convp 0$.
  Usando o \cref{lemma:conv_l1_to_p}, é suficiente provar que 
@@ -482,7 +482,7 @@ ao condicionamento usual no SCM aumentado.
  Pela Lei dos Grandes números,
  $n^{-1} \sum_{i=1}^n \frac{Y_i \I(X_i = x)}{f(x|\Z_i)} 
  \convp \E\left[\frac{Y \I(X = x)}{f(x|\Z)}\right]$. Como
- pelo \cref{thm:backdoor_est_2} temos que
+ pelo \cref{thm:backdoor_ipw} temos que
  $\E\left[\frac{Y \I(X = x)}{f(x|\Z)}\right] = \E[Y|do(X=x)]$,
  usando o \cref{lemma:conv_l1_to_p} é suficiente provar que 
  \begin{align*}

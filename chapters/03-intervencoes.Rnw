@@ -18,6 +18,7 @@ library(ggplot2)
 
 # Especificar o grafo
 grafo <- dagitty("dag {
+    X[e] Y[o]
     Z -> { X Y };
     X -> Y
 }")
@@ -276,6 +277,7 @@ library(ggplot2)
 
 # Especificar o grafo
 grafo <- dagitty("dag {
+    X[e] Y[o]
     X -> { Z Y };
     Z -> Y
 }")
@@ -357,3 +359,52 @@ a resolução destas questões.
 Consideraremos que desejamos medir
 o efeito causal de $X$ em $Y$, 
 onde $X, Y \in \sV$.
+
+\subsection{Exercícios}
+
+\begin{exercise}
+ Considere que $X_1$ e $X_2$ são variáveis binárias.
+ Também considere as seguintes definições:
+ \textbf{ACE} := $\P(X_2=1|do(X_1=1))-\P(X_2=1|do(X_1=0))$, e
+ \textbf{RD} := $\P(X_2=1|X_1=1)-\P(X_2=1|X_1=0)$.
+ Explique em palavras a diferença entre ACE e RD e
+ apresente um exemplo em que essa diferença ocorre.
+\end{exercise}
+
+\begin{exercise}[{\citet{Glymour2016}[p.32]}]
+ $(X_1,X_2,X_3,X_4)$ são 
+ variáveis binárias tais que
+ $X_{i-1}$ é a única causa imediata de $X_i$.
+ Além disso, $\P(X_1=1)=0.5$,
+ $\P(X_i=1|X_{i-1}=1)=p_{11}$ e
+ $\P(X_i=1|X_{i-1}=0)=p_{01}$.
+ Calcule:
+ \begin{enumerate}[label=(\alph*)]
+  \item $\P(X_1=1,X_2=0,X_3=1,X_4=0)$,
+  \item $\P(X_4=1|X_1=1)$, $\P(X_4=1|do(X_1=1)$, 
+  \item $\P(X_1=1|X_4=1)$, $\P(X_1=1|do(X_4=1)$, e
+  \item $\P(X_3=1|X_1=0,X_4=1)$
+ \end{enumerate}
+\end{exercise}
+
+\begin{exercise}[{\citet{Glymour2016}[p.29]}]
+ Considere que $(U_1, U_2, U_3)$ são independentes e
+ tais que $U_i \sim N(0,1)$. Também,
+ $X_1 \equiv U_1$,
+ $X_2 \equiv 3^{-1}X_1 + U_2$, e
+ $X_3 \equiv 2^{-4}X_2 + U_3$.
+ Considere que $X_1$ é 
+ a causa imediata de $X_2$,
+ que por sua vez é a causa imediata de $X_3$.
+ Além disso, cada $U_i$ influencia diretamente somente $X_i$.
+ \begin{enumerate}[label=(\alph*)]
+  \item Desenhe o DAG que representa 
+  a estrutura causal indicada no enunciado. 
+  \item Calcule $\E[X_2|X_1 = 3]$ e $\E[X_2|do(X_1 = 3)]$.
+  \item Calcule $\E[X_3|X_1 = 6]$ e $\E[X_3|do(X_1 = 6)]$.
+  \item Calcule $\E[X_1|X_2 = 1]$ e $\E[X_1|do(X_2 = 1)]$.
+  \item Calcule $\E[X_2|X_1 = 1, X_3 = 3]$,
+  $\E[X_2|X_1 = 1, do(X_3 = 3)]$, e
+  $\E[X_2|do(X_1 = 1), X_3 = 3]$.
+ \end{enumerate}
+\end{exercise}

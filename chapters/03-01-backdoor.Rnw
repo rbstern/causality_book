@@ -59,6 +59,7 @@ library(ggplot2)
 
 # Especificar o grafo
 grafo <- dagitty("dag {
+    X[e] Y[o]
     W -> { Z Y };
     Z -> X;
     X -> { A Y };
@@ -98,6 +99,7 @@ library(ggplot2)
 
 # Especificar o grafo
 grafo <- dagitty("dag {
+    X[e] Y[o]
     A -> { X B };
     B -> { Y }
     C -> { X Y };
@@ -141,11 +143,11 @@ ggdag(grafo, layout = "circle") +
 library(dagitty)
 # Especificar o grafo
 grafo <- dagitty("dag{
+    X[e] Y[o]
     A -> { X B }; B -> { Y }; C -> { X Y };
     X -> { D Y }; D -> Y }")
 
-adjustmentSets(grafo, "X", "Y",
-               type = "all")
+adjustmentSets(grafo, type = "all")
 @
 \end{example}
 
@@ -371,6 +373,7 @@ ilustrar a implementação da fórmula do ajuste.
 <<backdoor_est_ex, fig.pos="t", fig.height=2.5, fig.width=4, fig.cap="DAG usado como exemplo para estimar efeito de X em Y.", fig.align="center", echo = FALSE, message = FALSE, warning = FALSE>>==
 # Especificar o grafo
 grafo <- dagitty("dag {
+    X[e] Y[o]
     {A B} -> { X Y }; X -> {C Y}; C -> Y
 }")
 coordinates(grafo) <- list( 
@@ -400,6 +403,7 @@ $Y \sim N(A + B + C + X, \sigma^2)$:
 <<backdoor_est_ex_2, message = FALSE, warning = FALSE>>==
 # Especificar o grafo
 grafo <- dagitty::dagitty("dag {
+    X[e] Y[o]
     {A B} -> { X Y }; X -> {C Y}; C -> Y }")
 
 # Simular os dados
@@ -426,7 +430,7 @@ sendo uma regressão linear simples:
 # Retorna uma fórmula do tipo Y ~ X + Z_1 + ... + Z_d
 fm_ajuste <- function(grafo, causa, efeito)
 {
-  var_backdoor <- dagitty::adjustmentSets(grafo, causa, efeito)[[1]]
+  var_backdoor <- dagitty::adjustmentSets(grafo)[[1]]
   regressores = c(causa, var_backdoor)
   fm = paste(regressores, collapse = "+")
   fm = paste(c(efeito, fm), collapse = "~")
@@ -588,7 +592,6 @@ ilustrar a implementação de IPW:
 Considere que o grafo causal e
 o modelo de geração dos dados são 
 idênticos àqueles do \cref{ex:backdoor_est_ajuste}.
- 
 Iniciaremos a análise utilizando 
 regressão logística para estimar $\hf$.
  
@@ -598,7 +601,7 @@ regressão logística para estimar $\hf$.
 # Retorna uma fórmula do tipo X ~ Z_1 + ... + Z_d
 fm_ipw <- function(grafo, causa, efeito)
 {
-  var_backdoor <- dagitty::adjustmentSets(grafo, causa, efeito)[[1]]
+  var_backdoor <- dagitty::adjustmentSets(grafo)[[1]]
   fm = paste(var_backdoor, collapse = "+")
   fm = paste(c(causa, fm), collapse = "~")
   as.formula(fm)
@@ -633,7 +636,7 @@ algum método não-paramétrico para estimar $\hf$.
 Abaixo há um exemplo utilizando o XGBoost:
 
  <<backdoor_est_ex_6>>==
-var_backdoor <- dagitty::adjustmentSets(grafo, "X", "Y")[[1]]
+var_backdoor <- dagitty::adjustmentSets(grafo)[[1]]
 f_chapeu <- xgboost(
   data = data %>% 
     dplyr::select(all_of(var_backdoor)) %>% 
@@ -743,6 +746,30 @@ corr <- data %>%
   mutate(corr = corr_1 - corr_0) %>% 
   dplyr::select(corr) %>% 
   as.numeric()
-ace_ajuste_lm + ace_ipw_lm - corr
+ace_rob_lm <- ace_ajuste_lm + ace_ipw_lm - corr
+ace_rob_lm %>% round(2)
 @ 
 \end{example}
+
+\subsection{Exercícios}
+
+\begin{exercise}
+ Prove o \cref{lemma:backdoor_random}.
+\end{exercise}
+
+\begin{exercise}
+ Prove o \cref{lemma:backdoor_pais}.
+\end{exercise}
+
+\begin{exercise}
+ Prove que a variância amostral satisfaz
+ o \cref{def:perm}.
+\end{exercise}
+
+\begin{exercise}
+ Utilizando como referência o grafo e
+ o código no \cref{ex:backdoor_est_ajuste},
+ simule dados tais que a estimativa do $\ACE$ é
+ diferente quando um método de regressão linear e
+ um de regressão não-paramétrica são usados.
+\end{exercise}

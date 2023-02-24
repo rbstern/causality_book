@@ -308,7 +308,7 @@ impliedConditionalIndependencies(grafo)
  temos que $V_1$ e $V_2$ são independentes.
 \end{example}
 
-\section{Exercícios}
+\subsection{Exercícios}
 
 \begin{exercise}
  Considere que $f$ é uma densidade sobre 

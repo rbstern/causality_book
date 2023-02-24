@@ -65,17 +65,17 @@ grafo <- dagitty("dag {
 
 # Exibir a figura do grafo
 ggdag(grafo, layout = "circle") +
-  theme(axis.text.x=element_blank(),
-      axis.ticks.x=element_blank(),
-      axis.text.y=element_blank(),
-      axis.ticks.y=element_blank()) +
+  theme(axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank()) +
   xlab("") + ylab("")
 @
 
 Grafos direcionados serão úteis para 
 representar causalidade pois 
-usaremos vértices para representar variáveis e
-arestas para apontar de 
+seus vértices serão variáveis e
+suas arestas irão apontar de 
 cada causa imediata para seu efeito.
 Por exemplo, no \Cref{cap:intro}
 consideramos um caso em que Sexo e Tratamento são
@@ -110,9 +110,9 @@ formalizada a seguir:
  Um \textbf{caminho direcionado} é 
  uma sequência de vértices em
  um grafo direcionado,
- $C = \{V_1, \ldots, V_n\}$ tal que, 
+ $C = \{C_1, \ldots, C_n\}$ tal que, 
  para cada $1 \leq i < n$,
- $(V_i, V_{i+1}) \in \sE$.
+ $(C_i, C_{i+1}) \in \sE$.
 \end{definition}
 
 \begin{definition}
@@ -141,10 +141,10 @@ Caminho é formalizado a seguir:
 \begin{definition}
  \label{def:caminho}
  Um \textbf{caminho} é uma sequência de vértices,
- $C = \{V_1, \ldots, V_n\}$ tal que, 
+ $C = \{C_1, \ldots, C_n\}$ tal que, 
  para cada $1 \leq i < n$,
- $(V_i, V_{i+1}) \in \mathbb{E}$ ou 
- $(V_{i+1}, V_{i}) \in \mathbb{E}$. 
+ $(C_i, C_{i+1}) \in \mathbb{E}$ ou 
+ $(C_{i+1}, C_{i}) \in \mathbb{E}$. 
 \end{definition}
 
 \subsection{Grafo Direcionado Acíclico (DAG)}
@@ -158,11 +158,11 @@ formalizado a seguir:
 \begin{definition}
  \label{def:dag}
  Um \textbf{grafo direcionado acíclico} (DAG) é
- um grafo direcionado, $\sG$,
+ um grafo direcionado, $\sG = (\sV, \sE)$,
  tal que, para todo
  vértice, $V \in \sV$, não existe um
- caminho direcionado, $C = \{V_1, \ldots, V_n\}$
- tal que $V_1 = V = V_n$.
+ caminho direcionado, $C = \{C_1, \ldots, C_n\}$
+ tal que $C_1 = V = C_n$.
 \end{definition}
 
 Usualmente representaremos
@@ -192,9 +192,9 @@ conjunto de todos os pais de $V$:
 
 \begin{definition}
  \label{def:pais}
- Em um DAG, $\sG$,
- o conjunto de \textbf{pais} de $V \in \sV$, $Pa(V)$, é:
- $$Pa(V) = \{V^* \in \sV: (V^*, V) \in \sE\}.$$
+ O conjunto de \textbf{pais} de $V \in \sV$ 
+ em um DAG, $\sG = (\sV, \sE)$, é:
+ $$Pa(V) := \{V^* \in \sV: (V^*, V) \in \sE\}.$$
 \end{definition}
 
 Similarmente, dizemos que $V_1$ é um ancestral de $V_2$ em
@@ -206,14 +206,14 @@ todos os ancestrais de elementos de $\V$:
 
 \begin{definition}
  \label{def:ancestrais}
- Em um DAG, $\sG$,
+ Em um DAG, $\sG = (\sV, \sE)$,
  o conjunto de \textbf{ancestrais} de $\V \subseteq \sV$, 
  $Anc(\V)$, é tal que
  $Anc(\V) \subseteq \sV$ e
  $V^* \in Anc(\V)$ se e somente se existe
  $V \in \V$ e
- um caminho direcionado em $\sG$, C, tal que
- $C_1 = V^*$ e, para algum i, $C_i = V$.
+ um caminho direcionado, C, tal que
+ $C_1 = V^*$ e $C_i = V$.
 \end{definition}
 
 Note que podemos interpretar $Anc(\V)$ como
@@ -231,9 +231,9 @@ algum vértice em $\sA$:
 
 \begin{definition}
  \label{def:ancestral}
- Em um DAG, $\sG$,
- dizemos que $\sA \subseteq \sV$ é \textbf{ancestral} se,
- para todo $V \in \sA$, temos que
+ Dizemos que $\sA \subseteq \sV$ é 
+ \textbf{ancestral} em um DAG se,
+ para todo vértice $V \in \sA$, temos que
  $Pa(V) \subseteq \sA$.
 \end{definition}
 
@@ -686,7 +686,7 @@ a frequência daqueles que tem somente uma das doenças é
 maior do que seria caso as doenças não estivessem associadas.
 Quando fixamos o valor de uma consequência comum (hospitalização),
 as causas (doenças) passam a ser associadas.
-Esta associação não significa que,
+Esta associação não significa que
 infectar um indivíduo com uma das doenças
 reduz a probabilidade que ele tenha a outra.
 
