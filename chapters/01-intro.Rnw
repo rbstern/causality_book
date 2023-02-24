@@ -138,7 +138,7 @@ esta conclusão é incorreta.
 Considere que $Z$ é a indicadora de que 
 a pressão sanguínea do paciente está elevada.
 Além disso, é sabido que o tratamento tem como
-efeito colateral aumentar o risco
+efeito colateral aumentar o risco de
 pressão elevada nos pacientes.
 Neste caso, o fato de que
 há mais indivíduos com pressão elevada dentre aqueles que

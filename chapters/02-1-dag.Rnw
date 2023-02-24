@@ -143,8 +143,8 @@ Caminho é formalizado a seguir:
  Um \textbf{caminho} é uma sequência de vértices,
  $C = \{V_1, \ldots, V_n\}$ tal que, 
  para cada $1 \leq i < n$,
- $(V_i, V_{i+1}) \in \mathbb{E}$ ou 
- $(V_{i+1}, V_{i}) \in \mathbb{E}$. 
+ $(V_i, V_{i+1}) \in \sE$ ou 
+ $(V_{i+1}, V_{i}) \in \sE$. 
 \end{definition}
 
 \subsection{Grafo Direcionado Acíclico (DAG)}
@@ -248,7 +248,7 @@ algum vértice em $\sA$:
 
 Um modelo probabilístico em um DAG é
 tal que cada um dos vértices é uma variável aleatória.
-O DAG será usada para descrever 
+O DAG será usado para descrever 
 relações de independência condicional existentes entre
 estas variáveis.
 Mais especificamente, cada vértice será
@@ -315,7 +315,7 @@ pode ser encontrada
 na \cref{fig:confundidor}.
 O modelo de confundidor pode ser usado quando
 acreditamos que $V_2$ é uma causa comum a
-$V_1$ a $V_3$. Além disso,
+$V_1$ e a $V_3$. Além disso,
 $V_1$ não é causa imediata de $V_3$ 
 nem vice-versa.
 
@@ -599,7 +599,7 @@ resultados a seguir:
 \begin{proof}
  Considere que $V_1$ e $V_3$ são
  independentes e tem distribuição $\text{Bernoulli}(0.5)$.
- Além disso, $V_2 \equiv V_1+V_2$.
+ Além disso, $V_2 \equiv V_1+V_3$.
  Como $\P(V_3 = 1) = 0.5$ e
  $\P(V_3=1|V_1=1,V_2=2) = 1$, conclua que
  $V_1 \not\ind V_3 | V_2$.
