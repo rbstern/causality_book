@@ -336,6 +336,30 @@ ggdag(grafo, layout = "circle") +
  Não há paradoxo!
 \end{example}
 
+Além do efeito causal médio, 
+às vezes desejamos determinar 
+o efeito causal de $X$ em $Y$ quando
+observamos que a unidade amostral
+faz parte de determinado estrato da população.
+Em outras palavras, desejamos saber 
+o efeito causal de $X$ em $Y$ quando observamos que
+outras variáveis, $\Z$, assumem um determinado valor.
+
+\begin{definition}
+ \label{def:cace}
+ O efeito causal médio condicional, \CACE,
+ de $X \in \Re$ em $Y \in \Re$ dado $\Z$ é:
+ \begin{align*}
+  \CACE(\Z) &=
+  \begin{cases}
+   \E[Y|do(X=1),\Z] - \E[Y|do(X=0),\Z]
+   & \text{, se $X$ é binário}, \\
+   \frac{d\E[Y|do(X=x),\Z]}{dx}
+   & \text{, se $X$ é contínuo}.
+  \end{cases}
+ \end{align*}
+\end{definition}
+
 Uma vez estabelecido o modelo de probabilidade
 utilizado quando estudamos intervenções,
 agora podemos fazer inferência sobre o efeito causal.

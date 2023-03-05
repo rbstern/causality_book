@@ -1,7 +1,6 @@
 \input{config.tex}
 
 \begin{document}
-\SweaveOpts{concordance=TRUE}
 
 \maketitle
 

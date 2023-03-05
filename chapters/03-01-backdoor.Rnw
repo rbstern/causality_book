@@ -201,8 +201,9 @@ quantidades obtidas pelo modelo observacional.
 
 A seguir, o \cref{thm:backdoor} mostra que,
 se $\Z$ satisfaz o critério backdoor, então
-$f(y|do(x))$ pode ser obtido diretamente a partir de
-$f(y|x,\z)$ e $f(\z)$:
+é possível ligar algumas 
+distribuições sob intervenção em $X$ a
+distribuições observacionais:
 
 \begin{theorem}
  \label{thm:backdoor}
@@ -210,12 +211,39 @@ $f(y|x,\z)$ e $f(\z)$:
  o critério backdoor para medir
  o efeito causal de $X$ em $Y$, então
  \begin{align*}
-  f(y|do(x))
-  &= \int f(y|x,\z)f(\z)d\z
+  f(\z|do(x)) 
+  &= f(\z), \text{ e } \\
+  f(y|do(x), \z) 
+  &= f(y|x, \z).
  \end{align*}
 \end{theorem}
 
-Para compreender intuitivamente o \cref{thm:backdoor},
+O \cref{thm:backdoor} mostra que,
+se $\Z$ satisfaz o critério backdoor, então
+distribuição de $\Z$ quando
+aplicamos uma intervenção em $X$ é igual
+à distribuição marginal de $\Z$.
+Além disso, a distribuição condicional de
+$Y$ dado $\Z$ quando aplicamos uma intervenção em $X$ é igual 
+à distribuição de $Y$ dado $X$ e $Z$.
+Assim, o \cref{thm:backdoor} relaciona
+distribuições que não geraram os dados a 
+distribuições que os geraram.
+Com base neste resultado, é possível determinar
+$f(y|do(x))$ a partir de $f(y,x,\z)$:
+
+\begin{corollary}
+ \label{cor:backdoor}
+ Se $\Z$ satisfaz 
+ o critério backdoor para medir
+ o efeito causal de $X$ em $Y$, então
+ \begin{align*}
+  f(y|do(x)) &=
+  \int f(y|x,\z)f(\z)d\z.
+ \end{align*}
+\end{corollary}
+
+Para compreender intuitivamente o \cref{cor:backdoor},
 podemos retornar ao \cref{ex:simpson_fim}.
 Considere o caso em que $X, Y, Z$ são as indicadoras de que,
 respectivamente, o paciente foi submetido ao tratamento,
@@ -246,6 +274,8 @@ nos \cref{thm:backdoor_ajuste,thm:backdoor_ipw}.
  o critério backdoor para medir
  o efeito causal de $X$ em $Y$, então
  \begin{align*}
+  \E[g(Y)|do(X=x),\Z]
+  &= \E[g(Y)|X=x,\Z], \text{ e } \\
   \E[g(Y)|do(X=x)] 
   &= \E[\E[g(Y)|X=x,\Z]]
  \end{align*}
@@ -258,7 +288,9 @@ nos \cref{thm:backdoor_ajuste,thm:backdoor_ipw}.
  o efeito causal de $X$ em $Y$ e
  $X$ é discreto, então
  \begin{align*}
-  \E[g(Y)|do(X=x)] 
+  \E[g(Y)|do(X=x),\Z] 
+  &= \frac{\E[g(Y)\I(X=x)|\Z]}{f(x|\Z)}, \text{ e } \\
+  \E[g(Y)|do(X=x)]
   &= \E\left[\frac{g(Y)\I(X=x)}{f(x|\Z)}\right]
  \end{align*}
 \end{theorem}
@@ -299,16 +331,11 @@ a seguinte definição será útil
 
 O \cref{thm:backdoor_ajuste} determina que, 
 se $\Z$ satisfaz o critério backdoor, então
-$\E[Y|do(X=x) = \E[\E[Y|X=x,\Z]]$.
-Para criar um estimador baseado nesta expressão,
-analisaremos o segundo termo com mais detalhe.
-
-Primeiramente, note que 
-$\mu(X,Z) := \E[Y|X,\Z]$ é
-a função de regressão de $Y$ 
-em $X$ e $Z$. Assim, inicialmente
-podemos utilizar quaisquer métodos
-para estimação de regressão.
+$\E[Y|do(X),\Z] = \E[Y|X,\Z]$.
+Como $\mu(X,Z) := \E[Y|X,\Z]$ é 
+a função de regressão de $Y$ em $X$ e $Z$,
+podemos estimar $\mu$ utilizando 
+quaisquer métodos de estimação para regressão.
 Por exemplo, se $Y$ é contínua,
 possíveis métodos são:
 regressão linear, Nadaraya-Watson, 
@@ -321,18 +348,31 @@ floresta aleatória de classificação,
 redes neurais, \ldots
 Para qualquer opção escolhida,
 denotamos o estimador de $\mu$ por $\hmu$.
-Tendo ajustado um estimador, 
-podemos argumentar que:
+
+Utilizando $\hmu$, podemos estimar
+$\CACE(\Z)$ diretamente.
+Para tal, note que $\CACE(\Z)$ é
+função de $\E[Y|do(X),\Z]$.
+Como o \cref{thm:backdoor_ajuste} garante que
+$\E[Y|do(X=x),\Z] = \mu(x,\Z)$,
+podemos definir o estimador
+$\hdoyz := \hmu(x,\Z)$.
+
+O \cref{thm:backdoor_ajuste} também 
+orienta a estimação do $\ACE$. 
+Similarmente ao caso anterior,
+o $\ACE$ é função de $\E[Y|do(X)]$.
+Pelo \cref{thm:backdoor_ajuste},
+$\E[Y|do(X=x)] = \E[\mu(x,\Z)]$.
+Assim, se $\hmu \approx \mu$,
+$\E[Y|do(X=x)] \approx \E[\hmu(x,\Z)]$.
+Como $\E[\hmu(x,\Z)]$ é simplesmente 
+uma média populacional,
+podemos estimá-la com base
+na média amostral:
 \begin{align*}
- \E[\E[Y|X=x,\Z]] &= \E[\mu(x,\Z)] \approx \E[\hmu(x,\Z)]
+ \hdoy := \frac{\sum_{i=1}^n \hmu(x,\Z_i)}{n} \approx \E[\hmu(x,\Z)]
 \end{align*}
-Finalmente, $\E[\hmu(x,\Z)]$ é simplesmente uma média,
-que podemos aproximar usando a Lei dos Grandes Números:
-\begin{align*}
- \E[\hmu(x,\Z)] &\approx \frac{\sum_{i=1}^n \hmu(x,\Z_i)}{n}
-\end{align*}
-Combinando estas conclusões, 
-obtemos o estimador pela fórmula do ajuste, $\hdoy$:
 
 \begin{definition}
  \label{def:ajuste}
@@ -340,9 +380,12 @@ obtemos o estimador pela fórmula do ajuste, $\hdoy$:
  medir o efeito causal de $X$ em $Y$ e
  $\hmu(x,\z)$ é uma estimativa 
  da regressão $\E[Y|X=x,\Z=\z]$.
- O estimador de $\E[Y|do(X=x)]$ pela
- fórmula do ajuste é:
+ Os estimadores de 
+ $\E[Y|do(X=x),\Z]$ e
+ $\E[Y|do(X=x)]$ pela
+ fórmula do ajuste são:
 \begin{align*}
+ \hdoyz &:= \hmu(x,\Z) \\
  \hdoy &:= \frac{\sum_{i=1}^n \hmu(x,\Z_i)}{n}
 \end{align*}
 \end{definition}
@@ -419,7 +462,7 @@ Y <- rnorm(n, A + B + C + X, sd)
 data <- dplyr::tibble(A, B, C, X, Y)
 @
 
-A seguir, estimaremos o efeito causal pela
+Estimaremos o efeito causal pela
 fórmula do ajuste (\cref{def:ajuste}).
 Iniciaremos a análise utilizando $\hmu$ como
 sendo uma regressão linear simples:
@@ -530,15 +573,21 @@ round(ace_est_xgb, 2)
 
 \subsubsection{Ponderação pelo inverso do escore de propensidade (IPW)}
 
-Uma outra forma de estimar $\E[Y|do(X=x)]$ é
+Uma outra forma de estimar 
+$\E[Y|do(X=x)]$ e $\E[Y|do(X=x),\Z]$ é
 motivada pelo \cref{thm:backdoor_ipw}.
 Este resultado determina que, 
 se $\Z$ satisfaz o critério backdoor, então
 \begin{align*}
- \E[Y|do(X=x)] 
- &= \E\left[\frac{Y \I(X=x)}{f(x|\Z)}\right].
+ \E[Y|do(X=x),\Z] 
+ &= \frac{\E\left[Y \I(X=x)|\Z\right]}{f(x|\Z)}.
 \end{align*}
-Na segunda expressão, $f(x|\z)$ é 
+Na segunda expressão, $\E[Y \I(X=x)|\Z]$ é 
+a regressão de $Y\I(X=x)$ em $\Z$.
+Assim, esta quantidade pode ser estimada por
+um método de regressão arbitrário, que
+denotaremos por $\widehat{\E}[Y \I(X=x)|\Z]$.
+Também $f(x|\z)$ é 
 usualmente chamado de \textit{escore de propensidade}.
 Este escore captura a forma como 
 os confundidores atuam sobre $X$
@@ -551,27 +600,43 @@ algum algoritmo arbitrário de classificação.
 Denotaremos esta estimativa por $\hf(x|\z)$.
 Se a estimativa for boa, temos
 \begin{align*}
- \E\left[\frac{Y \I(X=x)}{f(x|\Z)}\right]
- &\approx \E\left[\frac{Y \I(X=x)}{\hf(x|\Z)}\right].
+ \E[Y|do(X=x),\Z]
+ &= \frac{\widehat{\E}[Y \I(X=x)|\Z]}{f(x|\Z)}
+ \approx \frac{\widehat{\E}[Y \I(X=x)|\Z]}{\hf(x|\z)}.
 \end{align*}
-Finalmente, observe novamente que 
-podemos aproximar a esperança por
-uma média empírica, isto é,
+
+O \cref{thm:backdoor_ipw} também orienta
+a estimação de $\E[Y|do(X=x)]$.
+Se $\Z$ satisfaz o critério backdoor, então
 \begin{align*}
- \E\left[\frac{Y \I(X=x)}{\hf(x|Z)}\right]
+ \E[Y|do(X=x)]
+ &= \E\left[\frac{Y \I(X=x)}{f(x|\Z)}\right]
+\end{align*}
+Como nesta expressão a esperança é
+uma média populacional,
+ela pode ser aproximada pela média amostral
+\begin{align*}
+ \E\left[\frac{Y \I(X=x)}{f(x|\Z)}\right]
  &\approx n^{-1} \sum_{i=1}^n \frac{Y_i \I(X_i=x)}{\hf(x|\Z_i)}.
 \end{align*}
+
 Combinando estas aproximações, obtemos:
 \begin{definition}
  \label{def:ipw}
  Considere que $\Z$ satisfaz o critério backdoor para
  medir o efeito causal de $X$ em $Y$ e
  $\hf(x|\z)$ é uma estimativa de $f(x|\z)$.
- O estimador de $\E[Y|do(X=x)]$ por IPW é:
+ Os estimadores de $\E[Y|do(X=x),\Z]$ e $\E[Y|do(X=x)]$ 
+ por IPW são:
 \begin{align*}
+ \hdoyzb &:= \frac{\widehat{\E}[Y \I(X=x)|\Z]}{\hf(x|\z)} \\
  \hdoyb &:= n^{-1} \sum_{i=1}^n \frac{Y_i \I(X_i=x)}{\hf(x|\Z_i)}.
 \end{align*}
 \end{definition}
+
+Se $\hf$ converge para $f$, então sob 
+condições relativamente pouco restritivas
+$\hdoyb$ converge para $\E[Y|do(X=x)]$.
 
 \begin{theorem}
  \label{thm:conv_ipw}
@@ -772,4 +837,270 @@ ace_rob_lm %>% round(2)
  simule dados tais que a estimativa do $\ACE$ é
  diferente quando um método de regressão linear e
  um de regressão não-paramétrica são usados.
+\end{exercise}
+
+\subsection{Regression Discontinuity Design (RDD)}
+
+Em determinadas situações,
+$X$ é completamente determinado
+pelos confundidores, $\Z$ \citep{Lee2010}.
+Por exemplo, considere que 
+desejamos determinar o efeito causal que
+um determinado programa social do governo traz 
+sobre o nível de educação dos cidadãos.
+Neste caso, $X$ é a indicadora de que
+o indíviduo é elegível ao programa e
+$Y$ mede o seu nível de educação.
+Em alguns casos, é razoável supor que
+$X$ é completamente determinado por $Z$,
+a renda do indivíduo.
+
+A situação acima traz desafios para
+a fórmula do ajuste e IPW discutidos anteriormente.
+Primeiramente, como $X = h(\Z)$, 
+não é possível estimar $\E[Y|X=x,\Z=\z]$
+quando $x \neq h(\z)$.
+Portanto, não é possível utilizar
+a fórmula do ajuste, uma vez que
+ela se baseia na expressão $\E[\E[Y|X=x,\Z]]$.
+Similarmente, o estimador de IPW envolve
+uma divisão por $f(x|\Z)$.
+Assim, quando $x \neq h(\Z)$
+há uma divisão por $0$, 
+o que torna o estimador indefinido.
+
+\subsubsection{Identificação causal no RDD}
+
+Apesar destas dificuldades,
+é possível medir nestas situações
+parte do efeito causal de $X$ em $Y$.
+Suponha que $\Z \in \Re$ e que 
+existe $z_1$ tal que $X = \I(\Z \geq \z_1)$. 
+Por exemplo, um benefício pode estar disponível
+apenas para cidadãos que tenham renda 
+abaixo de um teto ou
+uma lei pode ter efeitos
+a partir de uma determinada data.
+
+Neste caso, podemos estar interessados em
+$\E[Y|do(X=x),\Z=\z_1]$, 
+o efeito causal que $X$ tem na 
+fronteira de sua implementação.
+Intuitivamente, próximo a esta fronteira,
+as unidades amostrais são todas similares 
+em relação aos confundidores.
+Assim, se na fronteira houver uma diferença em $Y$ entre
+os valores de $X$, esta diferença 
+deve ser decorrente do efeito causal de $X$.
+Esta intuição é formalizada no resultado de
+identicação causal abaixo:
+
+\begin{theorem}[\citet{Hahn2001}]
+ \label{thm:id_rdd}
+ Considere que $\Z \in \Re$ satisfaz o critério backdoor para
+ estimar o efeito causal de $X \in \{0,1\}$ em $Y$ e que
+ $\E[Y|do(X=0),\Z]$ e $\E[Y|do(X=1),\Z]$ são 
+ contínuas em $\Z=\z_1$.
+ 
+ Se $X \equiv \I(\Z \geq \z_1)$, então
+ \begin{align*}
+  \CACE(\Z=\z_1)
+  &= \lim_{\z \downarrow \z_1} \E[Y|\Z = \z] 
+  - \lim_{\z \uparrow \z_1} \E[Y|\Z = \z].
+ \end{align*}
+ 
+ Se $f(x|\Z) \in (0,1)$ é contínua exceto em $\z_1$, então
+ \begin{align*}
+  \CACE(\Z=\z_1)
+  &= \frac{\lim_{\z \downarrow \z_1} \E[Y|\Z = \z] 
+  - \lim_{\z \uparrow \z_1} \E[Y|\Z = \z]}
+  {\lim_{\z \downarrow \z_1} f(X=1|\Z=\z) 
+  - \lim_{\z \uparrow \z_1} f(X=1|\Z=\z)}.
+ \end{align*}
+\end{theorem}
+
+Um detalhe sutil do \cref{thm:id_rdd} é que
+$X \equiv \I(\Z > \z_1)$ não é
+o suficiente para termos certeza que
+$\Z$ satisfaz o critério backdoor.
+Por exemplo, considere que 
+o governo criasse um benefício fiscal para
+todas empresas sediadas em um determinado município.
+Neste caso, a ocorrência do benefício é
+função da sede da empresa. 
+Contudo, a relação causal é mais complexa.
+Se o benefício for suficientemente alto,
+poderia motivar empresas a 
+moverem sua sede para o município.
+Em outras palavras, 
+o benefício seria causa da localização da sede e não o contrário.
+Neste caso, não seria possível aplicar o \cref{thm:id_rdd}.
+Este tipo de raciocínio indica que a análise por RDD é
+mais efetiva quando é difícil interferir sobre o valor de $\Z$.
+Por exemplo, como um indivíduo não pode interferir sobre a sua idade,
+é mais fácil justificar o uso de RDD em
+uma campanha de vacinação em que
+apenas indivíduos acima de uma determinada idade são vacinados.
+
+Um outro ponto importante de interpretação do \cref{thm:id_rdd} é que,
+embora $\E[Y|do(X=0),\Z]$ e $\E[Y|do(X=1),\Z]$ sejam supostas contínuas,
+$f(X=1|\Z)$ e $\E[Y|\Z]$ não o são. Intuitivamente,
+podemos imaginar $X$ representa a indicadora de que
+uma determinada política é adotada.
+Por exemplo, podemos imaginar que $X$ indica que um indivíduo foi vacinado,
+$\Z$ a sua idade e $Y$ a sua hospitalização.
+Neste caso, $\E[Y|do(X=0),\Z]$ e $\E[Y|do(X=1),\Z]$ representam
+a taxa de hospitalização quando
+todos os indivíduos são vacinados ou
+quando todos eles não o são.
+Nestas situações, seria razoável supor que
+a taxa de hospitalização é contínua em função da idade, pois
+não esperamos que exista uma grande descontinuidade 
+nas condições de saúde entre
+indivíduos com $69$ e com $70$ anos de idade.
+Este tipo de conclusão muitas vezes é resumido pela expressão em latim
+\textit{natura non facit saltus}
+(a natureza não faz saltos).
+Por outro lado, nos dados observados,
+a política não é adotada para uma faixa de valores de $\Z$ e
+passa a ser adotada a partir de um ponto,
+o que é responsável pela descontinuidade em
+$\E[Y|\Z]$ e em $f(X=1|\Z)$.
+Podemos imaginar que a vacinação é empregada 
+somente em indivíduos com mais de $70$ anos.
+Esta descontinuidade na política humana cria
+uma diferença importante entre indivíduos
+com $69$ e com $70$ anos,
+o que explica uma diferença grande 
+nas taxas de hospitalização entre estas idades
+nos dados observados.
+
+\subsubsection{Estimação no RDD}
+
+O \cref{thm:id_rdd} indica que $\CACE(\Z=\z_1)$ é
+função da regressão de $Y$ sobre $\Z$, $\E[Y|\Z]$, e
+sobre o classificador, $f(X=1|\Z)$.
+Uma possível estratégia é estimarmos 
+estas quantidades separadamente e, a seguir,
+estimarmos o $\CACE$ trocando
+as quantias populacionais pelas quantias estimadas.
+
+Uma dificuldade nesta estratégia é que
+sabemos que $\E[Y|\Z]$ e $f(X=1|\Z)$ são discontínuas.
+Para lidar com esta dificuldade, 
+uma possibilidade é 
+realizar uma regressão para $\Z < \z_1$ e
+outra para $\Z \geq \z_1$.
+
+\begin{definition}
+ \label{def:est_rdd}
+ Seja $D_{<} = \{i: \Z_i < \z_1\}$
+ o conjunto de unidades amostrais em que $\Z_i < \z_1$,
+ $\widehat{\E}_{<}[Y|\Z]$ e $\hf_{<}(X=1|\Z)$ regressões ajustadas
+ utilizando apenas dados em $D_{<}$ e
+ $\widehat{\E}_{\geq}[Y|\Z]$ e $\hf_{\geq}(X=1|\Z)$ ajustadas
+ em $D^{c}_{<}$.
+ O estimador RDD para $\CACE(\z_1)$ é
+ \begin{align*}
+  \hCACE(\z_1)
+  := \frac{\widehat{\E}_{\geq}[Y|\z_1] - \widehat{\E}_{<}[Y|\z_1]}
+  {\hf_{\geq}(X=1|\Z) - \hf_{<}(X=1|\Z)}.
+ \end{align*}
+ Em particular, se sabemos a priori que
+ $f(X=1|\z) = 1$ para $\z \geq \z_1$ e
+ $f(X=1|\z) = 0$ para $\z < \z_1$, então
+ \begin{align*}
+  \hCACE(\z_1)
+  := \widehat{\E}_{\geq}[Y|\z_1] - \widehat{\E}_{<}[Y|\z_1]
+ \end{align*}
+\end{definition}
+
+O exemplo a seguir ilustra a implementação de RDD quando
+$X \equiv \I(\Z \geq \z_1)$ utilizando 
+tanto regressão linear quanto 
+regressão de Kernel de Nadaraya-Watson.
+
+\begin{example}
+ \label{ex:rdd}
+ Considere que $Z_i$ satisfaz 
+ o critério backdoor para estimar 
+ o efeito causal de $X$ em $Y$.
+ Além disso, $Z_i \sim N(0,1)$,
+ $X_i \equiv \I(Z_i \geq 0)$ e
+ $Y_i|X_i,Z_i \sim N(50(X_i+1)(Z_i + 1), 1)$.
+ Podemos simular os dados da seguinte forma:
+ 
+<<rdd_ex_1_1, fig.pos="t", fig.height=3.5, fig.width=5, fig.cap="Exemplo em que Z satisfaz o critério backdoor para medir o efeito causal de X em Y e X = I(Z > 0). Como resultado da descontinuidade da propensidade de X em Z = 0, há uma descontinuidade na regressão E[Y|Z] no ponto Z=0.", fig.align="center">>==
+n <- 1000
+Z <- rnorm(n)
+X <- Z >= 0
+Y <- rnorm(n, 50*(X+1)*(Z+1))
+data <- tibble(X, Y, Z)
+plot(Z, Y)
+@
+ 
+ Como estamos simulando os dados,
+ podemos calcular $\CACE(0)$:
+ \begin{align*}
+  \CACE(0) 
+  &= \lim_{\z \downarrow 0}\E[Y|\Z=\z] 
+  - \lim_{\z \uparrow 0}\E[Y|\Z=\z]
+  & \text{\cref{thm:id_rdd}} \\
+  &= \lim_{\z \downarrow 0}\E[Y|X=1,\Z=\z]
+  - \lim_{\z \uparrow 0}\E[Y|X=0,\Z=\z] \\
+  &= \lim_{\z \downarrow 0} 50(1+1)(\z+1)
+  - \lim_{\z \uparrow 0} 50(0+1)(\z+1)
+  = 50
+ \end{align*}
+\end{example}
+
+O código abaixo estima $\CACE(0)$ usando regressão linear:
+
+<<rdd_ex_1_2>>==
+regs = data %>% 
+  mutate(Z1 = (Z >= 0)) %>% 
+  group_by(Z1) %>% 
+  summarise(
+    intercepto = lm(Y ~ Z)$coefficients[1], 
+    coef_angular = lm(Y ~ Z)$coefficients[2]
+  ) 
+regs
+
+est_cace = 1*regs[2, 2] + 0*regs[2, 3] -
+  1*regs[1, 2] + 0*regs[1, 3]
+round(as.numeric(est_cace), 2)
+@
+
+Similarmente, podemos estimar $\CACE(0)$ usando
+regressão por kernel de Nadaraya-Watson:
+
+<<rdd_ex_1_3, warning=FALSE, message=FALSE>>==
+library(np)
+options(np.messages = FALSE)
+nw_reg <- function(data, valor)
+{
+  bw <- npregbw(xdat = data$Z, ydat = data$Y)$bw
+  npksum(txdat= data$Z, exdat = valor, tydat = data$Y, bws = bw)$ksum/
+    npksum(txdat = data$Z, exdat = valor, bws = bw)$ksum
+}
+
+reg_baixo <- data %>% 
+  filter(Z < 0) %>% 
+  nw_reg(0)
+reg_cima <- data %>% 
+  filter(Z >= 0) %>% 
+  nw_reg(0)
+est_cace <- reg_cima - reg_baixo
+round(est_cace, 2)
+@
+
+\subsection{Exercícios}
+
+\begin{exercise}
+ Crie um exemplo em que,
+ ao contrário do \cref{ex:rdd},
+ $\E[Y|X=1,\Z]$ não é linear em $\Z$.
+ Compare as estimativas de $\CACE$ usando
+ a regressão linear e 
+ algum método de regressão não-paramétrica.
 \end{exercise}

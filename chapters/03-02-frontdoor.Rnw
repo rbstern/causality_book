@@ -1,3 +1,28 @@
+\section{Do-calculus}
+\label{sec:do_calculus}
+
+\begin{theorem}
+ \label{thm:do_calculus}
+ Teste
+ \begin{enumerate}
+  \item Seja $\sG^*$ o grafo obtido retirando de $\sG$ 
+  todas as arestas que apontam para $\X$. 
+  Se $\Y \dsep \Z | \X \cup \W$ em $\sG^*$, então
+  \begin{align*}
+   f(\Y|do(\X), \Z, \W) &= f(\Y|do(\X), \W)
+  \end{align*}
+  \item Seja $\sG^+$ o grafo obtido retirando de $\sG$ 
+  todas as arestas que 
+  apontam para $\X$ ou 
+  que partem de $\Z$. 
+  Se temos que $\Y \dsep \Z | \X \cup \W$ em $\sG^+$, então
+  \begin{align*}
+   f(\Y|do(\X), do(\Z), \W) &= f(\Y|do(\X), \Z, \W)
+  \end{align*}
+  \item 
+ \end{enumerate}
+\end{theorem}
+
 \section{Controlando mediadores (critério frontdoor)}
 \label{sec:frontdoor}
 
@@ -128,5 +153,3 @@ a estratégia é
  = \int f(\y|\w)f(\w|do(\X))d\w$ e
  $\E[Y|do(\X)] = \E[\E[Y|\W]|do(\X)]$.
 \end{exercise}
-
-\section{Do-calculus}

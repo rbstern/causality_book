@@ -1,7 +1,6 @@
 \input{config.tex}
 
 \begin{document}
-%\SweaveOpts{concordance=TRUE}
 
 \maketitle
 
@@ -332,9 +331,9 @@ formalizada a seguir:
  Um \textbf{caminho direcionado} é 
  uma sequência de vértices em
  um grafo direcionado,
- $C = \{V_1, \ldots, V_n\}$ tal que, 
+ $C = \{C_1, \ldots, C_n\}$ tal que, 
  para cada $1 \leq i < n$,
- $(V_i, V_{i+1}) \in \sE$.
+ $(C_i, C_{i+1}) \in \sE$.
 \end{definition}
 
 \begin{definition}
@@ -363,8 +362,10 @@ Caminho é formalizado a seguir:
 \begin{definition}
  \label{def:caminho}
  Um \textbf{caminho} é uma sequência de vértices,
- $C = \{V_1, \ldots, V_n\}$ tal que, 
+ $C = \{C_1, \ldots, C_n\}$ tal que, 
  para cada $1 \leq i < n$,
+ $(C_i, C_{i+1}) \in \sE$ ou 
+ $(C_{i+1}, C_{i}) \in \sE$. 
  $(V_i, V_{i+1}) \in \sE$ ou 
  $(V_{i+1}, V_{i}) \in \sE$. 
 \end{definition}
@@ -383,8 +384,8 @@ formalizado a seguir:
  um grafo direcionado, $\sG = (\sV, \sE)$,
  tal que, para todo
  vértice, $V \in \sV$, não existe um
- caminho direcionado, $C = \{V_1, \ldots, V_n\}$
- tal que $V_1 = V = V_n$.
+ caminho direcionado, $C = \{C_1, \ldots, C_n\}$
+ tal que $C_1 = V = C_n$.
 \end{definition}
 
 Usualmente representaremos
@@ -470,7 +471,7 @@ algum vértice em $\sA$:
 
 Um modelo probabilístico em um DAG é
 tal que cada um dos vértices é uma variável aleatória.
-O DAG será usada para descrever 
+O DAG será usado para descrever 
 relações de independência condicional existentes entre
 estas variáveis.
 Mais especificamente, cada vértice será
@@ -537,7 +538,7 @@ pode ser encontrada
 na \cref{fig:confundidor}.
 O modelo de confundidor pode ser usado quando
 acreditamos que $V_2$ é uma causa comum a
-$V_1$ a $V_3$. Além disso,
+$V_1$ e a $V_3$. Além disso,
 $V_1$ não é causa imediata de $V_3$ 
 nem vice-versa.
 
@@ -803,7 +804,7 @@ resultados a seguir:
 \begin{proof}
  Considere que $V_1$ e $V_3$ são
  independentes e tem distribuição $\text{Bernoulli}(0.5)$.
- Além disso, $V_2 \equiv V_1+V_2$.
+ Além disso, $V_2 \equiv V_1+V_3$.
  Como $\P(V_3 = 1) = 0.5$ e
  $\P(V_3=1|V_1=1,V_2=2) = 1$, conclua que
  $V_1 \not\ind V_3 | V_2$.
@@ -917,6 +918,23 @@ o diferencia de um modelo probabilístico genérico em um DAG é
 como o interpretamos.
 Existe uma aresta de $V_1$ em $V_2$ em um SCM
 se e somente se $V_1$ é uma causa direta de $V_2$.
+
+\begin{definition}
+ Dizemos que $(\sG,f)$ é um SCM linear Gaussiano se,
+ existe matriz diagonal positiva, $\Sigma$, e
+ $\beta in \Re^{n \times n}$ tal que,
+ para todo vértice $V_i$,
+ $\beta_{i,j} = 0$ quando $V_j \notin Pa(V_i)$ e
+ \begin{align*}
+  V_i|Pa(V) &\sim N(\beta_i, \Sigma_{i,i})
+ \end{align*}
+\end{definition}
+
+\begin{lemma}
+ Se $(\sG,f)$ é um SCM linear Gaussiano, então
+ $\sV \sim N(0, (I-\beta)^{-1}\Sigma((I-\beta)^{-1})^t)$.
+ 
+\end{lemma}
 
 No próximo capítulo estudaremos consequências desta interpretação causal.
 Contudo, antes disso, a próxima seção desenvolverá
@@ -1710,6 +1728,30 @@ assim trazendo clareza ao Paradoxo.
  Não há paradoxo!
 \end{example}
 
+Além do efeito causal médio, 
+às vezes desejamos determinar 
+o efeito causal de $X$ em $Y$ quando
+observamos que a unidade amostral
+faz parte de determinado estrato da população.
+Em outras palavras, desejamos saber 
+o efeito causal de $X$ em $Y$ quando observamos que
+outras variáveis, $\Z$, assumem um determinado valor.
+
+\begin{definition}
+ \label{def:cace}
+ O efeito causal médio condicional, \CACE,
+ de $X \in \Re$ em $Y \in \Re$ dado $\Z$ é:
+ \begin{align*}
+  \CACE(\Z) &=
+  \begin{cases}
+   \E[Y|do(X=1),\Z] - \E[Y|do(X=0),\Z]
+   & \text{, se $X$ é binário}, \\
+   \frac{d\E[Y|do(X=x),\Z]}{dx}
+   & \text{, se $X$ é contínuo}.
+  \end{cases}
+ \end{align*}
+\end{definition}
+
 Uma vez estabelecido o modelo de probabilidade
 utilizado quando estudamos intervenções,
 agora podemos fazer inferência sobre o efeito causal.
@@ -1966,8 +2008,9 @@ quantidades obtidas pelo modelo observacional.
 
 A seguir, o \cref{thm:backdoor} mostra que,
 se $\Z$ satisfaz o critério backdoor, então
-$f(y|do(x))$ pode ser obtido diretamente a partir de
-$f(y|x,\z)$ e $f(\z)$:
+é possível ligar algumas 
+distribuições sob intervenção em $X$ a
+distribuições observacionais:
 
 \begin{theorem}
  \label{thm:backdoor}
@@ -1975,12 +2018,39 @@ $f(y|x,\z)$ e $f(\z)$:
  o critério backdoor para medir
  o efeito causal de $X$ em $Y$, então
  \begin{align*}
-  f(y|do(x))
-  &= \int f(y|x,\z)f(\z)d\z
+  f(\z|do(x)) 
+  &= f(\z), \text{ e } \\
+  f(y|do(x), \z) 
+  &= f(y|x, \z).
  \end{align*}
 \end{theorem}
 
-Para compreender intuitivamente o \cref{thm:backdoor},
+O \cref{thm:backdoor} mostra que,
+se $\Z$ satisfaz o critério backdoor, então
+distribuição de $\Z$ quando
+aplicamos uma intervenção em $X$ é igual
+à distribuição marginal de $\Z$.
+Além disso, a distribuição condicional de
+$Y$ dado $\Z$ quando aplicamos uma intervenção em $X$ é igual 
+à distribuição de $Y$ dado $X$ e $Z$.
+Assim, o \cref{thm:backdoor} relaciona
+distribuições que não geraram os dados a 
+distribuições que os geraram.
+Com base neste resultado, é possível determinar
+$f(y|do(x))$ a partir de $f(y,x,\z)$:
+
+\begin{corollary}
+ \label{cor:backdoor}
+ Se $\Z$ satisfaz 
+ o critério backdoor para medir
+ o efeito causal de $X$ em $Y$, então
+ \begin{align*}
+  f(y|do(x)) &=
+  \int f(y|x,\z)f(\z)d\z.
+ \end{align*}
+\end{corollary}
+
+Para compreender intuitivamente o \cref{cor:backdoor},
 podemos retornar ao \cref{ex:simpson_fim}.
 Considere o caso em que $X, Y, Z$ são as indicadoras de que,
 respectivamente, o paciente foi submetido ao tratamento,
@@ -2011,6 +2081,8 @@ nos \cref{thm:backdoor_ajuste,thm:backdoor_ipw}.
  o critério backdoor para medir
  o efeito causal de $X$ em $Y$, então
  \begin{align*}
+  \E[g(Y)|do(X=x),\Z]
+  &= \E[g(Y)|X=x,\Z], \text{ e } \\
   \E[g(Y)|do(X=x)] 
   &= \E[\E[g(Y)|X=x,\Z]]
  \end{align*}
@@ -2023,7 +2095,9 @@ nos \cref{thm:backdoor_ajuste,thm:backdoor_ipw}.
  o efeito causal de $X$ em $Y$ e
  $X$ é discreto, então
  \begin{align*}
-  \E[g(Y)|do(X=x)] 
+  \E[g(Y)|do(X=x),\Z] 
+  &= \frac{\E[g(Y)\I(X=x)|\Z]}{f(x|\Z)}, \text{ e } \\
+  \E[g(Y)|do(X=x)]
   &= \E\left[\frac{g(Y)\I(X=x)}{f(x|\Z)}\right]
  \end{align*}
 \end{theorem}
@@ -2064,16 +2138,11 @@ a seguinte definição será útil
 
 O \cref{thm:backdoor_ajuste} determina que, 
 se $\Z$ satisfaz o critério backdoor, então
-$\E[Y|do(X=x) = \E[\E[Y|X=x,\Z]]$.
-Para criar um estimador baseado nesta expressão,
-analisaremos o segundo termo com mais detalhe.
-
-Primeiramente, note que 
-$\mu(X,Z) := \E[Y|X,\Z]$ é
-a função de regressão de $Y$ 
-em $X$ e $Z$. Assim, inicialmente
-podemos utilizar quaisquer métodos
-para estimação de regressão.
+$\E[Y|do(X),\Z] = \E[Y|X,\Z]$.
+Como $\mu(X,Z) := \E[Y|X,\Z]$ é 
+a função de regressão de $Y$ em $X$ e $Z$,
+podemos estimar $\mu$ utilizando 
+quaisquer métodos de estimação para regressão.
 Por exemplo, se $Y$ é contínua,
 possíveis métodos são:
 regressão linear, Nadaraya-Watson, 
@@ -2086,18 +2155,31 @@ floresta aleatória de classificação,
 redes neurais, \ldots
 Para qualquer opção escolhida,
 denotamos o estimador de $\mu$ por $\hmu$.
-Tendo ajustado um estimador, 
-podemos argumentar que:
+
+Utilizando $\hmu$, podemos estimar
+$\CACE(\Z)$ diretamente.
+Para tal, note que $\CACE(\Z)$ é
+função de $\E[Y|do(X),\Z]$.
+Como o \cref{thm:backdoor_ajuste} garante que
+$\E[Y|do(X=x),\Z] = \mu(x,\Z)$,
+podemos definir o estimador
+$\hdoyz := \hmu(x,\Z)$.
+
+O \cref{thm:backdoor_ajuste} também 
+orienta a estimação do $\ACE$. 
+Similarmente ao caso anterior,
+o $\ACE$ é função de $\E[Y|do(X)]$.
+Pelo \cref{thm:backdoor_ajuste},
+$\E[Y|do(X=x)] = \E[\mu(x,\Z)]$.
+Assim, se $\hmu \approx \mu$,
+$\E[Y|do(X=x)] \approx \E[\hmu(x,\Z)]$.
+Como $\E[\hmu(x,\Z)]$ é simplesmente 
+uma média populacional,
+podemos estimá-la com base
+na média amostral:
 \begin{align*}
- \E[\E[Y|X=x,\Z]] &= \E[\mu(x,\Z)] \approx \E[\hmu(x,\Z)]
+ \hdoy := \frac{\sum_{i=1}^n \hmu(x,\Z_i)}{n} \approx \E[\hmu(x,\Z)]
 \end{align*}
-Finalmente, $\E[\hmu(x,\Z)]$ é simplesmente uma média,
-que podemos aproximar usando a Lei dos Grandes Números:
-\begin{align*}
- \E[\hmu(x,\Z)] &\approx \frac{\sum_{i=1}^n \hmu(x,\Z_i)}{n}
-\end{align*}
-Combinando estas conclusões, 
-obtemos o estimador pela fórmula do ajuste, $\hdoy$:
 
 \begin{definition}
  \label{def:ajuste}
@@ -2105,9 +2187,12 @@ obtemos o estimador pela fórmula do ajuste, $\hdoy$:
  medir o efeito causal de $X$ em $Y$ e
  $\hmu(x,\z)$ é uma estimativa 
  da regressão $\E[Y|X=x,\Z=\z]$.
- O estimador de $\E[Y|do(X=x)]$ pela
- fórmula do ajuste é:
+ Os estimadores de 
+ $\E[Y|do(X=x),\Z]$ e
+ $\E[Y|do(X=x)]$ pela
+ fórmula do ajuste são:
 \begin{align*}
+ \hdoyz &:= \hmu(x,\Z) \\
  \hdoy &:= \frac{\sum_{i=1}^n \hmu(x,\Z_i)}{n}
 \end{align*}
 \end{definition}
@@ -2181,7 +2266,7 @@ $Y \sim N(A + B + C + X, \sigma^2)$:
 \end{kframe}
 \end{knitrout}
 
-A seguir, estimaremos o efeito causal pela
+Estimaremos o efeito causal pela
 fórmula do ajuste (\cref{def:ajuste}).
 Iniciaremos a análise utilizando $\hmu$ como
 sendo uma regressão linear simples:
@@ -2306,15 +2391,21 @@ Exibimos uma implementação usando XGBoost
 
 \subsubsection{Ponderação pelo inverso do escore de propensidade (IPW)}
 
-Uma outra forma de estimar $\E[Y|do(X=x)]$ é
+Uma outra forma de estimar 
+$\E[Y|do(X=x)]$ e $\E[Y|do(X=x),\Z]$ é
 motivada pelo \cref{thm:backdoor_ipw}.
 Este resultado determina que, 
 se $\Z$ satisfaz o critério backdoor, então
 \begin{align*}
- \E[Y|do(X=x)] 
- &= \E\left[\frac{Y \I(X=x)}{f(x|\Z)}\right].
+ \E[Y|do(X=x),\Z] 
+ &= \frac{\E\left[Y \I(X=x)|\Z\right]}{f(x|\Z)}.
 \end{align*}
-Na segunda expressão, $f(x|\z)$ é 
+Na segunda expressão, $\E[Y \I(X=x)|\Z]$ é 
+a regressão de $Y\I(X=x)$ em $\Z$.
+Assim, esta quantidade pode ser estimada por
+um método de regressão arbitrário, que
+denotaremos por $\widehat{\E}[Y \I(X=x)|\Z]$.
+Também $f(x|\z)$ é 
 usualmente chamado de \textit{escore de propensidade}.
 Este escore captura a forma como 
 os confundidores atuam sobre $X$
@@ -2327,27 +2418,43 @@ algum algoritmo arbitrário de classificação.
 Denotaremos esta estimativa por $\hf(x|\z)$.
 Se a estimativa for boa, temos
 \begin{align*}
- \E\left[\frac{Y \I(X=x)}{f(x|\Z)}\right]
- &\approx \E\left[\frac{Y \I(X=x)}{\hf(x|\Z)}\right].
+ \E[Y|do(X=x),\Z]
+ &= \frac{\widehat{\E}[Y \I(X=x)|\Z]}{f(x|\Z)}
+ \approx \frac{\widehat{\E}[Y \I(X=x)|\Z]}{\hf(x|\z)}.
 \end{align*}
-Finalmente, observe novamente que 
-podemos aproximar a esperança por
-uma média empírica, isto é,
+
+O \cref{thm:backdoor_ipw} também orienta
+a estimação de $\E[Y|do(X=x)]$.
+Se $\Z$ satisfaz o critério backdoor, então
 \begin{align*}
- \E\left[\frac{Y \I(X=x)}{\hf(x|Z)}\right]
+ \E[Y|do(X=x)]
+ &= \E\left[\frac{Y \I(X=x)}{f(x|\Z)}\right]
+\end{align*}
+Como nesta expressão a esperança é
+uma média populacional,
+ela pode ser aproximada pela média amostral
+\begin{align*}
+ \E\left[\frac{Y \I(X=x)}{f(x|\Z)}\right]
  &\approx n^{-1} \sum_{i=1}^n \frac{Y_i \I(X_i=x)}{\hf(x|\Z_i)}.
 \end{align*}
+
 Combinando estas aproximações, obtemos:
 \begin{definition}
  \label{def:ipw}
  Considere que $\Z$ satisfaz o critério backdoor para
  medir o efeito causal de $X$ em $Y$ e
  $\hf(x|\z)$ é uma estimativa de $f(x|\z)$.
- O estimador de $\E[Y|do(X=x)]$ por IPW é:
+ Os estimadores de $\E[Y|do(X=x),\Z]$ e $\E[Y|do(X=x)]$ 
+ por IPW são:
 \begin{align*}
+ \hdoyzb &:= \frac{\widehat{\E}[Y \I(X=x)|\Z]}{\hf(x|\z)} \\
  \hdoyb &:= n^{-1} \sum_{i=1}^n \frac{Y_i \I(X_i=x)}{\hf(x|\Z_i)}.
 \end{align*}
 \end{definition}
+
+Se $\hf$ converge para $f$, então sob 
+condições relativamente pouco restritivas
+$\hdoyb$ converge para $\E[Y|do(X=x)]$.
 
 \begin{theorem}
  \label{thm:conv_ipw}
@@ -2571,6 +2678,331 @@ no \cref{ex:backdoor_est_ipw}.
  um de regressão não-paramétrica são usados.
 \end{exercise}
 
+\subsection{Regression Discontinuity Design (RDD)}
+
+Em determinadas situações,
+$X$ é completamente determinado
+pelos confundidores, $\Z$ \citep{Lee2010}.
+Por exemplo, considere que 
+desejamos determinar o efeito causal que
+um determinado programa social do governo traz 
+sobre o nível de educação dos cidadãos.
+Neste caso, $X$ é a indicadora de que
+o indíviduo é elegível ao programa e
+$Y$ mede o seu nível de educação.
+Em alguns casos, é razoável supor que
+$X$ é completamente determinado por $Z$,
+a renda do indivíduo.
+
+A situação acima traz desafios para
+a fórmula do ajuste e IPW discutidos anteriormente.
+Primeiramente, como $X = h(\Z)$, 
+não é possível estimar $\E[Y|X=x,\Z=\z]$
+quando $x \neq h(\z)$.
+Portanto, não é possível utilizar
+a fórmula do ajuste, uma vez que
+ela se baseia na expressão $\E[\E[Y|X=x,\Z]]$.
+Similarmente, o estimador de IPW envolve
+uma divisão por $f(x|\Z)$.
+Assim, quando $x \neq h(\Z)$
+há uma divisão por $0$, 
+o que torna o estimador indefinido.
+
+\subsubsection{Identificação causal no RDD}
+
+Apesar destas dificuldades,
+é possível medir nestas situações
+parte do efeito causal de $X$ em $Y$.
+Suponha que $\Z \in \Re$ e que 
+existe $z_1$ tal que $X = \I(\Z \geq \z_1)$. 
+Por exemplo, um benefício pode estar disponível
+apenas para cidadãos que tenham renda 
+abaixo de um teto ou
+uma lei pode ter efeitos
+a partir de uma determinada data.
+
+Neste caso, podemos estar interessados em
+$\E[Y|do(X=x),\Z=\z_1]$, 
+o efeito causal que $X$ tem na 
+fronteira de sua implementação.
+Intuitivamente, próximo a esta fronteira,
+as unidades amostrais são todas similares 
+em relação aos confundidores.
+Assim, se na fronteira houver uma diferença em $Y$ entre
+os valores de $X$, esta diferença 
+deve ser decorrente do efeito causal de $X$.
+Esta intuição é formalizada no resultado de
+identicação causal abaixo:
+
+\begin{theorem}[\citet{Hahn2001}]
+ \label{thm:id_rdd}
+ Considere que $\Z \in \Re$ satisfaz o critério backdoor para
+ estimar o efeito causal de $X \in \{0,1\}$ em $Y$ e que
+ $\E[Y|do(X=0),\Z]$ e $\E[Y|do(X=1),\Z]$ são 
+ contínuas em $\Z=\z_1$.
+ 
+ Se $X \equiv \I(\Z \geq \z_1)$, então
+ \begin{align*}
+  \CACE(\Z=\z_1)
+  &= \lim_{\z \downarrow \z_1} \E[Y|\Z = \z] 
+  - \lim_{\z \uparrow \z_1} \E[Y|\Z = \z].
+ \end{align*}
+ 
+ Se $f(x|\Z) \in (0,1)$ é contínua exceto em $\z_1$, então
+ \begin{align*}
+  \CACE(\Z=\z_1)
+  &= \frac{\lim_{\z \downarrow \z_1} \E[Y|\Z = \z] 
+  - \lim_{\z \uparrow \z_1} \E[Y|\Z = \z]}
+  {\lim_{\z \downarrow \z_1} f(X=1|\Z=\z) 
+  - \lim_{\z \uparrow \z_1} f(X=1|\Z=\z)}.
+ \end{align*}
+\end{theorem}
+
+Um detalhe sutil do \cref{thm:id_rdd} é que
+$X \equiv \I(\Z > \z_1)$ não é
+o suficiente para termos certeza que
+$\Z$ satisfaz o critério backdoor.
+Por exemplo, considere que 
+o governo criasse um benefício fiscal para
+todas empresas sediadas em um determinado município.
+Neste caso, a ocorrência do benefício é
+função da sede da empresa. 
+Contudo, a relação causal é mais complexa.
+Se o benefício for suficientemente alto,
+poderia motivar empresas a 
+moverem sua sede para o município.
+Em outras palavras, 
+o benefício seria causa da localização da sede e não o contrário.
+Neste caso, não seria possível aplicar o \cref{thm:id_rdd}.
+Este tipo de raciocínio indica que a análise por RDD é
+mais efetiva quando é difícil interferir sobre o valor de $\Z$.
+Por exemplo, como um indivíduo não pode interferir sobre a sua idade,
+é mais fácil justificar o uso de RDD em
+uma campanha de vacinação em que
+apenas indivíduos acima de uma determinada idade são vacinados.
+
+Um outro ponto importante de interpretação do \cref{thm:id_rdd} é que,
+embora $\E[Y|do(X=0),\Z]$ e $\E[Y|do(X=1),\Z]$ sejam supostas contínuas,
+$f(X=1|\Z)$ e $\E[Y|\Z]$ não o são. Intuitivamente,
+podemos imaginar $X$ representa a indicadora de que
+uma determinada política é adotada.
+Por exemplo, podemos imaginar que $X$ indica que um indivíduo foi vacinado,
+$\Z$ a sua idade e $Y$ a sua hospitalização.
+Neste caso, $\E[Y|do(X=0),\Z]$ e $\E[Y|do(X=1),\Z]$ representam
+a taxa de hospitalização quando
+todos os indivíduos são vacinados ou
+quando todos eles não o são.
+Nestas situações, seria razoável supor que
+a taxa de hospitalização é contínua em função da idade, pois
+não esperamos que exista uma grande descontinuidade 
+nas condições de saúde entre
+indivíduos com $69$ e com $70$ anos de idade.
+Este tipo de conclusão muitas vezes é resumido pela expressão em latim
+\textit{natura non facit saltus}
+(a natureza não faz saltos).
+Por outro lado, nos dados observados,
+a política não é adotada para uma faixa de valores de $\Z$ e
+passa a ser adotada a partir de um ponto,
+o que é responsável pela descontinuidade em
+$\E[Y|\Z]$ e em $f(X=1|\Z)$.
+Podemos imaginar que a vacinação é empregada 
+somente em indivíduos com mais de $70$ anos.
+Esta descontinuidade na política humana cria
+uma diferença importante entre indivíduos
+com $69$ e com $70$ anos,
+o que explica uma diferença grande 
+nas taxas de hospitalização entre estas idades
+nos dados observados.
+
+\subsubsection{Estimação no RDD}
+
+O \cref{thm:id_rdd} indica que $\CACE(\Z=\z_1)$ é
+função da regressão de $Y$ sobre $\Z$, $\E[Y|\Z]$, e
+sobre o classificador, $f(X=1|\Z)$.
+Uma possível estratégia é estimarmos 
+estas quantidades separadamente e, a seguir,
+estimarmos o $\CACE$ trocando
+as quantias populacionais pelas quantias estimadas.
+
+Uma dificuldade nesta estratégia é que
+sabemos que $\E[Y|\Z]$ e $f(X=1|\Z)$ são discontínuas.
+Para lidar com esta dificuldade, 
+uma possibilidade é 
+realizar uma regressão para $\Z < \z_1$ e
+outra para $\Z \geq \z_1$.
+
+\begin{definition}
+ \label{def:est_rdd}
+ Seja $D_{<} = \{i: \Z_i < \z_1\}$
+ o conjunto de unidades amostrais em que $\Z_i < \z_1$,
+ $\widehat{\E}_{<}[Y|\Z]$ e $\hf_{<}(X=1|\Z)$ regressões ajustadas
+ utilizando apenas dados em $D_{<}$ e
+ $\widehat{\E}_{\geq}[Y|\Z]$ e $\hf_{\geq}(X=1|\Z)$ ajustadas
+ em $D^{c}_{<}$.
+ O estimador RDD para $\CACE(\z_1)$ é
+ \begin{align*}
+  \hCACE(\z_1)
+  := \frac{\widehat{\E}_{\geq}[Y|\z_1] - \widehat{\E}_{<}[Y|\z_1]}
+  {\hf_{\geq}(X=1|\Z) - \hf_{<}(X=1|\Z)}.
+ \end{align*}
+ Em particular, se sabemos a priori que
+ $f(X=1|\z) = 1$ para $\z \geq \z_1$ e
+ $f(X=1|\z) = 0$ para $\z < \z_1$, então
+ \begin{align*}
+  \hCACE(\z_1)
+  := \widehat{\E}_{\geq}[Y|\z_1] - \widehat{\E}_{<}[Y|\z_1]
+ \end{align*}
+\end{definition}
+
+O exemplo a seguir ilustra a implementação de RDD quando
+$X \equiv \I(\Z \geq \z_1)$ utilizando 
+tanto regressão linear quanto 
+regressão de Kernel de Nadaraya-Watson.
+
+\begin{example}
+ \label{ex:rdd}
+ Considere que $Z_i$ satisfaz 
+ o critério backdoor para estimar 
+ o efeito causal de $X$ em $Y$.
+ Além disso, $Z_i \sim N(0,1)$,
+ $X_i \equiv \I(Z_i \geq 0)$ e
+ $Y_i|X_i,Z_i \sim N(50(X_i+1)(Z_i + 1), 1)$.
+ Podemos simular os dados da seguinte forma:
+ 
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{n} \hlkwb{<-} \hlnum{1000}
+\hlstd{Z} \hlkwb{<-} \hlkwd{rnorm}\hlstd{(n)}
+\hlstd{X} \hlkwb{<-} \hlstd{Z} \hlopt{>=} \hlnum{0}
+\hlstd{Y} \hlkwb{<-} \hlkwd{rnorm}\hlstd{(n,} \hlnum{50}\hlopt{*}\hlstd{(X}\hlopt{+}\hlnum{1}\hlstd{)}\hlopt{*}\hlstd{(Z}\hlopt{+}\hlnum{1}\hlstd{))}
+\hlstd{data} \hlkwb{<-} \hlkwd{tibble}\hlstd{(X, Y, Z)}
+\hlkwd{plot}\hlstd{(Z, Y)}
+\end{alltt}
+\end{kframe}\begin{figure}[t]
+
+{\centering \includegraphics[width=\maxwidth]{./figures/rdd_ex_1_1-1} 
+
+}
+
+\caption[Exemplo em que Z satisfaz o critério backdoor para medir o efeito causal de X em Y e X = I(Z > 0)]{Exemplo em que Z satisfaz o critério backdoor para medir o efeito causal de X em Y e X = I(Z > 0). Como resultado da descontinuidade da propensidade de X em Z = 0, há uma descontinuidade na regressão E[Y|Z] no ponto Z=0.}\label{fig:rdd_ex_1_1}
+\end{figure}
+
+\end{knitrout}
+ 
+ Como estamos simulando os dados,
+ podemos calcular $\CACE(0)$:
+ \begin{align*}
+  \CACE(0) 
+  &= \lim_{\z \downarrow 0}\E[Y|\Z=\z] 
+  - \lim_{\z \uparrow 0}\E[Y|\Z=\z]
+  & \text{\cref{thm:id_rdd}} \\
+  &= \lim_{\z \downarrow 0}\E[Y|X=1,\Z=\z]
+  - \lim_{\z \uparrow 0}\E[Y|X=0,\Z=\z] \\
+  &= \lim_{\z \downarrow 0} 50(1+1)(\z+1)
+  - \lim_{\z \uparrow 0} 50(0+1)(\z+1)
+  = 50
+ \end{align*}
+\end{example}
+
+O código abaixo estima $\CACE(0)$ usando regressão linear:
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{regs} \hlkwb{=} \hlstd{data} \hlopt{%>%}
+  \hlkwd{mutate}\hlstd{(}\hlkwc{Z1} \hlstd{= (Z} \hlopt{>=} \hlnum{0}\hlstd{))} \hlopt{%>%}
+  \hlkwd{group_by}\hlstd{(Z1)} \hlopt{%>%}
+  \hlkwd{summarise}\hlstd{(}
+    \hlkwc{intercepto} \hlstd{=} \hlkwd{lm}\hlstd{(Y} \hlopt{~} \hlstd{Z)}\hlopt{$}\hlstd{coefficients[}\hlnum{1}\hlstd{],}
+    \hlkwc{coef_angular} \hlstd{=} \hlkwd{lm}\hlstd{(Y} \hlopt{~} \hlstd{Z)}\hlopt{$}\hlstd{coefficients[}\hlnum{2}\hlstd{]}
+  \hlstd{)}
+\hlstd{regs}
+\end{alltt}
+\begin{verbatim}
+## # A tibble: 2 x 3
+##   Z1    intercepto coef_angular
+##   <lgl>      <dbl>        <dbl>
+## 1 FALSE       50.1         50.1
+## 2 TRUE        99.9        100.
+\end{verbatim}
+\begin{alltt}
+\hlstd{est_cace} \hlkwb{=} \hlnum{1}\hlopt{*}\hlstd{regs[}\hlnum{2}\hlstd{,} \hlnum{2}\hlstd{]} \hlopt{+} \hlnum{0}\hlopt{*}\hlstd{regs[}\hlnum{2}\hlstd{,} \hlnum{3}\hlstd{]} \hlopt{-}
+  \hlnum{1}\hlopt{*}\hlstd{regs[}\hlnum{1}\hlstd{,} \hlnum{2}\hlstd{]} \hlopt{+} \hlnum{0}\hlopt{*}\hlstd{regs[}\hlnum{1}\hlstd{,} \hlnum{3}\hlstd{]}
+\hlkwd{round}\hlstd{(}\hlkwd{as.numeric}\hlstd{(est_cace),} \hlnum{2}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+## [1] 49.81
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+Similarmente, podemos estimar $\CACE(0)$ usando
+regressão por kernel de Nadaraya-Watson:
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{library}\hlstd{(np)}
+\hlkwd{options}\hlstd{(}\hlkwc{np.messages} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\hlstd{nw_reg} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{data}\hlstd{,} \hlkwc{valor}\hlstd{)}
+\hlstd{\{}
+  \hlstd{bw} \hlkwb{<-} \hlkwd{npregbw}\hlstd{(}\hlkwc{xdat} \hlstd{= data}\hlopt{$}\hlstd{Z,} \hlkwc{ydat} \hlstd{= data}\hlopt{$}\hlstd{Y)}\hlopt{$}\hlstd{bw}
+  \hlkwd{npksum}\hlstd{(}\hlkwc{txdat}\hlstd{= data}\hlopt{$}\hlstd{Z,} \hlkwc{exdat} \hlstd{= valor,} \hlkwc{tydat} \hlstd{= data}\hlopt{$}\hlstd{Y,} \hlkwc{bws} \hlstd{= bw)}\hlopt{$}\hlstd{ksum}\hlopt{/}
+    \hlkwd{npksum}\hlstd{(}\hlkwc{txdat} \hlstd{= data}\hlopt{$}\hlstd{Z,} \hlkwc{exdat} \hlstd{= valor,} \hlkwc{bws} \hlstd{= bw)}\hlopt{$}\hlstd{ksum}
+\hlstd{\}}
+
+\hlstd{reg_baixo} \hlkwb{<-} \hlstd{data} \hlopt{%>%}
+  \hlkwd{filter}\hlstd{(Z} \hlopt{<} \hlnum{0}\hlstd{)} \hlopt{%>%}
+  \hlkwd{nw_reg}\hlstd{(}\hlnum{0}\hlstd{)}
+\hlstd{reg_cima} \hlkwb{<-} \hlstd{data} \hlopt{%>%}
+  \hlkwd{filter}\hlstd{(Z} \hlopt{>=} \hlnum{0}\hlstd{)} \hlopt{%>%}
+  \hlkwd{nw_reg}\hlstd{(}\hlnum{0}\hlstd{)}
+\hlstd{est_cace} \hlkwb{<-} \hlstd{reg_cima} \hlopt{-} \hlstd{reg_baixo}
+\hlkwd{round}\hlstd{(est_cace,} \hlnum{2}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+## [1] 51.31
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+\subsection{Exercícios}
+
+\begin{exercise}
+ Crie um exemplo em que,
+ ao contrário do \cref{ex:rdd},
+ $\E[Y|X=1,\Z]$ não é linear em $\Z$.
+ Compare as estimativas de $\CACE$ usando
+ a regressão linear e 
+ algum método de regressão não-paramétrica.
+\end{exercise}
+
+\section{Do-calculus}
+\label{sec:do_calculus}
+
+\begin{theorem}
+ \label{thm:do_calculus}
+ Teste
+ \begin{enumerate}
+  \item Seja $\sG^*$ o grafo obtido retirando de $\sG$ 
+  todas as arestas que apontam para $\X$. 
+  Se $\Y \dsep \Z | \X \cup \W$ em $\sG^*$, então
+  \begin{align*}
+   f(\Y|do(\X), \Z, \W) &= f(\Y|do(\X), \W)
+  \end{align*}
+  \item Seja $\sG^+$ o grafo obtido retirando de $\sG$ 
+  todas as arestas que 
+  apontam para $\X$ ou 
+  que partem de $\Z$. 
+  Se temos que $\Y \dsep \Z | \X \cup \W$ em $\sG^+$, então
+  \begin{align*}
+   f(\Y|do(\X), do(\Z), \W) &= f(\Y|do(\X), \W)
+  \end{align*}
+  \item 
+ \end{enumerate}
+\end{theorem}
+
 \section{Controlando mediadores (critério frontdoor)}
 \label{sec:frontdoor}
 
@@ -2689,8 +3121,6 @@ a estratégia é
  $\E[Y|do(\X)] = \E[\E[Y|\W]|do(\X)]$.
 \end{exercise}
 
-\section{Do-calculus}
-
 \bibliographystyle{apalike}
 \bibliography{book}
 
@@ -2699,9 +3129,9 @@ a estratégia é
 
 \chapter{Demonstrações}
 
-\section{Relativas à \cref{sec:d-sep}}
+\section{Relativas à \text{\cref{sec:d-sep}}}
 
-\subsection{Relativas a \cref{lemma:equivIndep}}
+\subsection{Relativas ao \cref{lemma:equivIndep}}
 
 \begin{proof}[Prova do \cref{lemma:equivIndep}]
  A prova consistirá em demonstrar que,
@@ -2762,7 +3192,7 @@ a estratégia é
  \end{itemize}
 \end{proof}
 
-\subsection{Relativas a \cref{thm:d-sep}}
+\subsection{Relativas ao \cref{thm:d-sep}}
 
 \begin{lemma}
  \label{lem:dsep_indep_anc}
@@ -2928,9 +3358,11 @@ Como $\V^*_1 \ind^f \V^*_2 | \V_3$,
  \cref{lem:dsep_indep,lemma:d-sep-volta}.
 \end{proof}
 
-\section{Relativas à Seção \ref{sec:backdoor}}
+\section{Relativas à \cref{sec:backdoor}}
 
-Para realizar as demonstrações da \cref{sec:backdoor},
+\subsection{Relativas ao \cref{thm:backdoor}}
+
+Para realizar a demonstração do \cref{thm:backdoor},
 consideraremos um SCM aumentado, 
 em que existe uma variável que representa
 a ocorrência de uma intervenção em X.
@@ -3013,6 +3445,51 @@ ao condicionamento usual no SCM aumentado.
 \begin{lemma}
  \label{lemma:backdoor_3}
  Se $(\sG^*, f^*)$ é tal qual em \cref{def:scm_star} e
+ $\Z$ satisfaz o critério backdoor para
+ medir o efeito causal de $X$ em $Y$, então $I \dsep Y | X, \Z$.
+\end{lemma}
+
+\begin{proof}
+ Tome um caminho arbitrário de
+ $I$ em $Y$, $C = (I, C_2, \ldots, C_{n-1}, Y)$.
+ Por definição de $I$, $C_2 = X$ e 
+ $I \rightarrow X$. 
+ Se $X \rightarrow C_3$, então
+ $X$ é uma cadeia em $C$ e 
+ $C$ está bloqueado dado $X$ e $\Z$.
+ Se $X \leftarrow C_3$, então
+ $(X, C_3, \ldots, C_{n-1}, Y)$ está bloqueado
+ dado $\Z$, uma vez que $\Z$ satisfaz
+ o critério backdoor.
+ Conclua que $C$ está bloqueado dado $X$ e $\Z$.
+\end{proof}
+
+\begin{lemma}
+ \label{thm:backdoor_pt_1}
+ Se $\Z$ satisfaz o critério backdoor para
+ medir o efeito causal de $X$ em $Y$, então
+ $f(y|do(x),\z) = f(y|x,\z)$.
+\end{lemma}
+
+\begin{proof}
+ \begin{align*}
+  f(y|do(x),\z)
+  &= f_*(y|I=1, \z)
+  & \text{\cref{lemma:backdoor_1}} \\
+  &= \int f_*(y,X|I=1, \z)dX \\
+  &= \int f_*(X|I=1,\z)f_*(y|X, I=1, \z)dX \\
+  &= \int \I(X=x)f_*(y|X, I=1, \z)dX \\
+  &= f_*(y|x,I=1,\z) \\
+  &= f_*(y|x,I=0,\z)
+  & \text{\cref{lemma:backdoor_3}} \\
+  &= f(y|x,\z)
+  & \text{\cref{lemma:backdoor_2}}
+ \end{align*}
+\end{proof}
+
+\begin{lemma}
+ \label{lemma:backdoor_4}
+ Se $(\sG^*, f^*)$ é tal qual em \cref{def:scm_star} e
  $\X \notin Anc(\Z)$, então:
  \begin{align*}
   f_*(\z) &= f(\z)
@@ -3046,7 +3523,7 @@ ao condicionamento usual no SCM aumentado.
 \end{proof}
 
 \begin{lemma}
- \label{lemma:backdoor_4}
+ \label{lemma:backdoor_5}
  Se $(\sG^*, f^*)$ é tal qual em \cref{def:scm_star} e
  $\Z$ satisfaz o critério backdoor para
  medir o efeito causal de $X$ em $Y$, então $I \dsep \Z$.
@@ -3071,69 +3548,80 @@ ao condicionamento usual no SCM aumentado.
 \end{proof}
 
 \begin{lemma}
- \label{lemma:backdoor_5}
- Se $(\sG^*, f^*)$ é tal qual em \cref{def:scm_star} e
- $\Z$ satisfaz o critério backdoor para
- medir o efeito causal de $X$ em $Y$, então $I \dsep Y | X, \Z$.
+ \label{thm:backdoor_pt_2}
+ Se $\Z$ satisfaz o critério backdoor para
+ medir o efeito causal de $X$ em $Y$, então
+ $f(\z|do(x)) = f(\z)$.
 \end{lemma}
 
 \begin{proof}
- Tome um caminho arbitrário de
- $I$ em $Y$, $C = (I, C_2, \ldots, C_{n-1}, Y)$.
- Por definição de $I$, $C_2 = X$ e 
- $I \rightarrow X$. 
- Se $X \rightarrow C_3$, então
- $X$ é uma cadeia em $C$ e 
- $C$ está bloqueado dado $X$ e $\Z$.
- Se $X \leftarrow C_3$, então
- $(X, C_3, \ldots, C_{n-1}, Y)$ está bloqueado
- dado $\Z$, uma vez que $\Z$ satisfaz
- o critério backdoor.
- Conclua que $C$ está bloqueado dado $X$ e $\Z$.
+ \begin{align*}
+  f(\z|do(x))
+  &= f_*(\z|I=1)
+  & \text{\cref{lemma:backdoor_1}} \\
+  &= f_*(\z)
+  & \text{\cref{lemma:backdoor_5}} \\
+  &= f(\z)
+  & \text{\cref{lemma:backdoor_4}}
+ \end{align*}
 \end{proof}
 
 \begin{proof}[Prova do \cref{thm:backdoor}]
+ Decorre diretamente dos
+ \cref{thm:backdoor_pt_1,thm:backdoor_pt_2}.
+\end{proof}
+
+\begin{proof}[Prova do \cref{cor:backdoor}]
  \begin{align*}
   f(y|do(X=x))
-  &= f_*(y|I=1) 
-  & \text{\cref{lemma:backdoor_1}} \\
-  &= \int \int f_*(y,X,\z|I=1)d\X d\z \\
-  &= \int \int f_*(\z|I=1)f_*(X|\z,I=1)f_*(y|X,\z,I=1) d\x d\z \\
-  &= \int \int f_*(\z|I=1) \I(X=x) f_*(y|X,\z,I=1) d\x d\z \\
-  &= \int f_*(\z|I=1)f_*(y|x,\z,I=1) d\z \\
-  &= \int f_*(\z)f_*(y|x,\z,I=0)d\z
-  & \text{\cref{lemma:backdoor_4,lemma:backdoor_5}} \\
-  &= \int f(\z)f(y|x,\z)d\z
-  & \text{\cref{lemma:backdoor_2,lemma:backdoor_3}}
+  &= \int f(y,\z|do(X=x))d\z \\
+  &= \int f(\z|do(X=x))f(y|do(X=x),\z) \\
+  &= \int f(\z)f(y|x,\z)
+  & \text{\cref{thm:backdoor}}
  \end{align*}
 \end{proof}
 
+\subsection{Relativas aos \cref{thm:backdoor_ajuste,thm:backdoor_ipw}}
+
 \begin{proof}[Prova do \cref{thm:backdoor_ajuste}]
- \begin{align*}
-  \E[\E[g(Y)|X=x,\Z]]
-  &= \E\left[\int g(y) f(y|x,\Z)dy \right] \\
-  &= \int \int g(y) f(y|x,\z) dy f(\z) d\z \\
-  &= \int \int g(y) f(y|x,\z)f(\z) d\z dy \\
-  &= \int g(y) f(y|do(x))
-  & \text{\cref{thm:backdoor}} \\ 
-  &= \E[g(Y)|do(x)] 
-  & \text{\cref{def:exp_inter}}
- \end{align*}
+ \begin{align}
+  \label{eq:backdoor_ajuste_1}
+  \E[g(Y)|do(X=x),\Z]
+  &= \int g(y) f(y|do(x),\Z) dy 
+  & \text{\cref{def:exp_inter}} \nonumber \\
+  &= \int g(y) f(y|x, \Z)dy 
+  & \text{\cref{thm:backdoor}} \nonumber \\
+  &= \E[g(Y)|X=x,\Z] \\
+  \E[g(Y)|do(X=x)]
+  &= \E[\E[g(Y)|do(X=x),\Z]] \nonumber \\
+  &= \E[\E[g(Y)|X=x,\Z]]
+  & \text{\cref{eq:backdoor_ajuste_1}} \nonumber
+ \end{align}
 \end{proof}
 
 \begin{proof}[Prova do \cref{thm:backdoor_ipw}]
  \begin{align*}
-  \E[g(Y)|do(x)]
-  &= \int g(y) f(y|do(x))
+  \E[g(Y)|do(x),\Z]
+  &= \int g(y) f(y|do(x),\Z) dy
   & \text{\cref{def:exp_inter}} \\
-  &= \int \int g(y) f(y|x,\z)f(\z) d\z dy
+  &= \int g(y) f(y|x,\Z) dy
   & \text{\cref{thm:backdoor}} \\
-  &= \int \int g(y) \frac{f(x,y,\z)}{f(x,\z)} f(\z) d\z dy \\
-  &= \int \int \frac{g(y)}{f(x|\z)} f(x,y,\z) d\z dy \\
-  &= \int \frac{g(y)\I(x_*=x)}{f(x|\z)} f(x_*,y,z) d(x_*,y,\z) \\
+  &= \int \frac{g(y) f(y,x|\Z)}{f(x|\Z)} dy \\
+  &= \int \frac{g(y) \I(x_* = x) f(y,x_*|\Z)}{f(x|\Z)} d(x_*, y) \\
+  &= \E\left[\frac{g(Y)\I(X=x)}{f(x|\Z)}|\Z\right] \\
+  &= \frac{\E[g(Y)\I(X=x)|\Z]}{f(x|\Z)}
+ \end{align*}
+ \begin{align*}
+  \E[Y|do(x)]
+  &= \E[\E[Y|do(X),\Z]] \\
+  &= \E\left[\frac{\E[g(Y)\I(X=x)|\Z]}{f(x|\Z)}\right] 
+  & \text{\cref{thm:backdoor_ipw}} \\
+  &= \E\left[\E\left[\frac{g(Y)\I(X=x)}{f(x|\Z)}|\Z\right]\right] \\
   &= \E\left[\frac{g(Y)\I(X=x)}{f(x|\Z)}\right]
  \end{align*}
 \end{proof}
+
+\subsection{Relativas ao \cref{thm:conv_ajuste}}
 
 \begin{lemma}
  \label{lemma:conv_l1_to_p}
@@ -3175,6 +3663,8 @@ ao condicionamento usual no SCM aumentado.
  \end{align*}
 \end{proof}
 
+\subsection{Relativas ao \cref{thm:conv_ipw}}
+
 \begin{proof}[Prova do \cref{thm:conv_ipw}]
  Pela Lei dos Grandes números,
  $n^{-1} \sum_{i=1}^n \frac{Y_i \I(X_i = x)}{f(x|\Z_i)} 
@@ -3208,6 +3698,8 @@ ao condicionamento usual no SCM aumentado.
   =& o(1)
  \end{align*}
 \end{proof}
+
+\subsection{Relativas ao \cref{thm:conv_duplo_robusto}}
 
 \begin{proof}[Prova do \cref{thm:conv_duplo_robusto}]
  Se as condições do \cref{thm:conv_ajuste} estão satisfeitas,
@@ -3298,6 +3790,63 @@ ao condicionamento usual no SCM aumentado.
   \hf(x|\Z_1)-f(x|\Z_1)\big|\right]
   = o(1)
  \end{align*}
+\end{proof}
+
+\subsection{Relativas ao \cref{thm:id_rdd}}
+
+\begin{proof}[Prova do \cref{thm:id_rdd}]
+ Se $X \equiv \I(\Z \geq \z_1)$, então:
+ \begin{align*}
+  \CACE(\Z=\z_1)
+  &= \E[Y|do(X=1),\Z=\z_1] - \E[Y|do(X=0),\Z=\z_1] 
+  & \text{\cref{def:cace}} \\
+  &= \lim_{\z \downarrow \z_1} \E[Y|do(X=1),\Z=\z] 
+  - \lim_{\z \uparrow \z_1}\E[Y|do(X=0),\Z=\z]
+  & \text{continuidade} \\
+  &= \lim_{\z \downarrow \z_1} \E[Y|X=1,\Z=\z] 
+  - \lim_{\z \uparrow \z_1}\E[Y|X=0,\Z=\z]
+  & \text{\cref{thm:backdoor_ajuste}} \\
+  &= \lim_{\z \downarrow \z_1} \E[Y|X=1,\Z=\z] 
+  - \lim_{\z \uparrow \z_1}\E[Y|X=0,\Z=\z]
+  & X \equiv \I(\Z \geq \z_1)
+ \end{align*}
+ 
+ A seguir, considere que
+ $f(x|\Z) \in (0,1)$ é contínua exceto em $\z_1$.
+ Primeiramente, note que
+ \begin{align}
+  \label{eq:rdd_1}
+  \E[Y|\Z] 
+  &= \E[\E[Y|X,\Z]|\Z] \nonumber \\
+  &= \E[Y|X=1,\Z]f(X=1|\Z) + \E[Y|X=0,\Z](1-f(X=1|\Z)) \nonumber \\
+  &= (\E[Y|X=1,\Z]-\E[Y|X=0,\Z])f(X=1|\Z) + \E[Y|X=0,\Z] \nonumber \\
+  &= \CACE(\Z)f(X=1|\Z) + \E[Y|do(X=0),\Z]
+  & \text{\cref{thm:backdoor_ajuste}}
+ \end{align}
+ Como $\E[Y|do(X=0),\Z]$ e $\E[Y|do(X=1),\Z]$ são contínuas em $\z_1$,
+ $\CACE(\Z)$ também é contínua em $\z_1$. Assim, 
+ decorre da \cref{eq:rdd_1} que
+ \begin{align*}
+  \lim_{\z \downarrow \z_1}\E[Y|\Z=\z]
+  &= \CACE(\z_1)\lim_{\z \downarrow \z_1} f(X=1|\z) + \E[Y|do(X=0),\Z=\z_1] \\
+  \lim_{\z \uparrow \z_1}\E[Y|\Z=\z]
+  &= \CACE(\z_1)\lim_{\z \uparrow \z_1} f(X=1|\z) + \E[Y|do(X=0),\Z=\z_1] \\
+ \end{align*}
+ Finalmente subtraindo as equações acima, obtemos
+ \begin{align*}
+  \lim_{\z \downarrow \z_1}\E[Y|\Z=\z] - \lim_{\z \uparrow \z_1}\E[Y|\Z=\z]
+  &= \CACE(\z_1)(\lim_{\z \downarrow \z_1} f(X=1|\z) - \lim_{\z \uparrow \z_1} f(X=1|\z)) \\
+  \CACE(\z_1) 
+  &= \frac{\lim_{\z \downarrow \z_1}\E[Y|\Z=\z] - \lim_{\z \uparrow \z_1}\E[Y|\Z=\z]}
+  {\lim_{\z \downarrow \z_1} f(X=1|\z) - \lim_{\z \uparrow \z_1} f(X=1|\z)}
+ \end{align*}
+ 
+ Como $\E[Y|do(X=x),\Z] = \E[Y|X=x,\Z]$ 
+ (\cref{thm:backdoor_ajuste}) e
+ $\E[Y|do(X=x),\Z]$ é contínua em $\z_1$,
+ $\E[Y|X=x,\Z]$ é contínua em $\z_1$.
+ Além disso,
+ 
 \end{proof}
 
 \end{document}

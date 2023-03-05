@@ -4,6 +4,12 @@
 
 \usepackage{nameref}
 \usepackage[colorlinks=true, urlcolor=blue, citecolor=blue, linkcolor=blue]{hyperref}
+\usepackage{crossreftools}
+\pdfstringdefDisableCommands{%
+    \let\Cref\crtCref
+    \let\cref\crtcref
+}
+
 \usepackage{amsfonts, amsmath, amssymb, amsthm, thmtools}
   
 \usepackage{cleveref}
@@ -16,7 +22,7 @@
 \declaretheorem[name=Lema, refname={Lema, Lemas}, Refname={Lema, Lemas}, sibling=theorem]{lemma}
 \declaretheorem[name=Exercício, refname={Exercício, Exercícios}, Refname={Exercício, Exercícios}, sibling=theorem, style=definition]{exercise}
 
-\crefname{section}{seção}{seções}
+\crefname{section}{Seção}{Seções}
 \Crefname{section}{Seção}{Seções}
 \crefname{chapter}{capítulo}{capítulos}
 \Crefname{chapter}{Capítulo}{Capítulos}
@@ -28,7 +34,7 @@
 
 \setcounter{tocdepth}{4}
 
-\usepackage{color, xcolor, enumitem, fancyhdr, float, layout, multirow, setspace, slashbox, verbatim}
+\usepackage{color, xcolor, enumitem, float, layout, multirow, setspace, slashbox, verbatim}
 \usepackage{algorithm2e, algorithmicx, listings}
 \usepackage{caption, subcaption}
 \usepackage[authoryear]{natbib}
@@ -36,6 +42,9 @@
 \usepackage{authblk}
 \usepackage{cprotect}
 \bibpunct[; ]{(}{)}{,}{a}{,}{;}
+
+\usepackage{scrlayer-scrpage}
+\pagestyle{scrplain}
 
 \usepackage{graphicx}
 \graphicspath{{figures/}{../figures/}}
@@ -79,11 +88,15 @@
 \def\sV{{\mathcal V}}
 
 \def\ACE{{ACE}}
+\def\CACE{{CACE}}
 \def\hACE{{\widehat{\ACE}}}
+\def\hCACE{{\widehat{\CACE}}}
 \def\hmu{{\widehat{\mu}}}
 \def\hdoy{{\widehat{\E}}_{1}[Y|do(X=x)]}
 \def\hdoyb{{\widehat{\E}}_{2}[Y|do(X=x)]}
 \def\hdoyc{{\widehat{\E}}_{3}[Y|do(X=x)]}
+\def\hdoyz{{\widehat{\E}}_{1}[Y|do(X=x),\Z]}
+\def\hdoyzb{{\widehat{\E}}_{2}[Y|do(X=x),\Z]}
 \def\hf{\widehat{f}}
 
 \def\I{{\mathbb I}}

@@ -716,6 +716,23 @@ como o interpretamos.
 Existe uma aresta de $V_1$ em $V_2$ em um SCM
 se e somente se $V_1$ é uma causa direta de $V_2$.
 
+\begin{definition}
+ Dizemos que $(\sG,f)$ é um SCM linear Gaussiano se,
+ existe matriz diagonal positiva, $\Sigma$, e
+ $\beta in \Re^{n \times n}$ tal que,
+ para todo vértice $V_i$,
+ $\beta_{i,j} = 0$ quando $V_j \notin Pa(V_i)$ e
+ \begin{align*}
+  V_i|Pa(V) &\sim N(\beta_i, \Sigma_{i,i})
+ \end{align*}
+\end{definition}
+
+\begin{lemma}
+ Se $(\sG,f)$ é um SCM linear Gaussiano, então
+ $\sV \sim N(0, (I-\beta)^{-1}\Sigma((I-\beta)^{-1})^t)$.
+ 
+\end{lemma}
+
 No próximo capítulo estudaremos consequências desta interpretação causal.
 Contudo, antes disso, a próxima seção desenvolverá
 um resultado fundamental de modelos probabilísticos em DAGs que

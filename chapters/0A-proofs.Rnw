@@ -2,9 +2,9 @@
 
 \chapter{Demonstrações}
 
-\section{Relativas à \cref{sec:d-sep}}
+\section{Relativas à \text{\cref{sec:d-sep}}}
 
-\subsection{Relativas a \cref{lemma:equivIndep}}
+\subsection{Relativas ao \cref{lemma:equivIndep}}
 
 \begin{proof}[Prova do \cref{lemma:equivIndep}]
  A prova consistirá em demonstrar que,
@@ -65,7 +65,7 @@
  \end{itemize}
 \end{proof}
 
-\subsection{Relativas a \cref{thm:d-sep}}
+\subsection{Relativas ao \cref{thm:d-sep}}
 
 \begin{lemma}
  \label{lem:dsep_indep_anc}
@@ -231,9 +231,11 @@ Como $\V^*_1 \ind^f \V^*_2 | \V_3$,
  \cref{lem:dsep_indep,lemma:d-sep-volta}.
 \end{proof}
 
-\section{Relativas à Seção \ref{sec:backdoor}}
+\section{Relativas à \cref{sec:backdoor}}
 
-Para realizar as demonstrações da \cref{sec:backdoor},
+\subsection{Relativas ao \cref{thm:backdoor}}
+
+Para realizar a demonstração do \cref{thm:backdoor},
 consideraremos um SCM aumentado, 
 em que existe uma variável que representa
 a ocorrência de uma intervenção em X.
@@ -316,6 +318,51 @@ ao condicionamento usual no SCM aumentado.
 \begin{lemma}
  \label{lemma:backdoor_3}
  Se $(\sG^*, f^*)$ é tal qual em \cref{def:scm_star} e
+ $\Z$ satisfaz o critério backdoor para
+ medir o efeito causal de $X$ em $Y$, então $I \dsep Y | X, \Z$.
+\end{lemma}
+
+\begin{proof}
+ Tome um caminho arbitrário de
+ $I$ em $Y$, $C = (I, C_2, \ldots, C_{n-1}, Y)$.
+ Por definição de $I$, $C_2 = X$ e 
+ $I \rightarrow X$. 
+ Se $X \rightarrow C_3$, então
+ $X$ é uma cadeia em $C$ e 
+ $C$ está bloqueado dado $X$ e $\Z$.
+ Se $X \leftarrow C_3$, então
+ $(X, C_3, \ldots, C_{n-1}, Y)$ está bloqueado
+ dado $\Z$, uma vez que $\Z$ satisfaz
+ o critério backdoor.
+ Conclua que $C$ está bloqueado dado $X$ e $\Z$.
+\end{proof}
+
+\begin{lemma}
+ \label{thm:backdoor_pt_1}
+ Se $\Z$ satisfaz o critério backdoor para
+ medir o efeito causal de $X$ em $Y$, então
+ $f(y|do(x),\z) = f(y|x,\z)$.
+\end{lemma}
+
+\begin{proof}
+ \begin{align*}
+  f(y|do(x),\z)
+  &= f_*(y|I=1, \z)
+  & \text{\cref{lemma:backdoor_1}} \\
+  &= \int f_*(y,X|I=1, \z)dX \\
+  &= \int f_*(X|I=1,\z)f_*(y|X, I=1, \z)dX \\
+  &= \int \I(X=x)f_*(y|X, I=1, \z)dX \\
+  &= f_*(y|x,I=1,\z) \\
+  &= f_*(y|x,I=0,\z)
+  & \text{\cref{lemma:backdoor_3}} \\
+  &= f(y|x,\z)
+  & \text{\cref{lemma:backdoor_2}}
+ \end{align*}
+\end{proof}
+
+\begin{lemma}
+ \label{lemma:backdoor_4}
+ Se $(\sG^*, f^*)$ é tal qual em \cref{def:scm_star} e
  $\X \notin Anc(\Z)$, então:
  \begin{align*}
   f_*(\z) &= f(\z)
@@ -349,7 +396,7 @@ ao condicionamento usual no SCM aumentado.
 \end{proof}
 
 \begin{lemma}
- \label{lemma:backdoor_4}
+ \label{lemma:backdoor_5}
  Se $(\sG^*, f^*)$ é tal qual em \cref{def:scm_star} e
  $\Z$ satisfaz o critério backdoor para
  medir o efeito causal de $X$ em $Y$, então $I \dsep \Z$.
@@ -374,69 +421,80 @@ ao condicionamento usual no SCM aumentado.
 \end{proof}
 
 \begin{lemma}
- \label{lemma:backdoor_5}
- Se $(\sG^*, f^*)$ é tal qual em \cref{def:scm_star} e
- $\Z$ satisfaz o critério backdoor para
- medir o efeito causal de $X$ em $Y$, então $I \dsep Y | X, \Z$.
+ \label{thm:backdoor_pt_2}
+ Se $\Z$ satisfaz o critério backdoor para
+ medir o efeito causal de $X$ em $Y$, então
+ $f(\z|do(x)) = f(\z)$.
 \end{lemma}
 
 \begin{proof}
- Tome um caminho arbitrário de
- $I$ em $Y$, $C = (I, C_2, \ldots, C_{n-1}, Y)$.
- Por definição de $I$, $C_2 = X$ e 
- $I \rightarrow X$. 
- Se $X \rightarrow C_3$, então
- $X$ é uma cadeia em $C$ e 
- $C$ está bloqueado dado $X$ e $\Z$.
- Se $X \leftarrow C_3$, então
- $(X, C_3, \ldots, C_{n-1}, Y)$ está bloqueado
- dado $\Z$, uma vez que $\Z$ satisfaz
- o critério backdoor.
- Conclua que $C$ está bloqueado dado $X$ e $\Z$.
+ \begin{align*}
+  f(\z|do(x))
+  &= f_*(\z|I=1)
+  & \text{\cref{lemma:backdoor_1}} \\
+  &= f_*(\z)
+  & \text{\cref{lemma:backdoor_5}} \\
+  &= f(\z)
+  & \text{\cref{lemma:backdoor_4}}
+ \end{align*}
 \end{proof}
 
 \begin{proof}[Prova do \cref{thm:backdoor}]
+ Decorre diretamente dos
+ \cref{thm:backdoor_pt_1,thm:backdoor_pt_2}.
+\end{proof}
+
+\begin{proof}[Prova do \cref{cor:backdoor}]
  \begin{align*}
   f(y|do(X=x))
-  &= f_*(y|I=1) 
-  & \text{\cref{lemma:backdoor_1}} \\
-  &= \int \int f_*(y,X,\z|I=1)d\X d\z \\
-  &= \int \int f_*(\z|I=1)f_*(X|\z,I=1)f_*(y|X,\z,I=1) d\x d\z \\
-  &= \int \int f_*(\z|I=1) \I(X=x) f_*(y|X,\z,I=1) d\x d\z \\
-  &= \int f_*(\z|I=1)f_*(y|x,\z,I=1) d\z \\
-  &= \int f_*(\z)f_*(y|x,\z,I=0)d\z
-  & \text{\cref{lemma:backdoor_4,lemma:backdoor_5}} \\
-  &= \int f(\z)f(y|x,\z)d\z
-  & \text{\cref{lemma:backdoor_2,lemma:backdoor_3}}
+  &= \int f(y,\z|do(X=x))d\z \\
+  &= \int f(\z|do(X=x))f(y|do(X=x),\z) \\
+  &= \int f(\z)f(y|x,\z)
+  & \text{\cref{thm:backdoor}}
  \end{align*}
 \end{proof}
 
+\subsection{Relativas aos \cref{thm:backdoor_ajuste,thm:backdoor_ipw}}
+
 \begin{proof}[Prova do \cref{thm:backdoor_ajuste}]
- \begin{align*}
-  \E[\E[g(Y)|X=x,\Z]]
-  &= \E\left[\int g(y) f(y|x,\Z)dy \right] \\
-  &= \int \int g(y) f(y|x,\z) dy f(\z) d\z \\
-  &= \int \int g(y) f(y|x,\z)f(\z) d\z dy \\
-  &= \int g(y) f(y|do(x))
-  & \text{\cref{thm:backdoor}} \\ 
-  &= \E[g(Y)|do(x)] 
-  & \text{\cref{def:exp_inter}}
- \end{align*}
+ \begin{align}
+  \label{eq:backdoor_ajuste_1}
+  \E[g(Y)|do(X=x),\Z]
+  &= \int g(y) f(y|do(x),\Z) dy 
+  & \text{\cref{def:exp_inter}} \nonumber \\
+  &= \int g(y) f(y|x, \Z)dy 
+  & \text{\cref{thm:backdoor}} \nonumber \\
+  &= \E[g(Y)|X=x,\Z] \\
+  \E[g(Y)|do(X=x)]
+  &= \E[\E[g(Y)|do(X=x),\Z]] \nonumber \\
+  &= \E[\E[g(Y)|X=x,\Z]]
+  & \text{\cref{eq:backdoor_ajuste_1}} \nonumber
+ \end{align}
 \end{proof}
 
 \begin{proof}[Prova do \cref{thm:backdoor_ipw}]
  \begin{align*}
-  \E[g(Y)|do(x)]
-  &= \int g(y) f(y|do(x))
+  \E[g(Y)|do(x),\Z]
+  &= \int g(y) f(y|do(x),\Z) dy
   & \text{\cref{def:exp_inter}} \\
-  &= \int \int g(y) f(y|x,\z)f(\z) d\z dy
+  &= \int g(y) f(y|x,\Z) dy
   & \text{\cref{thm:backdoor}} \\
-  &= \int \int g(y) \frac{f(x,y,\z)}{f(x,\z)} f(\z) d\z dy \\
-  &= \int \int \frac{g(y)}{f(x|\z)} f(x,y,\z) d\z dy \\
-  &= \int \frac{g(y)\I(x_*=x)}{f(x|\z)} f(x_*,y,z) d(x_*,y,\z) \\
+  &= \int \frac{g(y) f(y,x|\Z)}{f(x|\Z)} dy \\
+  &= \int \frac{g(y) \I(x_* = x) f(y,x_*|\Z)}{f(x|\Z)} d(x_*, y) \\
+  &= \E\left[\frac{g(Y)\I(X=x)}{f(x|\Z)}|\Z\right] \\
+  &= \frac{\E[g(Y)\I(X=x)|\Z]}{f(x|\Z)}
+ \end{align*}
+ \begin{align*}
+  \E[Y|do(x)]
+  &= \E[\E[Y|do(X),\Z]] \\
+  &= \E\left[\frac{\E[g(Y)\I(X=x)|\Z]}{f(x|\Z)}\right] 
+  & \text{\cref{thm:backdoor_ipw}} \\
+  &= \E\left[\E\left[\frac{g(Y)\I(X=x)}{f(x|\Z)}|\Z\right]\right] \\
   &= \E\left[\frac{g(Y)\I(X=x)}{f(x|\Z)}\right]
  \end{align*}
 \end{proof}
+
+\subsection{Relativas ao \cref{thm:conv_ajuste}}
 
 \begin{lemma}
  \label{lemma:conv_l1_to_p}
@@ -478,6 +536,8 @@ ao condicionamento usual no SCM aumentado.
  \end{align*}
 \end{proof}
 
+\subsection{Relativas ao \cref{thm:conv_ipw}}
+
 \begin{proof}[Prova do \cref{thm:conv_ipw}]
  Pela Lei dos Grandes números,
  $n^{-1} \sum_{i=1}^n \frac{Y_i \I(X_i = x)}{f(x|\Z_i)} 
@@ -511,6 +571,8 @@ ao condicionamento usual no SCM aumentado.
   =& o(1)
  \end{align*}
 \end{proof}
+
+\subsection{Relativas ao \cref{thm:conv_duplo_robusto}}
 
 \begin{proof}[Prova do \cref{thm:conv_duplo_robusto}]
  Se as condições do \cref{thm:conv_ajuste} estão satisfeitas,
@@ -601,4 +663,61 @@ ao condicionamento usual no SCM aumentado.
   \hf(x|\Z_1)-f(x|\Z_1)\big|\right]
   = o(1)
  \end{align*}
+\end{proof}
+
+\subsection{Relativas ao \cref{thm:id_rdd}}
+
+\begin{proof}[Prova do \cref{thm:id_rdd}]
+ Se $X \equiv \I(\Z \geq \z_1)$, então:
+ \begin{align*}
+  \CACE(\Z=\z_1)
+  &= \E[Y|do(X=1),\Z=\z_1] - \E[Y|do(X=0),\Z=\z_1] 
+  & \text{\cref{def:cace}} \\
+  &= \lim_{\z \downarrow \z_1} \E[Y|do(X=1),\Z=\z] 
+  - \lim_{\z \uparrow \z_1}\E[Y|do(X=0),\Z=\z]
+  & \text{continuidade} \\
+  &= \lim_{\z \downarrow \z_1} \E[Y|X=1,\Z=\z] 
+  - \lim_{\z \uparrow \z_1}\E[Y|X=0,\Z=\z]
+  & \text{\cref{thm:backdoor_ajuste}} \\
+  &= \lim_{\z \downarrow \z_1} \E[Y|X=1,\Z=\z] 
+  - \lim_{\z \uparrow \z_1}\E[Y|X=0,\Z=\z]
+  & X \equiv \I(\Z \geq \z_1)
+ \end{align*}
+ 
+ A seguir, considere que
+ $f(x|\Z) \in (0,1)$ é contínua exceto em $\z_1$.
+ Primeiramente, note que
+ \begin{align}
+  \label{eq:rdd_1}
+  \E[Y|\Z] 
+  &= \E[\E[Y|X,\Z]|\Z] \nonumber \\
+  &= \E[Y|X=1,\Z]f(X=1|\Z) + \E[Y|X=0,\Z](1-f(X=1|\Z)) \nonumber \\
+  &= (\E[Y|X=1,\Z]-\E[Y|X=0,\Z])f(X=1|\Z) + \E[Y|X=0,\Z] \nonumber \\
+  &= \CACE(\Z)f(X=1|\Z) + \E[Y|do(X=0),\Z]
+  & \text{\cref{thm:backdoor_ajuste}}
+ \end{align}
+ Como $\E[Y|do(X=0),\Z]$ e $\E[Y|do(X=1),\Z]$ são contínuas em $\z_1$,
+ $\CACE(\Z)$ também é contínua em $\z_1$. Assim, 
+ decorre da \cref{eq:rdd_1} que
+ \begin{align*}
+  \lim_{\z \downarrow \z_1}\E[Y|\Z=\z]
+  &= \CACE(\z_1)\lim_{\z \downarrow \z_1} f(X=1|\z) + \E[Y|do(X=0),\Z=\z_1] \\
+  \lim_{\z \uparrow \z_1}\E[Y|\Z=\z]
+  &= \CACE(\z_1)\lim_{\z \uparrow \z_1} f(X=1|\z) + \E[Y|do(X=0),\Z=\z_1] \\
+ \end{align*}
+ Finalmente subtraindo as equações acima, obtemos
+ \begin{align*}
+  \lim_{\z \downarrow \z_1}\E[Y|\Z=\z] - \lim_{\z \uparrow \z_1}\E[Y|\Z=\z]
+  &= \CACE(\z_1)(\lim_{\z \downarrow \z_1} f(X=1|\z) - \lim_{\z \uparrow \z_1} f(X=1|\z)) \\
+  \CACE(\z_1) 
+  &= \frac{\lim_{\z \downarrow \z_1}\E[Y|\Z=\z] - \lim_{\z \uparrow \z_1}\E[Y|\Z=\z]}
+  {\lim_{\z \downarrow \z_1} f(X=1|\z) - \lim_{\z \uparrow \z_1} f(X=1|\z)}
+ \end{align*}
+ 
+ Como $\E[Y|do(X=x),\Z] = \E[Y|X=x,\Z]$ 
+ (\cref{thm:backdoor_ajuste}) e
+ $\E[Y|do(X=x),\Z]$ é contínua em $\z_1$,
+ $\E[Y|X=x,\Z]$ é contínua em $\z_1$.
+ Além disso,
+ 
 \end{proof}
