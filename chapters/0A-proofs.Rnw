@@ -246,25 +246,26 @@ ao condicionamento usual no SCM aumentado.
 \begin{definition}
  \label{def:scm_star}
  Seja $(\sG_*, f_*)$ um SCM expandido tal que
- $\sG_* = (\sV \cup \{I\}, \sE_*)$, e
- $\sE_* = \sE \cup \{(I \rightarrow X)\}$.
+ $\sG_* = (\sV \cup \{I_X: X \in \X\}, \sE_*)$, e
+ $\sE_* = \sE \cup \{(I_X \rightarrow X: X \in \X)\}$.
  Isto é, $\sG_*$ é uma cópia de $\sG$ em que
- adicionamos o vértice $I \in \{0,1\}$ e 
- uma única aresta de $I$ para $X$.
+ adicionamos para cada $X \in \X$
+ os vértice $I_X \in \{0,1\}$ e 
+ arestas de $I_X$ para $X$.
  
  $\sG^*$ admite uma interpretação intuitiva.
- $I$ é a indicadora de que fazemos uma intervenção em $X$,
+ $I_X$ é a indicadora de que fazemos uma intervenção em $X$,
  fazendo que esta assuma o valor $x$.
- Se $I = 0$, não há uma intervenção e, assim,
+ Se $I_X = 0$, não há uma intervenção e, assim,
  $X$ segue a sua distribuição observacional.
- Se $I = 1$, $X$ assume o valor $x$ com probabilidade $1$.
+ Se $I_X = 1$, $X$ assume o valor $x$ com probabilidade $1$.
  
  Finalmente, considerando $Pa(X)$ como os
  pais de $X$ segundo $\sG$, definimos que:
  \begin{align*}
-  f_*(X|Pa(X), I) 
+  f_*(X|Pa(X), I_X) 
   &= \begin{cases}
-   f(X|Pa(X)) & \text{, se $I = 0$, e} \\
+   f(X|Pa(X)) & \text{, se $I_X = 0$, e} \\
    \I(X = x) & \text{, caso contrário.}
   \end{cases}
  \end{align*}
@@ -272,42 +273,40 @@ ao condicionamento usual no SCM aumentado.
 
 \begin{lemma}
  \label{lemma:backdoor_1}
- Se $(\sG^*, f^*)$ é tal qual em \cref{def:scm_star}, então:
+ Se $(\sG_*, f_*)$ é tal qual em \cref{def:scm_star}, então:
  \begin{align*}
-  f(y|do(X=x)) &= f_*(y|I=1)
+  f(\sV|do(X=x)) &= f_*(\sV|I_{\X}=1)
  \end{align*}
 \end{lemma}
 
 \begin{proof}
- Tomando $\V_2 = \sV - \{X\}$:
  \begin{align*}
-  f_*(\V_2|I = 1) 
-  &= \frac{f_*(\V_2, I=1)}{f(I=1)} \\
-  &= \frac{\int f_*(\V_2, X, I=1)dX}{f(I=1)} \\
-  &= \frac{f(I=1)\I(X = x)\prod_{V_2 \in \V_2}f(V_2|Pa(V_2))}{f(I=1)}
+  f_*(\sV|I_{\X} = 1) 
+  &= \frac{f_*(\sV, I_{\X}=1)}{f(I_{\X}=1)} \\
+  &= \frac{f(I_{\X}=1)\prod_{X \in \X}\I(X = x)\prod_{V \notin \X}f(V|Pa(V))}{f(I=1)}
   & \text{\cref{def:scm_star}} \\
-  &= \I(X = x) \cdot \prod_{V_2 \in \V_2}f(V_2|Pa(V_2)) \\
-  &= f(\V_2|do(X=x)) 
+  &= \prod_{X \in \X}\I(X = x) \cdot \prod_{V \notin \V_1}f(V|Pa(V)) \\
+  &= f(\sV|do(\X=\x)) 
   & \text{\cref{def:intervencao}}
  \end{align*}
 \end{proof}
 
 \begin{lemma}
  \label{lemma:backdoor_2}
- Se $(\sG^*, f^*)$ é tal qual em \cref{def:scm_star}, então:
+ Se $(\sG_*, f_*)$ é tal qual em \cref{def:scm_star}, então:
  \begin{align*}
-  f_*(\sV|I=0) &= f(\sV).
+  f_*(\sV|I_{\X}=0) &= f(\sV).
  \end{align*}
 \end{lemma}
 
 \begin{proof}
  \begin{align*}
-  f_*(\sV|I=0) 
-  &= \frac{f_*(\sV, I=0)}{f_*(I=0)} \\
-  &= \frac{f_*(I=0)f_*(X|Pa(X),I=0)
-  \prod_{V \in \sV-\{X\}} f(V|Pa(V))}{f_*(I=0)}
+  f_*(\sV|I_{\X}=0) 
+  &= \frac{f_*(\sV, I_{\X}=0)}{f_*(I_{\X}=0)} \\
+  &= \frac{f_*(I_{\X}=0)\prod_{X \in \X}f_*(X|Pa(X),I_{X}=0)
+  \prod_{V \notin \X} f(V|Pa(V))}{f_*(I=0)}
   & \text{\cref{def:scm_star}} \\
-  &= f(X|Pa(X))\prod_{V \in \sV-\{X\}} f(V|Pa(V))
+  &= \prod_{X \in \X}f(X|Pa(X))\prod_{V \notin \X} f(V|Pa(V))
   & \text{\cref{def:scm_star}} \\
   &= \prod_{V \in \sV} f(V|Pa(V)) \\
   &= f(\sV) 
@@ -317,8 +316,8 @@ ao condicionamento usual no SCM aumentado.
 
 \begin{lemma}
  \label{lemma:backdoor_3}
- Se $(\sG^*, f^*)$ é tal qual em \cref{def:scm_star} e
- $\Z$ satisfaz o critério backdoor para
+ Se $(\sG_*, f_*)$ é tal qual em \cref{def:scm_star} e
+ $\Z$ satisfaz o segundo item do critério backdoor para
  medir o efeito causal de $X$ em $Y$, então $I \dsep Y | X, \Z$.
 \end{lemma}
 
@@ -328,20 +327,23 @@ ao condicionamento usual no SCM aumentado.
  Por definição de $I$, $C_2 = X$ e 
  $I \rightarrow X$. 
  Se $X \rightarrow C_3$, então
- $X$ é uma cadeia em $C$ e 
+ $X$ não é um colisor em $C$ e 
  $C$ está bloqueado dado $X$ e $\Z$.
  Se $X \leftarrow C_3$, então
  $(X, C_3, \ldots, C_{n-1}, Y)$ está bloqueado
  dado $\Z$, uma vez que $\Z$ satisfaz
- o critério backdoor.
+ o segundo item do critério backdoor.
  Conclua que $C$ está bloqueado dado $X$ e $\Z$.
 \end{proof}
 
 \begin{lemma}
  \label{thm:backdoor_pt_1}
- Se $\Z$ satisfaz o critério backdoor para
+ Se $\Z$ satisfaz 
+ o segundo item do critério backdoor para
  medir o efeito causal de $X$ em $Y$, então
- $f(y|do(x),\z) = f(y|x,\z)$.
+ \begin{align*}
+  f(y|do(x),\z) &= f(y|x,\z).
+ \end{align*}
 \end{lemma}
 
 \begin{proof}
@@ -362,7 +364,7 @@ ao condicionamento usual no SCM aumentado.
 
 \begin{lemma}
  \label{lemma:backdoor_4}
- Se $(\sG^*, f^*)$ é tal qual em \cref{def:scm_star} e
+ Se $(\sG_*, f_*)$ é tal qual em \cref{def:scm_star} e
  $\X \notin Anc(\Z)$, então:
  \begin{align*}
   f_*(\z) &= f(\z)
@@ -397,7 +399,7 @@ ao condicionamento usual no SCM aumentado.
 
 \begin{lemma}
  \label{lemma:backdoor_5}
- Se $(\sG^*, f^*)$ é tal qual em \cref{def:scm_star} e
+ Se $(\sG_*, f_*)$ é tal qual em \cref{def:scm_star} e
  $\Z$ satisfaz o critério backdoor para
  medir o efeito causal de $X$ em $Y$, então $I \dsep \Z$.
 \end{lemma}
@@ -713,11 +715,215 @@ ao condicionamento usual no SCM aumentado.
   &= \frac{\lim_{\z \downarrow \z_1}\E[Y|\Z=\z] - \lim_{\z \uparrow \z_1}\E[Y|\Z=\z]}
   {\lim_{\z \downarrow \z_1} f(X=1|\z) - \lim_{\z \uparrow \z_1} f(X=1|\z)}
  \end{align*}
+\end{proof}
+
+\section{Relativas às \text{\cref{sec:frontdoor,sec:do_calculus}}}
+
+\subsection{Relativas ao \text{\cref{thm:do_calculus}}}
+
+\begin{lemma}
+ \label{lemma:do_calculus_0}
+ $f^* \equiv f(\sV|do(\X=\x))$ é 
+ compatível com $\sG(\bar{\X})$. 
+ Além disso, $\X$ é degenerada em $\x$ segundo $f^*$.
+\end{lemma}
+
+\begin{proof}
+ Decorre da \cref{def:intervencao} que
+ $f^*(\sV) = \I(\X=\x) \prod_{V \notin \X}f(V|Pa(V))$.
+ Definindo $g_{X_i}(X_i) = \I(X_i=x_i)$, para todo $X_i \in \X$ e
+ $g_V(V,Pa(V)) = f(v|Pa(V))$, note que
+ \begin{align*}
+  f^*(\sV) 
+  &= \prod_{X_i \in \X}g_{X_i}(X_i)
+  \prod_{V \notin \X}g_V(V,Pa(V)) 
+ \end{align*}
+ Portanto, decorre do \cref{lem:compativel-equiv} que
+ $f^*$ é compatível com um grafo em que
+ todo $X_i \in \X$ não tem pais e
+ todo $V \notin \X$ tem os mesmos pais que em $\sG$.
+ Isto é, $\sG$ é compatível com $\sG(\bar{\X})$.
  
- Como $\E[Y|do(X=x),\Z] = \E[Y|X=x,\Z]$ 
- (\cref{thm:backdoor_ajuste}) e
- $\E[Y|do(X=x),\Z]$ é contínua em $\z_1$,
- $\E[Y|X=x,\Z]$ é contínua em $\z_1$.
- Além disso,
+ Além disso, tomando $\V = \sV - \X$,
+ \begin{align*}
+  f^*(\X)
+  &= \int f^*(sV) d\V \\
+  &= \int \I(\X=\x) \prod_{V \in \V}f(V|Pa(V)) d\V \\
+  &= \I(\X=\x) \int \prod_{V \in \V}f(V|Pa(V)) d\V \\
+  &= \I(\X=\x).
+ \end{align*}
+ Portanto, $\X$ é degenerado em $\x$ segundo $f^*$.
+\end{proof}
+
+\begin{lemma}
+ \label{lemma:do_calculus_1}
+ Se $\Y \dsep \Z | \X \cup \W$ em $\sG(\bar{\X})$, então
+ \begin{align*}
+  f(\Y|do(\X), \Z, \W) &= f(\Y|do(\X), \W)
+ \end{align*}
+\end{lemma}
+
+\begin{proof}
+ Seja $f^*(\sV) \equiv f(\sV|do(\X=\x))$. 
+ Decorre do \cref{lemma:do_calculus_0} que
+ $f^*$ é compatível com $\sG(\bar{\X})$ e que
+ $\X$ é degenerado em $\x$ segundo $f^*$.
+ Assim,
+ \begin{align*}
+  f(\Y|do(\X), \Z, \W)
+  &= f^*(\Y|\Z, \W) \\
+  &= f^*(\Y|\X=\x, \Z, \W)
+  & \X \text{ é degenerado segundo }  f^* \\
+  &= f^*(\Y|\X=\x, \W)
+  & f^* \text{ compatível com } \sG(do(\X)) \text{,} \\
+  && \Y \dsep \Z | \X \cup \W \text{ em } \sG(do(\X)) \text{, e \cref{thm:d-sep}} \\
+  &= f(\Y|do(\X=\x), \W).
+ \end{align*}
+\end{proof}
+
+\begin{lemma}
+ \label{lemma:do_calculus_2}
+ Se $Y \dsep \W | \Z \cup \X$ em
+ $\sG(\bar{\X}, \underline{\W})$, então
+ \begin{align*}
+  f(Y|do(\X),do(\W),\Z) &= f(Y|do(\X),\W,\Z)
+ \end{align*}
+\end{lemma}
+
+\begin{proof}
+ Seja $f^*(\sV) \equiv f(\sV|do(\X=\x))$. 
+ Como $Y \dsep \W | \Z \cup \X$ 
+ em $\sG(\bar{\X}, \underline{\W})$, 
+ não há nenhum caminho ativo em $\sG(\bar{\X})$
+ de $\X$ em $Y$ que inicia com $\W \leftarrow$.
+ Isto é, $\X \cup \Z$ satisfaz 
+ o segundo item do critério backdoor para
+ medir o efeito causal de $\W$ em $Y$.
+ Portanto,
+ \begin{align*}
+  f(Y|do(\X=\x),do(\W),\Z)
+  &= f^*(Y|do(\W),\Z) \\
+  &= f^*(Y|do(\W),\X=\x,\Z)
+  & \text{\cref{lemma:do_calculus_0}} \\
+  &= f^*(Y|\W,\X=\x,\Z)
+  & \text{\cref{thm:backdoor_pt_1}} \\
+  &= f^*(Y|\W,\Z) \\
+  &= f(Y|do(\X=\x),\W,\Z)
+ \end{align*}
+\end{proof}
+
+\begin{lemma}
+ \label{lemma:do_calculus_3}
+ Se $\Y \dsep I_{\X} | \Z \cup \W$ em $\sG(\bar{\W}, \X^{+})$, então:
+ \begin{align*}
+  f(Y|do(\W), do(\X), \Z) &= f(Y|do(\W), \Z)
+ \end{align*}
+\end{lemma}
+
+\begin{proof}
+ Seja $f^*(\sV) \equiv f(\sV|do(\W=\w))$.
+ \begin{align*}
+  f(Y|do(\W=\w), do(\X), \Z)
+  &= f^*(Y|do(\X),\Z) 
+  & \text{\cref{lemma:do_calculus_0}} \\
+  &= f^*(Y|do(\X),\W=\w,\Z)
+  & \text{\cref{lemma:do_calculus_0}} \\ 
+  &= f^*_*(Y|I_{\X} = 1, \W=\w, \Z)
+  & \text{\cref{lemma:backdoor_1}} \\
+  &= f^*_*(Y|\W=\w, \Z, I_{\X}=0)
+  & Y \dsep I_{\X} | \W \cup \Z
+  \text{ em } \sG(\bar{\W}, \X^{+}) \\
+  &= f^*(Y|\W=\w, \Z) 
+  & \text{\cref{lemma:backdoor_2}} \\
+  &= f(Y|do(\W=\w), \Z)
+  & \text{\cref{lemma:do_calculus_0}}
+ \end{align*}
+\end{proof}
+
+\begin{proof}[Prova do \cref{thm:do_calculus}]
+ Decorre dos 
+ \cref{lemma:do_calculus_1,lemma:do_calculus_2,lemma:do_calculus_3}.
+\end{proof}
+
+\subsection{Relativas ao \text{\cref{thm:frontdoor}}}
+
+\begin{lemma}
+ \label{lemma:frontdoor_1}
+ Se $\W$ satisfaz o critério frontdoor para
+ medir o efeito causal de $X$ em $Y$, então
+ $f(Y|do(X),\W) = f(Y|do(X),do(\W))$.
+\end{lemma}
+
+\begin{proof}
+ Decorre do critério frontdoor \cref{def:frontdoor}.3 que
+ $X$ satisfaz o item 2 do critério backdoor para
+ medir o efeito causal de $\W$ em $Y$.
+ Portanto, pelo \cref{lemma:do_calculus_backdoor},
+ $\Y \dsep \W | \X$ em $\sG(\underline{\W})$.
+ Pelo \cref{lemma:dsep_monotone},
+ $\Y \dsep \W | \X$ em $\sG(\bar{\X}, \underline{\W})$.
+ A prova se conclui aplicando o item 2
+ do \cref{thm:do_calculus}.
+\end{proof}
+
+\begin{lemma}
+ \label{lemma:frontdoor_2}
+ Se $\W$ satisfaz o critério frontdoor para
+ medir o efeito causal de $X$ em $Y$, então
+ $f(Y|do(X),do(\W)) = f(Y|do(\W))$.
+\end{lemma}
+
+\begin{proof}
+ A prova consiste em aplicar o item 3 do \cref{thm:do_calculus}.
+ Para tal, desejamos provar que
+ $\Y \dsep I_{X} | \W$ em $\sG(\bar{\W}, X^{+})$.
+ Tome $C$ como um caminho arbitrário 
+ em $\sG(\bar{\W}, X^{+})$ de $I_{\X}$ em $Y$.
  
+ Primeiramente, provaremos que $C$ não é um caminho direcionado.
+ $C$ não é um caminho direcionado de $Y$ a $I_{X}$ pois
+ a única aresta em $\sG(\bar{\W}, X^{+})$ ligada a $I_{X}$ é
+ $I_{X} \rightarrow X$. A seguir, 
+ suponha que $C$ é um caminho direcionado de $I_{X}$ a $Y$.
+ Pelo \cref{def:frontdoor}.2, existe $C_i$ tal que
+ $C_i \in \W$. Como $C$ é direcionado de $I_X$ em $Y$,
+ $C_{i-1} \rightarrow C_i$. Este é um absurdo, pois
+ não há aresta apontando para $\W$ em $\sG(\bar{\W}, X^{+})$.
+ Portanto, $C$ não é um caminho direcionado.
+ 
+ Conclua que existe $C_i$ que é um colisor.
+ Como não há arestas apontando para $\W$ em $\sG(\bar{\W}, X^{+})$,
+ $C_i \notin \W$. Como $C_i$ é um colisor e $C_i \notin \W$,
+ conclua que $C$ está bloqueado.
+ Como $C$ era arbitrário,
+ $\Y \dsep I_{X} | \W$ em $\sG(\bar{\W}, X^{+})$.
+\end{proof}
+
+\begin{proof}[Prova do \cref{thm:frontdoor}]
+ \begin{align*}
+  f(Y|do(X=x))
+  &= \int f(Y|do(X=x),\W)f(\W|do(X=x))d\W \\
+  &= \int f(Y|do(X=x),\W)f(\W|X=x)d\W 
+  & \text{\cref{lemma:frontdoor_backdoor}} \\
+  &= \int f(Y|do(X=x),do(\W))f(\W|X=x)d\W 
+  & \text{\cref{lemma:frontdoor_1}} \\
+  &= \int f(Y|do(\W))f(\W|X=x)d\W 
+  & \text{\cref{lemma:frontdoor_2}} \\
+  &= \int \int f(Y|\W,X)f(X)dX f(\W|X=x)d\W
+  & \text{\cref{lemma:frontdoor_backdoor}}
+ \end{align*}
+\end{proof}
+
+\subsection{Relativas ao \text{\cref{thm:frontdoor_ipw}}}
+
+\begin{proof}[Prova do \cref{thm:frontdoor_ipw}]
+ \begin{align*}
+  \E[Y|do(X=x)]
+  &= \int Y f(Y|do(X=x)) dY \\
+  &= \int Y \int f(\W|x) \int f(Y|X,\W)f(X)dXdWdY 
+  & \text{\cref{thm:frontdoor}} \\
+  &= \int Y f(Y|X,\W)f(X) f(\W|x) d(Y \times \W \times Y) \\
+  &= \int \frac{Y f(\W|x)}{f(\W|X)} f(Y,\W,X) d(Y \times \W \times Y) \\
+  &= \E\left[\frac{Y f(\W|x)}{f(\W|X)} \right]
+ \end{align*}
 \end{proof}

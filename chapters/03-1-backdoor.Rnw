@@ -36,12 +36,12 @@ todos os caminhos de informação que passam por confundidores:
  Seja $\sG = (\sV, \sE)$ um grafo causal e $X, Y \in \sV$.
  Dizemos que $\Z \subseteq \sV - \{X,Y\}$ satisfaz 
  o critério ``backdoor'' se:
- \begin{itemize}
+ \begin{enumerate}
   \item $X \notin Anc(\Z)$,
   \item Para todo caminho de $X$ em $Y$, 
   $C = (X, C_2, \ldots, C_{n-1}, Y)$ tal que
   $(C_2, X) \in \sE$, $C$ está bloqueado dado $\Z$.
- \end{itemize}
+ \end{enumerate}
 \end{definition}
 
 \begin{example}
@@ -356,7 +356,9 @@ função de $\E[Y|do(X),\Z]$.
 Como o \cref{thm:backdoor_ajuste} garante que
 $\E[Y|do(X=x),\Z] = \mu(x,\Z)$,
 podemos definir o estimador
-$\hdoyz := \hmu(x,\Z)$.
+\begin{align*}
+ \hdoyz := \hmu(x,\Z).
+\end{align*}
 
 O \cref{thm:backdoor_ajuste} também 
 orienta a estimação do $\ACE$. 
@@ -1030,7 +1032,7 @@ regressão de Kernel de Nadaraya-Watson.
  $Y_i|X_i,Z_i \sim N(50(X_i+1)(Z_i + 1), 1)$.
  Podemos simular os dados da seguinte forma:
  
-<<rdd_ex_1_1, fig.pos="t", fig.height=3.5, fig.width=5, fig.cap="Exemplo em que Z satisfaz o critério backdoor para medir o efeito causal de X em Y e X = I(Z > 0). Como resultado da descontinuidade da propensidade de X em Z = 0, há uma descontinuidade na regressão E[Y|Z] no ponto Z=0.", fig.align="center">>==
+<<rdd_ex_1_1, fig.pos="t", fig.height=3.5, fig.width=5, fig.cap="Exemplo em que Z satisfaz o critério backdoor para medir o efeito causal de X em Y e X = I(Z $>$ 0). Como resultado da descontinuidade da propensidade de X em Z = 0, há uma descontinuidade na regressão de Y em Z no ponto Z=0.", fig.align="center">>==
 n <- 1000
 Z <- rnorm(n)
 X <- Z >= 0

@@ -922,7 +922,7 @@ se e somente se $V_1$ é uma causa direta de $V_2$.
 \begin{definition}
  Dizemos que $(\sG,f)$ é um SCM linear Gaussiano se,
  existe matriz diagonal positiva, $\Sigma$, e
- $\beta in \Re^{n \times n}$ tal que,
+ $\beta \in \Re^{n \times n}$ tal que,
  para todo vértice $V_i$,
  $\beta_{i,j} = 0$ quando $V_j \notin Pa(V_i)$ e
  \begin{align*}
@@ -1114,25 +1114,13 @@ classificaremos a seguir os vértices que o constituem.
  Seja $C = (C_1,\ldots,C_n)$ um caminho 
  em um DAG, $\sG = (\sV,\sE)$.
  Para cada $2 \leq i \leq n-1$:
- \begin{enumerate}
-  \item $C_i$ é um \textbf{confundidor} em $C$ se
-  $(C_i,C_{i-1}) \in \sE$ e $(C_i,C_{i+1}) \in \sE$,
-  isto é, existem arestas apontando de $C_i$ para
-  $C_{i-1}$ e $C_{i+1}$. Neste caso, desenhamos
-  $C_{i-1} \leftarrow C_i \rightarrow C_{i+1}$.
-  \item $C_i$ é uma \textbf{cadeia} em $C$ se
-  $(C_{i-1},C_{i}) \in \sE$ e $(C_i,C_{i+1}) \in \sE$, ou
-  $(C_{i+1},C_{i}) \in \sE$ e $(C_i,C_{i-1}) \in \sE$,
-  isto é, $(C_{i-1},C_i,C_{i+1})$ ou $(C_{i+1},C_i,C_{i-1})$ é 
-  um caminho direcionado. Neste caso, desenhamos
-  $C_{i-1} \rightarrow C_i \rightarrow C_{i+1}$ ou
-  $C_{i-1} \leftarrow C_i \leftarrow C_{i+1}$.
+ \begin{itemize}
   \item $C_i$ é um \textbf{colisor} em $C$ se
   $(C_{i-1},C_{i}) \in \sE$ e $(C_{i+1},C_{i}) \in \sE$,
   isto é, existem arestas apontando de $C_{i-1}$ e de $C_{i+1}$ 
   para $C_{i}$. Neste caso, desenhamos
   $C_{i-1} \rightarrow C_i \leftarrow C_{i+1}$.
- \end{enumerate}
+ \end{itemize}
 \end{definition}
 
 Note que a classificação na \cref{def:caminho-cat}
@@ -1169,11 +1157,11 @@ Com base na \cref{def:caminho-cat}, é
 possível compreender se um caminho permite a
 passagem de informação.
 Na \cref{sec:dag-ex} vimos que,
-se $V_2$ é um confundidor ou uma cadeia entre
+se $V_2$ não é um colisor entre
 $V_1$ e $V_3$, então
 $V_1$ e $V_3$ são independentes dado $V_2$.
 Por analogia, podemos intuir que um vértice que
-é um confundidor ou uma cadeia num caminho
+não é um colisor num caminho
 não permite a passagem de informação
 quando seu valor é conhecido.
 Similarmente, na \cref{sec:dag-ex},
@@ -1194,7 +1182,7 @@ Neste caso, dizemos que o caminho está \textit{bloqueado}:
  Dizemos que $C$ está bloqueado dado $\Z \subset \sV$, se
  \begin{enumerate}
   \item Existe algum $2 \leq i \leq n-1$ tal que
-  $C_i$ é um confundidor ou cadeia em $C$ e $C_{i} \in \Z$, ou
+  $C_i$ não é um colisor em $C$ e $C_{i} \in \Z$, ou
   \item Existe algum $2 \leq i \leq n-1$ tal que 
   $C_i$ é um colisor em $C$ e $C_{i} \notin Anc(\Z)$.
  \end{enumerate}
@@ -1240,17 +1228,17 @@ Esta conclusão é apresentada no
  precisamos analisar todos os caminhos de um para o outro.
  Estes caminhos são: $V_1 \rightarrow V_2 \rightarrow V_3$, e
  $V_1 \rightarrow V_2 \leftarrow V_4 \rightarrow V_3$.
- No primeiro caminho $V_2$ é um confundidor e, assim,
+ No primeiro caminho $V_2$ não é um colisor e, assim,
  o caminho não está bloqueado marginalmente.
  Portanto, $V_1$ e $V_3$ não são d-separados marginalmente.
  Por outro lado, no segundo caminho $V_2$ é um colisor e
- $V_4$ é um confundidor. Assim,
+ $V_4$ não o é. Assim,
  condicionando em $V_2$, este caminho não está bloqueado.
  Portanto, $V_1$ e $V_3$ não são d-separados dado $V_2$.
  Finalmente, dado $V_2$ e $V_4$, 
  ambos os caminhos estão bloqueados, 
- pois $V_2$ é um confundidor no primeiro e
- $V_4$ é um confundidor no segundo.
+ pois $V_2$ não é um colisor no primeiro e
+ $V_4$ não é um colisor no segundo.
  Assim, $V_1$ e $V_3$ são d-separados dado $(V_2,V_4)$.
  Para treinar este raciocínio,
  continue analisando a d-separação entre $V_1$ e $V_4$.
@@ -1412,6 +1400,15 @@ Esta conclusão é apresentada no
  $V \perp \V_2 | \V_3$.
 \end{exercise}
 
+\begin{exercise}
+ \label{lemma:dsep_monotone}
+ Sejam $\sG_1 = (\sV, \sE_1)$ e
+ $\sG_2 = (\sV, \sE_2)$ grafos
+ tais que $\sE_1 \subseteq \sE_2$.
+ Prove que se $\V_1 \dsep \V_2 | \V_3$ em $\sG_2$, então
+ $\V_1 \dsep \V_2 | \V_3$ em $\sG_1$.
+\end{exercise}
+
 \chapter{Intervenções}
 \label{cap:intervencao}
 
@@ -1545,18 +1542,17 @@ podemos definir o modelo de probabilidade sob intervenção:
 \begin{definition}
  \label{def:intervencao}
  Seja $\sG = (\sV, \sE)$ um DAG,
- $(\sG,f)$ um SCM (\cref{def:scm}),
- $\V_1 \subseteq \sV$, e 
- $\V_2 = \sV - \V_1$. 
+ $(\sG,f)$ um SCM (\cref{def:scm}), e
+ $\V_1 \subseteq \sV$. 
  O modelo de probabilidade obtido após
  uma intervenção em $\V_1$ é dado por:
  \begin{align*}
-  f(\V_2|do(\V_1))
+  f(\sV|do(\V_1))
   &:= \prod_{V_2 \in \V_2} f(V_2|Pa(V_2))
   &\text{, ou equivalentemente} \\
-  f(\V_2|do(\V_1 = \bv_1))
+  f(\sV|do(\V_1 = \bv_1))
   &:= \left(\prod_{(v_1,V_1) \in (\bv_1,\V_1)} \I(V_1 = v_1)\right)
-  \cdot \left(\prod_{V_2 \in \V_2} f(V_2|Pa(V_2))\right)
+  \cdot \left(\prod_{V_2 \notin \V_1} f(V_2|Pa(V_2))\right)
  \end{align*}
 \end{definition}
 Para compreender a \cref{def:intervencao}, 
@@ -1581,7 +1577,7 @@ das densidades do vértice dadas suas causas.
 
 Com base na discussão acima, podemos definir
 o \textbf{efeito causal} que um conjunto de variáveis, $\X$,
-tem em outro conjunto, $\Y$.
+tem em outro conjunto, $\Y$:
 
 \begin{definition}
  \label{def:exp_inter}
@@ -1863,12 +1859,12 @@ todos os caminhos de informação que passam por confundidores:
  Seja $\sG = (\sV, \sE)$ um grafo causal e $X, Y \in \sV$.
  Dizemos que $\Z \subseteq \sV - \{X,Y\}$ satisfaz 
  o critério ``backdoor'' se:
- \begin{itemize}
+ \begin{enumerate}
   \item $X \notin Anc(\Z)$,
   \item Para todo caminho de $X$ em $Y$, 
   $C = (X, C_2, \ldots, C_{n-1}, Y)$ tal que
   $(C_2, X) \in \sE$, $C$ está bloqueado dado $\Z$.
- \end{itemize}
+ \end{enumerate}
 \end{definition}
 
 \begin{example}
@@ -2163,7 +2159,9 @@ função de $\E[Y|do(X),\Z]$.
 Como o \cref{thm:backdoor_ajuste} garante que
 $\E[Y|do(X=x),\Z] = \mu(x,\Z)$,
 podemos definir o estimador
-$\hdoyz := \hmu(x,\Z)$.
+\begin{align*}
+ \hdoyz := \hmu(x,\Z).
+\end{align*}
 
 O \cref{thm:backdoor_ajuste} também 
 orienta a estimação do $\ACE$. 
@@ -2885,7 +2883,7 @@ regressão de Kernel de Nadaraya-Watson.
 
 }
 
-\caption[Exemplo em que Z satisfaz o critério backdoor para medir o efeito causal de X em Y e X = I(Z > 0)]{Exemplo em que Z satisfaz o critério backdoor para medir o efeito causal de X em Y e X = I(Z > 0). Como resultado da descontinuidade da propensidade de X em Z = 0, há uma descontinuidade na regressão E[Y|Z] no ponto Z=0.}\label{fig:rdd_ex_1_1}
+\caption[Exemplo em que Z satisfaz o critério backdoor para medir o efeito causal de X em Y e X = I(Z $>$ 0)]{Exemplo em que Z satisfaz o critério backdoor para medir o efeito causal de X em Y e X = I(Z $>$ 0). Como resultado da descontinuidade da propensidade de X em Z = 0, há uma descontinuidade na regressão de Y em Z no ponto Z=0.}\label{fig:rdd_ex_1_1}
 \end{figure}
 
 \end{knitrout}
@@ -2978,31 +2976,6 @@ regressão por kernel de Nadaraya-Watson:
  algum método de regressão não-paramétrica.
 \end{exercise}
 
-\section{Do-calculus}
-\label{sec:do_calculus}
-
-\begin{theorem}
- \label{thm:do_calculus}
- Teste
- \begin{enumerate}
-  \item Seja $\sG^*$ o grafo obtido retirando de $\sG$ 
-  todas as arestas que apontam para $\X$. 
-  Se $\Y \dsep \Z | \X \cup \W$ em $\sG^*$, então
-  \begin{align*}
-   f(\Y|do(\X), \Z, \W) &= f(\Y|do(\X), \W)
-  \end{align*}
-  \item Seja $\sG^+$ o grafo obtido retirando de $\sG$ 
-  todas as arestas que 
-  apontam para $\X$ ou 
-  que partem de $\Z$. 
-  Se temos que $\Y \dsep \Z | \X \cup \W$ em $\sG^+$, então
-  \begin{align*}
-   f(\Y|do(\X), do(\Z), \W) &= f(\Y|do(\X), \W)
-  \end{align*}
-  \item 
- \end{enumerate}
-\end{theorem}
-
 \section{Controlando mediadores (critério frontdoor)}
 \label{sec:frontdoor}
 
@@ -3032,27 +3005,195 @@ sobre a incidência de câncer.
 Assim, como $G$ não é observado,
 não é possível implementar 
 os métodos de estimação vistos na última seção.
-
 Apesar desta dificuldade, 
 ainda é possível medir o efeito causal de $X$ em $Y$
 na \cref{fig:frontdoor_ex_1}.
-Para tal, a estratégia é 
-mensurar o efeito de 
-todos os caminhos direcionados que 
-partem de $X$ e chegam a $Y$.
-Em outras palavras, 
-a estratégia é 
 
+Para tal, primeiramente observe que
+é possível estimar o efeito causal de $X$ em $P$ 
+e de $P$ em $Y$. 
+Para medir o efeito causal de $X$ em $P$,
+note que $\emptyset$ satisfaz o critério backdoor.
+Isso ocorre pois $Y$ é um colisor em
+$X \leftarrow G \rightarrow Y \leftarrow P$.
+Além disso, como $X = Pa(P)$, decorre
+do \cref{lemma:backdoor_pais} que
+$X$ satisfaz o critério backdoor para
+medir o efeito causal de $P$ em $Y$.
+Das duas últimas conclusões decorre do
+\cref{thm:backdoor} que
+$f(P|do(X)) = f(P|X)$ e que 
+$f(Y|do(P)) = \int f(Y|P,X)f(X)dX$.
+
+A seguir, o critério frontdoor consiste 
+em observar que $P$ está
+no único caminho direcionado de $X$ a $Y$,
+$X \rightarrow P \rightarrow Y$. Assim,
+é possível provar a identificação causal
 \begin{align*}
- f(y|do(X)) 
- &= \int f(y|do(W))f(W|do(X))dW
+ f(Y|do(X))
+ &= \int f(P|do(X))f(Y|do(P))dP \\
+ &= \int f(P|do(X)) \int f(Y|P,X)f(X)dX.
 \end{align*}
 
-\begin{align*}
- \E[Y|do(X)]
- &= \int y f(y|do(X)) \\
- &= \int \int y f(y|do(W)) f(W|do(X)) dW dy
-\end{align*}
+O critério frontdoor é formalizado a seguir:
+
+\begin{definition}
+ \label{def:frontdoor}
+ $\W$ satisfaz o critério frontdoor para
+ medir o efeito causal de $X$ em $Y$ se:
+ \begin{enumerate}
+  \item para todo caminho direcionado de $X$ em $Y$, $C$,
+  existe $C_i \in \W$ e, para todo $W \in \W$,
+  existe caminho direcionado de $X$ em $Y$, $C$,
+  e $i$ tal que $C_i = W$.
+  \item $\emptyset$ satisfaz
+  o item 2 do critério backdoor (\cref{def:backdoor}) para
+  medir o efeito causal de $X$ em $\W$.
+  \item $X$ satisfaz
+  o item 2 do critério backdoor (\cref{def:backdoor}) para
+  medir o efeito causal de $\W$ em $Y$.
+ \end{enumerate}
+\end{definition}
+
+A \cref{def:frontdoor} elenca todos os itens que
+utilizamos na análise da \cref{fig:frontdoor_ex_1}.
+O primeiro item do critério identifica que 
+$\W$ deve interceptar todos os caminhos direcionados
+de $X$ a $Y$. Isto é, $\W$ capturar 
+a informação de todos os mediadores de $X$ a $Y$.
+O segundo e terceiro itens estabelecem as condições para que
+seja possível aplicar o critério backdoor para 
+identificar $f(\W|do(X))$ e $f(Y|do(\W))$.
+
+\subsubsection{Identificação causal}
+
+O critério frontdoor possibilita
+a identificação do efeito causal de $X$ em $Y$:
+
+\begin{theorem}
+ \label{thm:frontdoor}
+  Se $\W$ satisfaz o critério frontdoor para
+  medir o efeito causal de $X$ em $Y$, então
+  \begin{align*}
+   f(Y|do(X=x))
+   &= \int f(\W|x) \int f(Y|\W,X)f(X) dX d\W
+  \end{align*}
+\end{theorem}
+
+\begin{theorem}
+ \label{thm:frontdoor_ipw}
+ Se $\W$ satisfaz o critério frontdoor para
+ estimar o efeito causal de $X$ em $Y$, então
+ \begin{align*}
+  \E[Y|do(X=x)]
+  &= \E\left[\frac{Y \cdot f(W|x)}{f(W|X)}\right]
+ \end{align*}
+\end{theorem}
+
+\subsubsection{Estimação pelo critério frontdoor}
+
+A estimação é um tema menos desenvolvido
+ao aplicar o critério frontdoor.
+Alguns estimadores não-paramétricos
+são apresentados em \citet{Tchetgen2012}.
+A seguir, desenvolvemos 
+um estimador não-paramétrico mais simples 
+inspirado na estratégia de IPW.
+
+\begin{definition}
+ \label{def:frontdoor_ipw}
+ Considere que $\W$ satisfaz o critério frontdoor
+ para medir o efeito causal de $X$ em $Y$ e que
+ $\hf(\W|X)$ é um estimador de $f(\W|X)$.
+ Um estimador do tipo IPW para
+ $\E[Y|do(X=x)]$ é dado por
+ \begin{align*}
+  \widehat{\E}_{f}[Y|do(X=x)]
+  &:= n^{-1}\sum_{i=1}^n \frac{Y_i \hf(\W_i|x)}{\hf(\W_i|X_i)}.
+ \end{align*}
+\end{definition}
+
+Para provar o \cref{thm:frontdoor}
+utilizamos o \textit{do calculus}, 
+que é discutido na \cref{sec:do_calculus}.
+
+\section{Do-calculus}
+\label{sec:do_calculus}
+
+O \textit{do calculus} consiste em 
+um conjunto de regras para
+alterar densidade envolvend o operador ``do''.
+Por exemplo, o do calculus explica 
+como remover o operador do,
+trocá-lo pelo condicionamento simples, ou
+remover algum condicionamento simples.
+Para apresentar o do calculus,
+é necessário primeiramente definir
+algumas modificações sobre o grafo causal.
+
+\begin{definition}
+ \label{def:do_graph}
+ Seja $(\sG,f)$ um SCM tal que $\sG = (\sV,\sE)$:
+ \begin{align*}
+  \sG(\bar{\V}) 
+  &:= (\sV, \{E \in \sE: E_2 \notin \V\}) \\
+  \sG(\bar{\V}_1, \underline{\V}_2)
+  &:= (\sV, \{E \in \sE: E_2 \notin \V_1 \text{ e } E_1 \notin \V_2\}) \\
+  \sG(\bar{\V}_1, \V_2^{+})
+  &= (\sV \cup \{I_V: V \in \V_2\}, 
+  \{E \in \sE: E_2 \notin \V_1\} \cup \{(I_V, V): V \in \V_2\})
+ \end{align*}
+ Isto é, $\sG(\bar{\V})$ é
+ o grafo obtido retirando de $\sG$ as arestas que apontam para $\V$,
+ $\sG(\bar{\V}_1, \underline{\V}_2)$ é 
+ o grafo obtido retirando de $\sG$ 
+ todas as arestas que apontam para $\V_1$ ou 
+ que saem de $\V_2$, e
+ $\sG(\bar{\V}_1, \V_2^{+})$ é 
+ o grafo obtido adicionando a $\sG$ um novo vértice $I_V$ e
+ uma aresta $I_V \rightarrow V$, para todo $V \in \V_2$, e
+ retirando todas as arestas que apontam para $\V_1$.
+\end{definition}
+
+Com base na \cref{def:do_graph},
+é possível apresentar o do calculus:
+
+\begin{theorem}
+ Seja $(\sG,f)$ um SCM e $\X$, $\Y$, $\W$ e $\Z$ 
+ conjuntos de vértices disjuntos:
+ \label{thm:do_calculus}
+ \begin{enumerate}
+  \item  Se $\Y \dsep \Z | \X \cup \W$ em $\sG(\bar{\X})$, então
+  $f(\Y|do(\X), \Z, \W) = f(\Y|do(\X), \W)$.
+  \item Se $\Y \dsep \W | \Z \cup \X$ em $\sG(\bar{\X}, \underline{\W})$, então
+  $f(\Y|do(\X), do(\W), \Z) = f(\Y|do(\X), \W, \Z)$.
+  \item Se $\Y \dsep I_{\X} | \Z \cup \W$ em $\sG(\bar{\W}, \X^{+})$, então
+  $f(Y|do(\W), do(\X), \Z) = f(Y|do(\W), \Z)$.
+ \end{enumerate}
+\end{theorem}
+
+O seguinte lema mostra como
+o do calculus generaliza 
+certos aspectos do critério backdoor:
+
+\begin{lemma}
+ \label{lemma:do_calculus_backdoor}
+ $X$ satisfaz o item 2 do critério backdoor
+ para medir o efeito causal de $\W$ em $Y$ 
+ se e somente se $Y \dsep \W | X$ em $\sG(\underline{\W})$.
+\end{lemma}
+
+Utilizando o do calculus,
+é possível obter todas 
+as relações de identificação que
+são válidas supondo apenas que
+$f$ é compatível com 
+o grafo causal \citep{Shpitser2006,Shpitser2008}.
+Contudo, às vezes é razoável fazer 
+mais suposições.
+Discutiremos este tipo de situação
+no próximo capítulo.
 
 \subsection{Exercícios}
 
@@ -3119,6 +3260,333 @@ a estratégia é
  Prove que $f(\y|do(\X)) 
  = \int f(\y|\w)f(\w|do(\X))d\w$ e
  $\E[Y|do(\X)] = \E[\E[Y|\W]|do(\X)]$.
+\end{exercise}
+
+\begin{exercise}
+ \label{lemma:frontdoor_backdoor}
+ Prove que se $\W$ satisfaz o critério frontdoor para
+ medir o efeito causal de $X$ em $Y$, então
+ $f(\W|do(X)) = f(\W|X)$ e
+ $f(Y|do(\W)) = \int f(Y|\W,X=x^*)f(X=x^*)dx^*$.
+\end{exercise}
+
+\begin{exercise}
+ Prove o \cref{lemma:do_calculus_backdoor}.
+\end{exercise}
+
+\chapter{Resultados potenciais}
+
+No capítulo passado, vimos que
+$f(y|do(x))$ nos permite entender
+o comportamento de $Y$ em 
+um cenário distinto dos dados observados.
+Por exemplo, se $X$ é 
+a indicadora de um tratamento e
+$Y$ é a indicadora de cura, então
+$f(y|do(X=1))$ nos permite entender
+a proporção de cura em um cenário hipotético em que
+administramos o tratamento a todos os indivíduos.
+Esta distribuição nos permite investigar
+questões causais que 
+não eram acessíveis usando apenas
+a distribuição observacional, $f(y,x)$.
+
+Contudo, algumas perguntas causais 
+não são respondidas utilizando apenas
+os mecanismos desenvolvidos no \cref{cap:intervencao}.
+Por exemplo, qual a probabilidade de que 
+um indivíduo se cure quando rece o tratamento e
+não se cure quando não o recebe.
+Quando tentamos traduzir esta questão,
+notamos que partes dela envolvem $Y=1$ e $do(X=1)$
+e outras partes envolvem $Y=0$ e $do(X=0)$.
+Se tentarmos ingenuamente traduzir a questão,
+poderíamos obter algo como $\P(Y=1, Y=0|do(X=1),do(X=0))$.
+Contudo, a probabilidade acima não responde à pergunta colocada.
+Em primeiro lugar, não está definido fazermos
+as intervenções $do(X=1)$ e $do(X=0)$ na mesma unidade amostral.
+Além disso, mesmo que a probabilidade estivesse definida,
+é impossível que o mesmo $Y$ assuma tanto o valor $1$ quanto $0$.
+Isto é, $\P(Y=1, Y=0|\ldots) = 0$.
+
+A última constatação nos revela que
+o modelo no \cref{cap:intervencao}
+não tem variáveis suficientes para
+traduzir a perguntada levantada.
+Se imaginamos que é possível que
+um indivíduo se cure ao receber o tratamento e
+não se cure quando não o recebe, 
+isto ocorre pois as ocorrências de cura
+em cada cenário hipotético não são 
+logicamente equivalentes.
+Em outras palavras, é como se 
+houvessem \textit{resultados potenciais}\footnote{
+ Esta é uma tradução livre da expressão
+ ``potential outcomes'' usada em inglês.},
+$Y_1$ e $Y_0$, para
+indicar a ocorrência de cura em
+cada cenário considerado.
+Com uso destas variáveis, 
+poderíamos escrever $\P(Y_1 = 1, Y_0 = 0)$.
+
+O objetivo desta seção é 
+incluir este tipo de variável de forma
+a preservar as ferramentas desenvolvidas
+no \cref{cap:intervencao}.
+Neste quesito, a maior dificuldade será
+estabelecer a distribuição conjunta
+entre os resultados potenciais.
+Para tal, será útil relembrar
+um lema fundamental em simulação:
+
+\begin{lemma}
+ \label{lemma:simulacao}
+ Considere que $F(v|Pa(V))$ é
+ uma função de densidade acumulada condicional arbitrária e
+ $U \sim U(0,1)$. Se definirmos,
+ $V \equiv F^{-1}(U|Pa(V))$, então
+ $V|Pa(V) \sim F$.
+\end{lemma}
+
+O \cref{lemma:simulacao} traz 
+várias interpretações que nos serão úteis.
+A primeira interpretação, de caráter técnico, é 
+que podemos simular de 
+qualquer distribuição multivariada utilizando apenas
+variáveis i.i.d. e funções determinísticas.
+Em particular, podemos 
+reescrever um SCM de tal forma que
+cada vértice, $V$, seja função determinística
+de seus pais e uma variável de ruído, $U_V$.
+Esta abordagem, que está ligada a
+modelos de equações estruturais, é
+apresentada nas \cref{def:grafo_struct,def:scm_struct}.
+
+\begin{definition}
+ \label{def:grafo_struct}
+ Seja $\sG = (\sV, \sE)$ um grafo causal.
+ O grafo causal estrutural,
+ $\sG^+ = (\sV^+, \sE^+)$, é tal que 
+ $\sV^+ = \sV \cup (U_V)_{V \in \sV}$ e
+ $\sE^+ = \sE \cup \{(U_V, V): V \in \sV\}$.
+ Isto é, para cada $V \in \sV$, 
+ $\sG^+$ adiciona uma nova variável $U_V$ e
+ uma aresta de $U_V$ a $V$.
+\end{definition} 
+ 
+\begin{definition}
+ \label{def:scm_struct}
+ Seja $(\sG,f)$ um SCM.
+ Um SCM em equações estruturais para $(\sG,f)$, 
+ $(\sG^+,f^+)$, é tal que
+ $\sG^+$ é o grafo causal estrutural de $\sG$,
+ $(U_V)_{V \in \sV}$ são independentes segundo $f^+$ e,
+ para cada $V \in \sV$, existe uma função determinística, 
+ $g_V: U_V \times Pa(V) \rightarrow \Re$,
+ tal que $f^+(V|U_V,Pa(V)) = \I(V = g_V(U_V, Pa(V)))$ e
+ $f^+(\sV) = f(\sV)$.
+\end{definition}
+ 
+O \cref{ex:eq_struct} ilustra
+uma forma de obter 
+um SCM em equações estruturais
+a partir de um SCM com dois vértices.
+ 
+\begin{example}
+ \label{ex:eq_struct}
+ Considere que $X \rightarrow Y$,
+ $X \sim \text{Exp}(1)$ e $Y|X \sim \text{Exp}(X)$.
+ Neste caso, o grafo estrutural causal é
+ dado por $U_X \rightarrow X \rightarrow Y \leftarrow U_Y$.
+ Além disso, existem várias representações do SCM
+ em equações estruturais. Uma possibilidade é
+ definir que $U_X$ e $U_Y$ são i.i.d. e $U(0,1)$,
+ $X \equiv -\log(U_X)$ e $Y \equiv -\log(U_Y)/X$.
+\end{example}
+ 
+O \cref{lemma:simulacao} também permite
+uma interpretação de caráter mais filosófico.
+Podemos imaginar que toda variável em um SCM, $V$, é
+uma função determinística de seus pais e
+de \textit{condições locais} não-observadas, $U_V$.
+A expressão ``condições locais'' indica que
+cada $U_V$ é usada somente para gerar $V$ e que
+as variáveis em $U$ são independentes, isto é,
+não trazem informação umas sobre as outras.
+
+A interpretação acima é usada
+na definição de resultados potenciais.
+A ideia principal é que 
+as mesmas funções determínistas e
+variáveis de ruído locais são usadas
+para gerar todos os resultados potenciais.
+A única diferença é que,
+para cada resultado potencial,
+o valor das variáveis em que 
+houve intervenção é fixado.
+Esta definição é compatível com 
+a ideia de que não é possível modificar
+os ruídos locais por meio da intervenção.
+Em outras palavras, 
+o resultado potencial é o mais próximo possível
+do resultado observado sob a restrição que
+fixamos os valores das variáveis em que
+houve intervenção.
+
+\begin{definition}
+ \label{def:grafo_potencial}
+ Seja $(\sG, f)$ um SCM de grafo causal 
+ $\sG = (\sV, \sE)$ e
+ $(\sG^+, f^+)$ o seu SCM em equações estruturais.
+ O grafo de resultados potenciais dado
+ por intervenções em $\X \subseteq \sV$,
+ $\sG^* = (\sV^*, \sE^*)$ é tal que
+ \begin{align*}
+  \sV^* &= \{W_{\V=\bv}: W \in \sV, \V \subseteq \X, \bv \in supp(\V)\} \cup \{U_W: W \in \sV\}, \\
+  \sE^* &= \{(W_{\V=\bv}, Z_{\V=\bv}): \V \subseteq \X, \bv \in supp(\V),
+  (W, Z) \in \sE{+}, Z \notin \V\}.
+ \end{align*}
+ Para todo $W \in \sV$, abreviamos $W_{\emptyset}$ por $W$.
+\end{definition}
+ 
+Em palavras, o grafo de resultados potenciais cria 
+uma cópia de $\sG$ para cada possível intervenção, $\V=\bv$.
+Além disso, adiciona-se uma aresta de $U_W$ para cada cópia de $W$.
+Esta construção indica que as mesmas variáveis em $U$
+geram todos os resultados potenciais.
+Também, para cada vértice em que 
+houve uma intervenção,
+$W_{\V=\bv} \in \V_{\V=\bv}$, removem-se 
+todas as arestas que apontam para $W_{\V=\bv}$.
+Esta remoção ocorre porque, 
+quando realizamos uma intervenção em $\V$,
+o valor de $\V$ é fixado e, assim,
+não é gerado por suas causas em $\sG$.
+
+\begin{example}
+ \label{ex:potential_model}
+ Considere que $(X,Y) \in \{0,1\}^2$ e 
+ o grafo causal é $X \rightarrow Y$.
+ Vimos no \cref{ex:eq_struct} que 
+ o grafo causal estrutural é dado por
+ $U_X \rightarrow X \rightarrow Y \leftarrow U_Y$.
+ Vamos construir o grafo de resultados potenciais
+ dadas intervenções em $X$.
+ Neste caso, além dos vértices $U_X, U_Y, X, Y$,
+ temos também $X_{X=0}, Y_{X=0}, X_{X=1}, Y_{X=1}$.
+ Como não há ambiguidade neste caso, 
+ podemos abreviar os últimos quatro vértices por
+ $X_0, Y_0, X_1, Y_1$.
+ 
+ O grafo de resultados potenciais é
+ ilustrado na \cref{fig:grafo_potencial}.
+ O grafo causal estrutural é a reta horizontal 
+ de $U_X$ a $U_Y$. 
+ Os resultados potenciais são 
+ cópias deste grafo que usam 
+ as mesmas variáveis $U$ e 
+ em que removemos as arestas que
+ apontam para a intervenções, $X_0$ e $X_1$.
+ 
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{figure}[t]
+
+{\centering \includegraphics[width=\maxwidth]{./figures/grafo_potencial-1} 
+
+}
+
+\caption[Grafo de resultados potenciais dadas intervenções em $X$]{Grafo de resultados potenciais dadas intervenções em $X$.}\label{fig:grafo_potencial}
+\end{figure}
+
+\end{knitrout}
+\end{example}
+
+Uma vez definido o grafo de resultados potenciais,
+podemos extender a distribuição
+do modelo de equações estruturais para este grafo.
+Esta extensão envolve três etapas.
+Primeiramente, a distribuição de $U$ continua a mesma.
+Em segundo lugar, para todo 
+vértice do grafo de resultados potenciais, $W_{\V=\bv}$, 
+em que não houve uma intervenção, 
+este vértice é gerado pelo mesmo mecanismo que $W$.
+Isto é, $W_{\V=\bv} = \I(g_W(U_W, Pa^*(W_{\V=\bv})))$.
+Finalmente, se houve uma intervenção em $W_{\V=\bv}$,
+então ela é uma variável degenerada no valor desta intervenção.
+Esta construção é formalizada na \cref{def:scm_potencial}.
+
+\begin{definition}
+ \label{def:scm_potencial}
+ Seja $(\sG^+, f^+)$ um
+ SCM em equações estruturais para $(\sG, f)$
+ com funções determinísticas, $g$.
+ O modelo de resultados potenciais (POM)\footnote{
+  utilizamos a sigla POM em referência ao
+  termo em inglês ``potential outcomes model''} 
+  dado por intervenções em $\X$,
+ $(\sG^*, f^*)$ é tal que
+ $\sG^*$ é o grafo de resultados potenciais
+ dado por intervenções em $\X$ (\cref{def:grafo_potencial}) e
+ \begin{align*}
+  f^*(U_W) &= f(U_W) & \text{, para todo } W \in \sV, \\
+  f^*(W_{\V=\bv}|Pa^*(W_{\V=\bv}))
+  &= 
+  \begin{cases}
+   \I(W_{\V=\bv} = \bv_i) & \text{, se } W \equiv \V_i \\
+   \I(W_{\V=\bv} = g_W(U_W, Pa^*(W_{\V=\bv}))) & \text{, caso contrário.}
+  \end{cases}
+ \end{align*}
+\end{definition}
+
+Ainda que seja uma formalização conveniente,
+o POM é consideravelmente mais complexo que o SCM original.
+Para ganhar intuição sobre o POM,
+alguns lemas de tradução são fundamentais.
+
+\begin{lemma}
+ \label{lemma:obs_to_potential}
+ Para toda intervenção, $\V=\bv$,
+ $\P(\sV = \sV_{\V=\bv}|\V = \bv) = 1$.
+\end{lemma}
+
+O \cref{lemma:obs_to_potential} conecta
+o dado observacional em $\sV$ ao
+resultado potencial $\sV_{\V=\bv}$.
+Mais especificamente, quando 
+observamos que $\V=\bv$, então
+os resultados potenciais dada a
+intervenção $\V=\bv$ são
+idênticos aos resultados observados.
+Em outras palavras,
+ao observamos que $\V=\bv$, aprendemos que
+estamos justamente na hipótese
+de resultados potenciais em que $\V=\bv$.
+
+\begin{lemma}
+ \begin{align*}
+  f(\sV_{\V=\bv})
+  &= f(\sV|do(\V=\bv))
+ \end{align*}
+\end{lemma}
+
+\begin{lemma}[Ignorabilidade condicional]
+ Se $\Z$ satisfaz o critério backdoor para 
+ medir o efeito causal de $X$ em $Y$, 
+ então para todo $x$,
+ $Y_{X=x} \dsep X | \Z$.
+\end{lemma}
+
+\subsection{Exercícios}
+
+\begin{exercise}
+ Prove o \cref{lemma:simulacao}.
+\end{exercise}
+
+\begin{exercise}
+ Mostre que no \cref{ex:eq_struct} 
+ a distribuição de $(X,Y)$ no SCM 
+ em equações estruturais é igual 
+ àquela no SCM original.
 \end{exercise}
 
 \bibliographystyle{apalike}
@@ -3373,25 +3841,26 @@ ao condicionamento usual no SCM aumentado.
 \begin{definition}
  \label{def:scm_star}
  Seja $(\sG_*, f_*)$ um SCM expandido tal que
- $\sG_* = (\sV \cup \{I\}, \sE_*)$, e
- $\sE_* = \sE \cup \{(I \rightarrow X)\}$.
+ $\sG_* = (\sV \cup \{I_X: X \in \X\}, \sE_*)$, e
+ $\sE_* = \sE \cup \{(I_X \rightarrow X: X \in \X)\}$.
  Isto é, $\sG_*$ é uma cópia de $\sG$ em que
- adicionamos o vértice $I \in \{0,1\}$ e 
- uma única aresta de $I$ para $X$.
+ adicionamos para cada $X \in \X$
+ os vértice $I_X \in \{0,1\}$ e 
+ arestas de $I_X$ para $X$.
  
  $\sG^*$ admite uma interpretação intuitiva.
- $I$ é a indicadora de que fazemos uma intervenção em $X$,
+ $I_X$ é a indicadora de que fazemos uma intervenção em $X$,
  fazendo que esta assuma o valor $x$.
- Se $I = 0$, não há uma intervenção e, assim,
+ Se $I_X = 0$, não há uma intervenção e, assim,
  $X$ segue a sua distribuição observacional.
- Se $I = 1$, $X$ assume o valor $x$ com probabilidade $1$.
+ Se $I_X = 1$, $X$ assume o valor $x$ com probabilidade $1$.
  
  Finalmente, considerando $Pa(X)$ como os
  pais de $X$ segundo $\sG$, definimos que:
  \begin{align*}
-  f_*(X|Pa(X), I) 
+  f_*(X|Pa(X), I_X) 
   &= \begin{cases}
-   f(X|Pa(X)) & \text{, se $I = 0$, e} \\
+   f(X|Pa(X)) & \text{, se $I_X = 0$, e} \\
    \I(X = x) & \text{, caso contrário.}
   \end{cases}
  \end{align*}
@@ -3399,42 +3868,40 @@ ao condicionamento usual no SCM aumentado.
 
 \begin{lemma}
  \label{lemma:backdoor_1}
- Se $(\sG^*, f^*)$ é tal qual em \cref{def:scm_star}, então:
+ Se $(\sG_*, f_*)$ é tal qual em \cref{def:scm_star}, então:
  \begin{align*}
-  f(y|do(X=x)) &= f_*(y|I=1)
+  f(\sV|do(X=x)) &= f_*(\sV|I_{\X}=1)
  \end{align*}
 \end{lemma}
 
 \begin{proof}
- Tomando $\V_2 = \sV - \{X\}$:
  \begin{align*}
-  f_*(\V_2|I = 1) 
-  &= \frac{f_*(\V_2, I=1)}{f(I=1)} \\
-  &= \frac{\int f_*(\V_2, X, I=1)dX}{f(I=1)} \\
-  &= \frac{f(I=1)\I(X = x)\prod_{V_2 \in \V_2}f(V_2|Pa(V_2))}{f(I=1)}
+  f_*(\sV|I_{\X} = 1) 
+  &= \frac{f_*(\sV, I_{\X}=1)}{f(I_{\X}=1)} \\
+  &= \frac{f(I_{\X}=1)\prod_{X \in \X}\I(X = x)\prod_{V \notin \X}f(V|Pa(V))}{f(I=1)}
   & \text{\cref{def:scm_star}} \\
-  &= \I(X = x) \cdot \prod_{V_2 \in \V_2}f(V_2|Pa(V_2)) \\
-  &= f(\V_2|do(X=x)) 
+  &= \prod_{X \in \X}\I(X = x) \cdot \prod_{V \notin \V_1}f(V|Pa(V)) \\
+  &= f(\sV|do(\X=\x)) 
   & \text{\cref{def:intervencao}}
  \end{align*}
 \end{proof}
 
 \begin{lemma}
  \label{lemma:backdoor_2}
- Se $(\sG^*, f^*)$ é tal qual em \cref{def:scm_star}, então:
+ Se $(\sG_*, f_*)$ é tal qual em \cref{def:scm_star}, então:
  \begin{align*}
-  f_*(\sV|I=0) &= f(\sV).
+  f_*(\sV|I_{\X}=0) &= f(\sV).
  \end{align*}
 \end{lemma}
 
 \begin{proof}
  \begin{align*}
-  f_*(\sV|I=0) 
-  &= \frac{f_*(\sV, I=0)}{f_*(I=0)} \\
-  &= \frac{f_*(I=0)f_*(X|Pa(X),I=0)
-  \prod_{V \in \sV-\{X\}} f(V|Pa(V))}{f_*(I=0)}
+  f_*(\sV|I_{\X}=0) 
+  &= \frac{f_*(\sV, I_{\X}=0)}{f_*(I_{\X}=0)} \\
+  &= \frac{f_*(I_{\X}=0)\prod_{X \in \X}f_*(X|Pa(X),I_{X}=0)
+  \prod_{V \notin \X} f(V|Pa(V))}{f_*(I=0)}
   & \text{\cref{def:scm_star}} \\
-  &= f(X|Pa(X))\prod_{V \in \sV-\{X\}} f(V|Pa(V))
+  &= \prod_{X \in \X}f(X|Pa(X))\prod_{V \notin \X} f(V|Pa(V))
   & \text{\cref{def:scm_star}} \\
   &= \prod_{V \in \sV} f(V|Pa(V)) \\
   &= f(\sV) 
@@ -3444,8 +3911,8 @@ ao condicionamento usual no SCM aumentado.
 
 \begin{lemma}
  \label{lemma:backdoor_3}
- Se $(\sG^*, f^*)$ é tal qual em \cref{def:scm_star} e
- $\Z$ satisfaz o critério backdoor para
+ Se $(\sG_*, f_*)$ é tal qual em \cref{def:scm_star} e
+ $\Z$ satisfaz o segundo item do critério backdoor para
  medir o efeito causal de $X$ em $Y$, então $I \dsep Y | X, \Z$.
 \end{lemma}
 
@@ -3455,20 +3922,23 @@ ao condicionamento usual no SCM aumentado.
  Por definição de $I$, $C_2 = X$ e 
  $I \rightarrow X$. 
  Se $X \rightarrow C_3$, então
- $X$ é uma cadeia em $C$ e 
+ $X$ não é um colisor em $C$ e 
  $C$ está bloqueado dado $X$ e $\Z$.
  Se $X \leftarrow C_3$, então
  $(X, C_3, \ldots, C_{n-1}, Y)$ está bloqueado
  dado $\Z$, uma vez que $\Z$ satisfaz
- o critério backdoor.
+ o segundo item do critério backdoor.
  Conclua que $C$ está bloqueado dado $X$ e $\Z$.
 \end{proof}
 
 \begin{lemma}
  \label{thm:backdoor_pt_1}
- Se $\Z$ satisfaz o critério backdoor para
+ Se $\Z$ satisfaz 
+ o segundo item do critério backdoor para
  medir o efeito causal de $X$ em $Y$, então
- $f(y|do(x),\z) = f(y|x,\z)$.
+ \begin{align*}
+  f(y|do(x),\z) &= f(y|x,\z).
+ \end{align*}
 \end{lemma}
 
 \begin{proof}
@@ -3489,7 +3959,7 @@ ao condicionamento usual no SCM aumentado.
 
 \begin{lemma}
  \label{lemma:backdoor_4}
- Se $(\sG^*, f^*)$ é tal qual em \cref{def:scm_star} e
+ Se $(\sG_*, f_*)$ é tal qual em \cref{def:scm_star} e
  $\X \notin Anc(\Z)$, então:
  \begin{align*}
   f_*(\z) &= f(\z)
@@ -3524,7 +3994,7 @@ ao condicionamento usual no SCM aumentado.
 
 \begin{lemma}
  \label{lemma:backdoor_5}
- Se $(\sG^*, f^*)$ é tal qual em \cref{def:scm_star} e
+ Se $(\sG_*, f_*)$ é tal qual em \cref{def:scm_star} e
  $\Z$ satisfaz o critério backdoor para
  medir o efeito causal de $X$ em $Y$, então $I \dsep \Z$.
 \end{lemma}
@@ -3840,13 +4310,217 @@ ao condicionamento usual no SCM aumentado.
   &= \frac{\lim_{\z \downarrow \z_1}\E[Y|\Z=\z] - \lim_{\z \uparrow \z_1}\E[Y|\Z=\z]}
   {\lim_{\z \downarrow \z_1} f(X=1|\z) - \lim_{\z \uparrow \z_1} f(X=1|\z)}
  \end{align*}
+\end{proof}
+
+\section{Relativas às \text{\cref{sec:frontdoor,sec:do_calculus}}}
+
+\subsection{Relativas ao \text{\cref{thm:do_calculus}}}
+
+\begin{lemma}
+ \label{lemma:do_calculus_0}
+ $f^* \equiv f(\sV|do(\X=\x))$ é 
+ compatível com $\sG(\bar{\X})$. 
+ Além disso, $\X$ é degenerada em $\x$ segundo $f^*$.
+\end{lemma}
+
+\begin{proof}
+ Decorre da \cref{def:intervencao} que
+ $f^*(\sV) = \I(\X=\x) \prod_{V \notin \X}f(V|Pa(V))$.
+ Definindo $g_{X_i}(X_i) = \I(X_i=x_i)$, para todo $X_i \in \X$ e
+ $g_V(V,Pa(V)) = f(v|Pa(V))$, note que
+ \begin{align*}
+  f^*(\sV) 
+  &= \prod_{X_i \in \X}g_{X_i}(X_i)
+  \prod_{V \notin \X}g_V(V,Pa(V)) 
+ \end{align*}
+ Portanto, decorre do \cref{lem:compativel-equiv} que
+ $f^*$ é compatível com um grafo em que
+ todo $X_i \in \X$ não tem pais e
+ todo $V \notin \X$ tem os mesmos pais que em $\sG$.
+ Isto é, $\sG$ é compatível com $\sG(\bar{\X})$.
  
- Como $\E[Y|do(X=x),\Z] = \E[Y|X=x,\Z]$ 
- (\cref{thm:backdoor_ajuste}) e
- $\E[Y|do(X=x),\Z]$ é contínua em $\z_1$,
- $\E[Y|X=x,\Z]$ é contínua em $\z_1$.
- Além disso,
+ Além disso, tomando $\V = \sV - \X$,
+ \begin{align*}
+  f^*(\X)
+  &= \int f^*(sV) d\V \\
+  &= \int \I(\X=\x) \prod_{V \in \V}f(V|Pa(V)) d\V \\
+  &= \I(\X=\x) \int \prod_{V \in \V}f(V|Pa(V)) d\V \\
+  &= \I(\X=\x).
+ \end{align*}
+ Portanto, $\X$ é degenerado em $\x$ segundo $f^*$.
+\end{proof}
+
+\begin{lemma}
+ \label{lemma:do_calculus_1}
+ Se $\Y \dsep \Z | \X \cup \W$ em $\sG(\bar{\X})$, então
+ \begin{align*}
+  f(\Y|do(\X), \Z, \W) &= f(\Y|do(\X), \W)
+ \end{align*}
+\end{lemma}
+
+\begin{proof}
+ Seja $f^*(\sV) \equiv f(\sV|do(\X=\x))$. 
+ Decorre do \cref{lemma:do_calculus_0} que
+ $f^*$ é compatível com $\sG(\bar{\X})$ e que
+ $\X$ é degenerado em $\x$ segundo $f^*$.
+ Assim,
+ \begin{align*}
+  f(\Y|do(\X), \Z, \W)
+  &= f^*(\Y|\Z, \W) \\
+  &= f^*(\Y|\X=\x, \Z, \W)
+  & \X \text{ é degenerado segundo }  f^* \\
+  &= f^*(\Y|\X=\x, \W)
+  & f^* \text{ compatível com } \sG(do(\X)) \text{,} \\
+  && \Y \dsep \Z | \X \cup \W \text{ em } \sG(do(\X)) \text{, e \cref{thm:d-sep}} \\
+  &= f(\Y|do(\X=\x), \W).
+ \end{align*}
+\end{proof}
+
+\begin{lemma}
+ \label{lemma:do_calculus_2}
+ Se $Y \dsep \W | \Z \cup \X$ em
+ $\sG(\bar{\X}, \underline{\W})$, então
+ \begin{align*}
+  f(Y|do(\X),do(\W),\Z) &= f(Y|do(\X),\W,\Z)
+ \end{align*}
+\end{lemma}
+
+\begin{proof}
+ Seja $f^*(\sV) \equiv f(\sV|do(\X=\x))$. 
+ Como $Y \dsep \W | \Z \cup \X$ 
+ em $\sG(\bar{\X}, \underline{\W})$, 
+ não há nenhum caminho ativo em $\sG(\bar{\X})$
+ de $\X$ em $Y$ que inicia com $\W \leftarrow$.
+ Isto é, $\X \cup \Z$ satisfaz 
+ o segundo item do critério backdoor para
+ medir o efeito causal de $\W$ em $Y$.
+ Portanto,
+ \begin{align*}
+  f(Y|do(\X=\x),do(\W),\Z)
+  &= f^*(Y|do(\W),\Z) \\
+  &= f^*(Y|do(\W),\X=\x,\Z)
+  & \text{\cref{lemma:do_calculus_0}} \\
+  &= f^*(Y|\W,\X=\x,\Z)
+  & \text{\cref{thm:backdoor_pt_1}} \\
+  &= f^*(Y|\W,\Z) \\
+  &= f(Y|do(\X=\x),\W,\Z)
+ \end{align*}
+\end{proof}
+
+\begin{lemma}
+ \label{lemma:do_calculus_3}
+ Se $\Y \dsep I_{\X} | \Z \cup \W$ em $\sG(\bar{\W}, \X^{+})$, então:
+ \begin{align*}
+  f(Y|do(\W), do(\X), \Z) &= f(Y|do(\W), \Z)
+ \end{align*}
+\end{lemma}
+
+\begin{proof}
+ Seja $f^*(\sV) \equiv f(\sV|do(\W=\w))$.
+ \begin{align*}
+  f(Y|do(\W=\w), do(\X), \Z)
+  &= f^*(Y|do(\X),\Z) 
+  & \text{\cref{lemma:do_calculus_0}} \\
+  &= f^*(Y|do(\X),\W=\w,\Z)
+  & \text{\cref{lemma:do_calculus_0}} \\ 
+  &= f^*_*(Y|I_{\X} = 1, \W=\w, \Z)
+  & \text{\cref{lemma:backdoor_1}} \\
+  &= f^*_*(Y|\W=\w, \Z, I_{\X}=0)
+  & Y \dsep I_{\X} | \W \cup \Z
+  \text{ em } \sG(\bar{\W}, \X^{+}) \\
+  &= f^*(Y|\W=\w, \Z) 
+  & \text{\cref{lemma:backdoor_2}} \\
+  &= f(Y|do(\W=\w), \Z)
+  & \text{\cref{lemma:do_calculus_0}}
+ \end{align*}
+\end{proof}
+
+\begin{proof}[Prova do \cref{thm:do_calculus}]
+ Decorre dos 
+ \cref{lemma:do_calculus_1,lemma:do_calculus_2,lemma:do_calculus_3}.
+\end{proof}
+
+\subsection{Relativas ao \text{\cref{thm:frontdoor}}}
+
+\begin{lemma}
+ \label{lemma:frontdoor_1}
+ Se $\W$ satisfaz o critério frontdoor para
+ medir o efeito causal de $X$ em $Y$, então
+ $f(Y|do(X),\W) = f(Y|do(X),do(\W))$.
+\end{lemma}
+
+\begin{proof}
+ Decorre do critério frontdoor \cref{def:frontdoor}.3 que
+ $X$ satisfaz o item 2 do critério backdoor para
+ medir o efeito causal de $\W$ em $Y$.
+ Portanto, pelo \cref{lemma:do_calculus_backdoor},
+ $\Y \dsep \W | \X$ em $\sG(\underline{\W})$.
+ Pelo \cref{lemma:dsep_monotone},
+ $\Y \dsep \W | \X$ em $\sG(\bar{\X}, \underline{\W})$.
+ A prova se conclui aplicando o item 2
+ do \cref{thm:do_calculus}.
+\end{proof}
+
+\begin{lemma}
+ \label{lemma:frontdoor_2}
+ Se $\W$ satisfaz o critério frontdoor para
+ medir o efeito causal de $X$ em $Y$, então
+ $f(Y|do(X),do(\W)) = f(Y|do(\W))$.
+\end{lemma}
+
+\begin{proof}
+ A prova consiste em aplicar o item 3 do \cref{thm:do_calculus}.
+ Para tal, desejamos provar que
+ $\Y \dsep I_{X} | \W$ em $\sG(\bar{\W}, X^{+})$.
+ Tome $C$ como um caminho arbitrário 
+ em $\sG(\bar{\W}, X^{+})$ de $I_{\X}$ em $Y$.
  
+ Primeiramente, provaremos que $C$ não é um caminho direcionado.
+ $C$ não é um caminho direcionado de $Y$ a $I_{X}$ pois
+ a única aresta em $\sG(\bar{\W}, X^{+})$ ligada a $I_{X}$ é
+ $I_{X} \rightarrow X$. A seguir, 
+ suponha que $C$ é um caminho direcionado de $I_{X}$ a $Y$.
+ Pelo \cref{def:frontdoor}.2, existe $C_i$ tal que
+ $C_i \in \W$. Como $C$ é direcionado de $I_X$ em $Y$,
+ $C_{i-1} \rightarrow C_i$. Este é um absurdo, pois
+ não há aresta apontando para $\W$ em $\sG(\bar{\W}, X^{+})$.
+ Portanto, $C$ não é um caminho direcionado.
+ 
+ Conclua que existe $C_i$ que é um colisor.
+ Como não há arestas apontando para $\W$ em $\sG(\bar{\W}, X^{+})$,
+ $C_i \notin \W$. Como $C_i$ é um colisor e $C_i \notin \W$,
+ conclua que $C$ está bloqueado.
+ Como $C$ era arbitrário,
+ $\Y \dsep I_{X} | \W$ em $\sG(\bar{\W}, X^{+})$.
+\end{proof}
+
+\begin{proof}[Prova do \cref{thm:frontdoor}]
+ \begin{align*}
+  f(Y|do(X=x))
+  &= \int f(Y|do(X=x),\W)f(\W|do(X=x))d\W \\
+  &= \int f(Y|do(X=x),\W)f(\W|X=x)d\W 
+  & \text{\cref{lemma:frontdoor_backdoor}} \\
+  &= \int f(Y|do(X=x),do(\W))f(\W|X=x)d\W 
+  & \text{\cref{lemma:frontdoor_1}} \\
+  &= \int f(Y|do(\W))f(\W|X=x)d\W 
+  & \text{\cref{lemma:frontdoor_2}} \\
+  &= \int \int f(Y|\W,X)f(X)dX f(\W|X=x)d\W
+  & \text{\cref{lemma:frontdoor_backdoor}}
+ \end{align*}
+\end{proof}
+
+\subsection{Relativas ao \text{\cref{thm:frontdoor_ipw}}}
+
+\begin{proof}[Prova do \cref{thm:frontdoor_ipw}]
+ \begin{align*}
+  \E[Y|do(X=x)]
+  &= \int Y f(Y|do(X=x)) dY \\
+  &= \int Y \int f(\W|x) \int f(Y|X,\W)f(X)dXdWdY 
+  & \text{\cref{thm:frontdoor}} \\
+  &= \int Y f(Y|X,\W)f(X) f(\W|x) d(Y \times \W \times Y) \\
+  &= \int \frac{Y f(\W|x)}{f(\W|X)} f(Y,\W,X) d(Y \times \W \times Y) \\
+  &= \E\left[\frac{Y f(\W|x)}{f(\W|X)} \right]
+ \end{align*}
 \end{proof}
 
 \end{document}

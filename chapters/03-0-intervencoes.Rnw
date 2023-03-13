@@ -145,18 +145,17 @@ podemos definir o modelo de probabilidade sob intervenção:
 \begin{definition}
  \label{def:intervencao}
  Seja $\sG = (\sV, \sE)$ um DAG,
- $(\sG,f)$ um SCM (\cref{def:scm}),
- $\V_1 \subseteq \sV$, e 
- $\V_2 = \sV - \V_1$. 
+ $(\sG,f)$ um SCM (\cref{def:scm}), e
+ $\V_1 \subseteq \sV$. 
  O modelo de probabilidade obtido após
  uma intervenção em $\V_1$ é dado por:
  \begin{align*}
-  f(\V_2|do(\V_1))
+  f(\sV|do(\V_1))
   &:= \prod_{V_2 \in \V_2} f(V_2|Pa(V_2))
   &\text{, ou equivalentemente} \\
-  f(\V_2|do(\V_1 = \bv_1))
+  f(\sV|do(\V_1 = \bv_1))
   &:= \left(\prod_{(v_1,V_1) \in (\bv_1,\V_1)} \I(V_1 = v_1)\right)
-  \cdot \left(\prod_{V_2 \in \V_2} f(V_2|Pa(V_2))\right)
+  \cdot \left(\prod_{V_2 \notin \V_1} f(V_2|Pa(V_2))\right)
  \end{align*}
 \end{definition}
 Para compreender a \cref{def:intervencao}, 
@@ -181,7 +180,7 @@ das densidades do vértice dadas suas causas.
 
 Com base na discussão acima, podemos definir
 o \textbf{efeito causal} que um conjunto de variáveis, $\X$,
-tem em outro conjunto, $\Y$.
+tem em outro conjunto, $\Y$:
 
 \begin{definition}
  \label{def:exp_inter}

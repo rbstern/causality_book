@@ -75,25 +75,13 @@ classificaremos a seguir os vértices que o constituem.
  Seja $C = (C_1,\ldots,C_n)$ um caminho 
  em um DAG, $\sG = (\sV,\sE)$.
  Para cada $2 \leq i \leq n-1$:
- \begin{enumerate}
-  \item $C_i$ é um \textbf{confundidor} em $C$ se
-  $(C_i,C_{i-1}) \in \sE$ e $(C_i,C_{i+1}) \in \sE$,
-  isto é, existem arestas apontando de $C_i$ para
-  $C_{i-1}$ e $C_{i+1}$. Neste caso, desenhamos
-  $C_{i-1} \leftarrow C_i \rightarrow C_{i+1}$.
-  \item $C_i$ é uma \textbf{cadeia} em $C$ se
-  $(C_{i-1},C_{i}) \in \sE$ e $(C_i,C_{i+1}) \in \sE$, ou
-  $(C_{i+1},C_{i}) \in \sE$ e $(C_i,C_{i-1}) \in \sE$,
-  isto é, $(C_{i-1},C_i,C_{i+1})$ ou $(C_{i+1},C_i,C_{i-1})$ é 
-  um caminho direcionado. Neste caso, desenhamos
-  $C_{i-1} \rightarrow C_i \rightarrow C_{i+1}$ ou
-  $C_{i-1} \leftarrow C_i \leftarrow C_{i+1}$.
+ \begin{itemize}
   \item $C_i$ é um \textbf{colisor} em $C$ se
   $(C_{i-1},C_{i}) \in \sE$ e $(C_{i+1},C_{i}) \in \sE$,
   isto é, existem arestas apontando de $C_{i-1}$ e de $C_{i+1}$ 
   para $C_{i}$. Neste caso, desenhamos
   $C_{i-1} \rightarrow C_i \leftarrow C_{i+1}$.
- \end{enumerate}
+ \end{itemize}
 \end{definition}
 
 Note que a classificação na \cref{def:caminho-cat}
@@ -137,11 +125,11 @@ Com base na \cref{def:caminho-cat}, é
 possível compreender se um caminho permite a
 passagem de informação.
 Na \cref{sec:dag-ex} vimos que,
-se $V_2$ é um confundidor ou uma cadeia entre
+se $V_2$ não é um colisor entre
 $V_1$ e $V_3$, então
 $V_1$ e $V_3$ são independentes dado $V_2$.
 Por analogia, podemos intuir que um vértice que
-é um confundidor ou uma cadeia num caminho
+não é um colisor num caminho
 não permite a passagem de informação
 quando seu valor é conhecido.
 Similarmente, na \cref{sec:dag-ex},
@@ -162,7 +150,7 @@ Neste caso, dizemos que o caminho está \textit{bloqueado}:
  Dizemos que $C$ está bloqueado dado $\Z \subset \sV$, se
  \begin{enumerate}
   \item Existe algum $2 \leq i \leq n-1$ tal que
-  $C_i$ é um confundidor ou cadeia em $C$ e $C_{i} \in \Z$, ou
+  $C_i$ não é um colisor em $C$ e $C_{i} \in \Z$, ou
   \item Existe algum $2 \leq i \leq n-1$ tal que 
   $C_i$ é um colisor em $C$ e $C_{i} \notin Anc(\Z)$.
  \end{enumerate}
@@ -208,17 +196,17 @@ Esta conclusão é apresentada no
  precisamos analisar todos os caminhos de um para o outro.
  Estes caminhos são: $V_1 \rightarrow V_2 \rightarrow V_3$, e
  $V_1 \rightarrow V_2 \leftarrow V_4 \rightarrow V_3$.
- No primeiro caminho $V_2$ é um confundidor e, assim,
+ No primeiro caminho $V_2$ não é um colisor e, assim,
  o caminho não está bloqueado marginalmente.
  Portanto, $V_1$ e $V_3$ não são d-separados marginalmente.
  Por outro lado, no segundo caminho $V_2$ é um colisor e
- $V_4$ é um confundidor. Assim,
+ $V_4$ não o é. Assim,
  condicionando em $V_2$, este caminho não está bloqueado.
  Portanto, $V_1$ e $V_3$ não são d-separados dado $V_2$.
  Finalmente, dado $V_2$ e $V_4$, 
  ambos os caminhos estão bloqueados, 
- pois $V_2$ é um confundidor no primeiro e
- $V_4$ é um confundidor no segundo.
+ pois $V_2$ não é um colisor no primeiro e
+ $V_4$ não é um colisor no segundo.
  Assim, $V_1$ e $V_3$ são d-separados dado $(V_2,V_4)$.
  Para treinar este raciocínio,
  continue analisando a d-separação entre $V_1$ e $V_4$.
@@ -363,4 +351,13 @@ ggdag(grafo, layout = "circle") +
  para todo $V \in \sV$, 
  $V \perp \V_1 | \V_3$ ou
  $V \perp \V_2 | \V_3$.
+\end{exercise}
+
+\begin{exercise}
+ \label{lemma:dsep_monotone}
+ Sejam $\sG_1 = (\sV, \sE_1)$ e
+ $\sG_2 = (\sV, \sE_2)$ grafos
+ tais que $\sE_1 \subseteq \sE_2$.
+ Prove que se $\V_1 \dsep \V_2 | \V_3$ em $\sG_2$, então
+ $\V_1 \dsep \V_2 | \V_3$ em $\sG_1$.
 \end{exercise}

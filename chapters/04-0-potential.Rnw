@@ -1,0 +1,327 @@
+\chapter{Resultados potenciais}
+
+No capítulo passado, vimos que
+$f(y|do(x))$ nos permite entender
+o comportamento de $Y$ em 
+um cenário distinto dos dados observados.
+Por exemplo, se $X$ é 
+a indicadora de um tratamento e
+$Y$ é a indicadora de cura, então
+$f(y|do(X=1))$ nos permite entender
+a proporção de cura em um cenário hipotético em que
+administramos o tratamento a todos os indivíduos.
+Esta distribuição nos permite investigar
+questões causais que 
+não eram acessíveis usando apenas
+a distribuição observacional, $f(y,x)$.
+
+Contudo, algumas perguntas causais 
+não são respondidas utilizando apenas
+os mecanismos desenvolvidos no \cref{cap:intervencao}.
+Por exemplo, qual a probabilidade de que 
+um indivíduo se cure quando rece o tratamento e
+não se cure quando não o recebe.
+Quando tentamos traduzir esta questão,
+notamos que partes dela envolvem $Y=1$ e $do(X=1)$
+e outras partes envolvem $Y=0$ e $do(X=0)$.
+Se tentarmos ingenuamente traduzir a questão,
+poderíamos obter algo como $\P(Y=1, Y=0|do(X=1),do(X=0))$.
+Contudo, a probabilidade acima não responde à pergunta colocada.
+Em primeiro lugar, não está definido fazermos
+as intervenções $do(X=1)$ e $do(X=0)$ na mesma unidade amostral.
+Além disso, mesmo que a probabilidade estivesse definida,
+é impossível que o mesmo $Y$ assuma tanto o valor $1$ quanto $0$.
+Isto é, $\P(Y=1, Y=0|\ldots) = 0$.
+
+A última constatação nos revela que
+o modelo no \cref{cap:intervencao}
+não tem variáveis suficientes para
+traduzir a perguntada levantada.
+Se imaginamos que é possível que
+um indivíduo se cure ao receber o tratamento e
+não se cure quando não o recebe, 
+isto ocorre pois as ocorrências de cura
+em cada cenário hipotético não são 
+logicamente equivalentes.
+Em outras palavras, é como se 
+houvessem \textit{resultados potenciais}\footnote{
+ Esta é uma tradução livre da expressão
+ ``potential outcomes'' usada em inglês.},
+$Y_1$ e $Y_0$, para
+indicar a ocorrência de cura em
+cada cenário considerado.
+Com uso destas variáveis, 
+poderíamos escrever $\P(Y_1 = 1, Y_0 = 0)$.
+
+O objetivo desta seção é 
+incluir este tipo de variável de forma
+a preservar as ferramentas desenvolvidas
+no \cref{cap:intervencao}.
+Neste quesito, a maior dificuldade será
+estabelecer a distribuição conjunta
+entre os resultados potenciais.
+Para tal, será útil relembrar
+um lema fundamental em simulação:
+
+\begin{lemma}
+ \label{lemma:simulacao}
+ Considere que $F(v|Pa(V))$ é
+ uma função de densidade acumulada condicional arbitrária e
+ $U \sim U(0,1)$. Se definirmos,
+ $V \equiv F^{-1}(U|Pa(V))$, então
+ $V|Pa(V) \sim F$.
+\end{lemma}
+
+O \cref{lemma:simulacao} traz 
+várias interpretações que nos serão úteis.
+A primeira interpretação, de caráter técnico, é 
+que podemos simular de 
+qualquer distribuição multivariada utilizando apenas
+variáveis i.i.d. e funções determinísticas.
+Em particular, podemos 
+reescrever um SCM de tal forma que
+cada vértice, $V$, seja função determinística
+de seus pais e uma variável de ruído, $U_V$.
+Esta abordagem, que está ligada a
+modelos de equações estruturais, é
+apresentada nas \cref{def:grafo_struct,def:scm_struct}.
+
+\begin{definition}
+ \label{def:grafo_struct}
+ Seja $\sG = (\sV, \sE)$ um grafo causal.
+ O grafo causal estrutural,
+ $\sG^+ = (\sV^+, \sE^+)$, é tal que 
+ $\sV^+ = \sV \cup (U_V)_{V \in \sV}$ e
+ $\sE^+ = \sE \cup \{(U_V, V): V \in \sV\}$.
+ Isto é, para cada $V \in \sV$, 
+ $\sG^+$ adiciona uma nova variável $U_V$ e
+ uma aresta de $U_V$ a $V$.
+\end{definition} 
+ 
+\begin{definition}
+ \label{def:scm_struct}
+ Seja $(\sG,f)$ um SCM.
+ Um SCM em equações estruturais para $(\sG,f)$, 
+ $(\sG^+,f^+)$, é tal que
+ $\sG^+$ é o grafo causal estrutural de $\sG$,
+ $(U_V)_{V \in \sV}$ são independentes segundo $f^+$ e,
+ para cada $V \in \sV$, existe uma função determinística, 
+ $g_V: U_V \times Pa(V) \rightarrow \Re$,
+ tal que $f^+(V|U_V,Pa(V)) = \I(V = g_V(U_V, Pa(V)))$ e
+ $f^+(\sV) = f(\sV)$.
+\end{definition}
+ 
+O \cref{ex:eq_struct} ilustra
+uma forma de obter 
+um SCM em equações estruturais
+a partir de um SCM com dois vértices.
+ 
+\begin{example}
+ \label{ex:eq_struct}
+ Considere que $X \rightarrow Y$,
+ $X \sim \text{Exp}(1)$ e $Y|X \sim \text{Exp}(X)$.
+ Neste caso, o grafo estrutural causal é
+ dado por $U_X \rightarrow X \rightarrow Y \leftarrow U_Y$.
+ Além disso, existem várias representações do SCM
+ em equações estruturais. Uma possibilidade é
+ definir que $U_X$ e $U_Y$ são i.i.d. e $U(0,1)$,
+ $X \equiv -\log(U_X)$ e $Y \equiv -\log(U_Y)/X$.
+\end{example}
+ 
+O \cref{lemma:simulacao} também permite
+uma interpretação de caráter mais filosófico.
+Podemos imaginar que toda variável em um SCM, $V$, é
+uma função determinística de seus pais e
+de \textit{condições locais} não-observadas, $U_V$.
+A expressão ``condições locais'' indica que
+cada $U_V$ é usada somente para gerar $V$ e que
+as variáveis em $U$ são independentes, isto é,
+não trazem informação umas sobre as outras.
+
+A interpretação acima é usada
+na definição de resultados potenciais.
+A ideia principal é que 
+as mesmas funções determínistas e
+variáveis de ruído locais são usadas
+para gerar todos os resultados potenciais.
+A única diferença é que,
+para cada resultado potencial,
+o valor das variáveis em que 
+houve intervenção é fixado.
+Esta definição é compatível com 
+a ideia de que não é possível modificar
+os ruídos locais por meio da intervenção.
+Em outras palavras, 
+o resultado potencial é o mais próximo possível
+do resultado observado sob a restrição que
+fixamos os valores das variáveis em que
+houve intervenção.
+
+\begin{definition}
+ \label{def:grafo_potencial}
+ Seja $(\sG, f)$ um SCM de grafo causal 
+ $\sG = (\sV, \sE)$ e
+ $(\sG^+, f^+)$ o seu SCM em equações estruturais.
+ O grafo de resultados potenciais dado
+ por intervenções em $\X \subseteq \sV$,
+ $\sG^* = (\sV^*, \sE^*)$ é tal que
+ \begin{align*}
+  \sV^* &= \{W_{\V=\bv}: W \in \sV, \V \subseteq \X, \bv \in supp(\V)\} \cup \{U_W: W \in \sV\}, \\
+  \sE^* &= \{(W_{\V=\bv}, Z_{\V=\bv}): \V \subseteq \X, \bv \in supp(\V),
+  (W, Z) \in \sE{+}, Z \notin \V\}.
+ \end{align*}
+ Para todo $W \in \sV$, abreviamos $W_{\emptyset}$ por $W$.
+\end{definition}
+ 
+Em palavras, o grafo de resultados potenciais cria 
+uma cópia de $\sG$ para cada possível intervenção, $\V=\bv$.
+Além disso, adiciona-se uma aresta de $U_W$ para cada cópia de $W$.
+Esta construção indica que as mesmas variáveis em $U$
+geram todos os resultados potenciais.
+Também, para cada vértice em que 
+houve uma intervenção,
+$W_{\V=\bv} \in \V_{\V=\bv}$, removem-se 
+todas as arestas que apontam para $W_{\V=\bv}$.
+Esta remoção ocorre porque, 
+quando realizamos uma intervenção em $\V$,
+o valor de $\V$ é fixado e, assim,
+não é gerado por suas causas em $\sG$.
+
+\begin{example}
+ \label{ex:potential_model}
+ Considere que $(X,Y) \in \{0,1\}^2$ e 
+ o grafo causal é $X \rightarrow Y$.
+ Vimos no \cref{ex:eq_struct} que 
+ o grafo causal estrutural é dado por
+ $U_X \rightarrow X \rightarrow Y \leftarrow U_Y$.
+ Vamos construir o grafo de resultados potenciais
+ dadas intervenções em $X$.
+ Neste caso, além dos vértices $U_X, U_Y, X, Y$,
+ temos também $X_{X=0}, Y_{X=0}, X_{X=1}, Y_{X=1}$.
+ Como não há ambiguidade neste caso, 
+ podemos abreviar os últimos quatro vértices por
+ $X_0, Y_0, X_1, Y_1$.
+ 
+ O grafo de resultados potenciais é
+ ilustrado na \cref{fig:grafo_potencial}.
+ O grafo causal estrutural é a reta horizontal 
+ de $U_X$ a $U_Y$. 
+ Os resultados potenciais são 
+ cópias deste grafo que usam 
+ as mesmas variáveis $U$ e 
+ em que removemos as arestas que
+ apontam para a intervenções, $X_0$ e $X_1$.
+ 
+<<grafo_potencial, fig.pos="t", fig.height=3, fig.width=4, fig.cap="Grafo de resultados potenciais dadas intervenções em $X$.", fig.align="center", echo = FALSE, message = FALSE, warning = FALSE>>==
+library(dagitty)
+library(ggdag)
+library(ggplot2)
+
+# Especificar o grafo
+grafo <- dagitty("dag {
+    UX -> X -> Y
+    UY -> { Y Y0 Y1}
+    X0 -> Y0
+    X1 -> Y1
+}")
+coordinates(grafo) <- list( 
+  x=c(UX=0, X=1, Y=2, UY=3, X0 = 1, Y0 = 2, X1 = 1, Y1 = 2),
+  y=c(UX=1, X=1, Y=1, UY=1, X0 = 2, Y0 = 2, X1 = 0, Y1 = 0))
+
+# Exibir a figura do grafo
+ggdag(grafo, layout = "circle") +
+  theme(axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank()) +
+  xlab("") + ylab("")
+@ 
+\end{example}
+
+Uma vez definido o grafo de resultados potenciais,
+podemos extender a distribuição
+do modelo de equações estruturais para este grafo.
+Esta extensão envolve três etapas.
+Primeiramente, a distribuição de $U$ continua a mesma.
+Em segundo lugar, para todo 
+vértice do grafo de resultados potenciais, $W_{\V=\bv}$, 
+em que não houve uma intervenção, 
+este vértice é gerado pelo mesmo mecanismo que $W$.
+Isto é, $W_{\V=\bv} = \I(g_W(U_W, Pa^*(W_{\V=\bv})))$.
+Finalmente, se houve uma intervenção em $W_{\V=\bv}$,
+então ela é uma variável degenerada no valor desta intervenção.
+Esta construção é formalizada na \cref{def:scm_potencial}.
+
+\begin{definition}
+ \label{def:scm_potencial}
+ Seja $(\sG^+, f^+)$ um
+ SCM em equações estruturais para $(\sG, f)$
+ com funções determinísticas, $g$.
+ O modelo de resultados potenciais (POM)\footnote{
+  utilizamos a sigla POM em referência ao
+  termo em inglês ``potential outcomes model''} 
+  dado por intervenções em $\X$,
+ $(\sG^*, f^*)$ é tal que
+ $\sG^*$ é o grafo de resultados potenciais
+ dado por intervenções em $\X$ (\cref{def:grafo_potencial}) e
+ \begin{align*}
+  f^*(U_W) &= f(U_W) & \text{, para todo } W \in \sV, \\
+  f^*(W_{\V=\bv}|Pa^*(W_{\V=\bv}))
+  &= 
+  \begin{cases}
+   \I(W_{\V=\bv} = \bv_i) & \text{, se } W \equiv \V_i \\
+   \I(W_{\V=\bv} = g_W(U_W, Pa^*(W_{\V=\bv}))) & \text{, caso contrário.}
+  \end{cases}
+ \end{align*}
+\end{definition}
+
+Ainda que seja uma formalização conveniente,
+o POM é consideravelmente mais complexo que o SCM original.
+Para ganhar intuição sobre o POM,
+alguns lemas de tradução são fundamentais.
+
+\begin{lemma}
+ \label{lemma:obs_to_potential}
+ Para toda intervenção, $\V=\bv$,
+ $\P(\sV = \sV_{\V=\bv}|\V = \bv) = 1$.
+\end{lemma}
+
+O \cref{lemma:obs_to_potential} conecta
+o dado observacional em $\sV$ ao
+resultado potencial $\sV_{\V=\bv}$.
+Mais especificamente, quando 
+observamos que $\V=\bv$, então
+os resultados potenciais dada a
+intervenção $\V=\bv$ são
+idênticos aos resultados observados.
+Em outras palavras,
+ao observamos que $\V=\bv$, aprendemos que
+estamos justamente na hipótese
+de resultados potenciais em que $\V=\bv$.
+
+\begin{lemma}
+ \begin{align*}
+  f(\sV_{\V=\bv})
+  &= f(\sV|do(\V=\bv))
+ \end{align*}
+\end{lemma}
+
+\begin{lemma}[Ignorabilidade condicional]
+ Se $\Z$ satisfaz o critério backdoor para 
+ medir o efeito causal de $X$ em $Y$, 
+ então para todo $x$,
+ $Y_{X=x} \dsep X | \Z$.
+\end{lemma}
+
+\subsection{Exercícios}
+
+\begin{exercise}
+ Prove o \cref{lemma:simulacao}.
+\end{exercise}
+
+\begin{exercise}
+ Mostre que no \cref{ex:eq_struct} 
+ a distribuição de $(X,Y)$ no SCM 
+ em equações estruturais é igual 
+ àquela no SCM original.
+\end{exercise}

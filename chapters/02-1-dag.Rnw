@@ -719,7 +719,7 @@ se e somente se $V_1$ é uma causa direta de $V_2$.
 \begin{definition}
  Dizemos que $(\sG,f)$ é um SCM linear Gaussiano se,
  existe matriz diagonal positiva, $\Sigma$, e
- $\beta in \Re^{n \times n}$ tal que,
+ $\beta \in \Re^{n \times n}$ tal que,
  para todo vértice $V_i$,
  $\beta_{i,j} = 0$ quando $V_j \notin Pa(V_i)$ e
  \begin{align*}

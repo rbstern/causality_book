@@ -1,0 +1,310 @@
+\section{Controlando mediadores (critério frontdoor)}
+\label{sec:frontdoor}
+
+ <<frontdoor_ex_1, fig.pos="t", fig.height=2.5, fig.width=4, fig.cap=".", fig.align="center", echo = FALSE, message = FALSE, warning = FALSE>>==
+library(dagitty)
+library(ggdag)
+library(ggplot2)
+
+# Especificar o grafo
+grafo <- dagitty("dag {
+  X[e] Y[o] G[u]
+  G -> {X Y};
+  X -> P;
+  P -> Y
+}")
+coordinates(grafo) <- list( 
+  x=c(G=1, X=0, Y=2, P=1),
+  y=c(G=2, X=1, Y=1, P=0))
+
+# Exibir a figura do grafo
+ggdag(grafo, layout = "circle") +
+  theme(axis.text.x=element_blank(),
+      axis.ticks.x=element_blank(),
+      axis.text.y=element_blank(),
+      axis.ticks.y=element_blank()) +
+  xlab("") + ylab("")
+@
+
+Há casos em que não existem variáveis observadas que 
+satisfazem o critério backdoor.
+Por exemplo, considere o grafo causal 
+na \cref{fig:frontdoor_ex_1} \citep{Glymour2016}.
+Neste grafo, estamos interessados em
+compreender o efeito causal
+do fumo ($X$) sobre a incidência de câncer ($Y$).
+Além disso, fatores genéticos não observáveis ($G$)
+são um potencial confundidor, uma vez que 
+podem ter influência tanto sobre o fumo quanto 
+sobre a incidência de câncer.
+Assim, como $G$ não é observado,
+não é possível implementar 
+os métodos de estimação vistos na última seção.
+Apesar desta dificuldade, 
+ainda é possível medir o efeito causal de $X$ em $Y$
+na \cref{fig:frontdoor_ex_1}.
+
+Para tal, primeiramente observe que
+é possível estimar o efeito causal de $X$ em $P$ 
+e de $P$ em $Y$. 
+Para medir o efeito causal de $X$ em $P$,
+note que $\emptyset$ satisfaz o critério backdoor.
+Isso ocorre pois $Y$ é um colisor em
+$X \leftarrow G \rightarrow Y \leftarrow P$.
+Além disso, como $X = Pa(P)$, decorre
+do \cref{lemma:backdoor_pais} que
+$X$ satisfaz o critério backdoor para
+medir o efeito causal de $P$ em $Y$.
+Das duas últimas conclusões decorre do
+\cref{thm:backdoor} que
+$f(P|do(X)) = f(P|X)$ e que 
+$f(Y|do(P)) = \int f(Y|P,X)f(X)dX$.
+
+A seguir, o critério frontdoor consiste 
+em observar que $P$ está
+no único caminho direcionado de $X$ a $Y$,
+$X \rightarrow P \rightarrow Y$. Assim,
+é possível provar a identificação causal
+\begin{align*}
+ f(Y|do(X))
+ &= \int f(P|do(X))f(Y|do(P))dP \\
+ &= \int f(P|do(X)) \int f(Y|P,X)f(X)dX.
+\end{align*}
+
+O critério frontdoor é formalizado a seguir:
+
+\begin{definition}
+ \label{def:frontdoor}
+ $\W$ satisfaz o critério frontdoor para
+ medir o efeito causal de $X$ em $Y$ se:
+ \begin{enumerate}
+  \item para todo caminho direcionado de $X$ em $Y$, $C$,
+  existe $C_i \in \W$ e, para todo $W \in \W$,
+  existe caminho direcionado de $X$ em $Y$, $C$,
+  e $i$ tal que $C_i = W$.
+  \item $\emptyset$ satisfaz
+  o item 2 do critério backdoor (\cref{def:backdoor}) para
+  medir o efeito causal de $X$ em $\W$.
+  \item $X$ satisfaz
+  o item 2 do critério backdoor (\cref{def:backdoor}) para
+  medir o efeito causal de $\W$ em $Y$.
+ \end{enumerate}
+\end{definition}
+
+A \cref{def:frontdoor} elenca todos os itens que
+utilizamos na análise da \cref{fig:frontdoor_ex_1}.
+O primeiro item do critério identifica que 
+$\W$ deve interceptar todos os caminhos direcionados
+de $X$ a $Y$. Isto é, $\W$ capturar 
+a informação de todos os mediadores de $X$ a $Y$.
+O segundo e terceiro itens estabelecem as condições para que
+seja possível aplicar o critério backdoor para 
+identificar $f(\W|do(X))$ e $f(Y|do(\W))$.
+
+\subsubsection{Identificação causal}
+
+O critério frontdoor possibilita
+a identificação do efeito causal de $X$ em $Y$:
+
+\begin{theorem}
+ \label{thm:frontdoor}
+  Se $\W$ satisfaz o critério frontdoor para
+  medir o efeito causal de $X$ em $Y$, então
+  \begin{align*}
+   f(Y|do(X=x))
+   &= \int f(\W|x) \int f(Y|\W,X)f(X) dX d\W
+  \end{align*}
+\end{theorem}
+
+\begin{theorem}
+ \label{thm:frontdoor_ipw}
+ Se $\W$ satisfaz o critério frontdoor para
+ estimar o efeito causal de $X$ em $Y$, então
+ \begin{align*}
+  \E[Y|do(X=x)]
+  &= \E\left[\frac{Y \cdot f(W|x)}{f(W|X)}\right]
+ \end{align*}
+\end{theorem}
+
+\subsubsection{Estimação pelo critério frontdoor}
+
+A estimação é um tema menos desenvolvido
+ao aplicar o critério frontdoor.
+Alguns estimadores não-paramétricos
+são apresentados em \citet{Tchetgen2012}.
+A seguir, desenvolvemos 
+um estimador não-paramétrico mais simples 
+inspirado na estratégia de IPW.
+
+\begin{definition}
+ \label{def:frontdoor_ipw}
+ Considere que $\W$ satisfaz o critério frontdoor
+ para medir o efeito causal de $X$ em $Y$ e que
+ $\hf(\W|X)$ é um estimador de $f(\W|X)$.
+ Um estimador do tipo IPW para
+ $\E[Y|do(X=x)]$ é dado por
+ \begin{align*}
+  \widehat{\E}_{f}[Y|do(X=x)]
+  &:= n^{-1}\sum_{i=1}^n \frac{Y_i \hf(\W_i|x)}{\hf(\W_i|X_i)}.
+ \end{align*}
+\end{definition}
+
+Para provar o \cref{thm:frontdoor}
+utilizamos o \textit{do calculus}, 
+que é discutido na \cref{sec:do_calculus}.
+
+\section{Do-calculus}
+\label{sec:do_calculus}
+
+O \textit{do calculus} consiste em 
+um conjunto de regras para
+alterar densidade envolvend o operador ``do''.
+Por exemplo, o do calculus explica 
+como remover o operador do,
+trocá-lo pelo condicionamento simples, ou
+remover algum condicionamento simples.
+Para apresentar o do calculus,
+é necessário primeiramente definir
+algumas modificações sobre o grafo causal.
+
+\begin{definition}
+ \label{def:do_graph}
+ Seja $(\sG,f)$ um SCM tal que $\sG = (\sV,\sE)$:
+ \begin{align*}
+  \sG(\bar{\V}) 
+  &:= (\sV, \{E \in \sE: E_2 \notin \V\}) \\
+  \sG(\bar{\V}_1, \underline{\V}_2)
+  &:= (\sV, \{E \in \sE: E_2 \notin \V_1 \text{ e } E_1 \notin \V_2\}) \\
+  \sG(\bar{\V}_1, \V_2^{+})
+  &= (\sV \cup \{I_V: V \in \V_2\}, 
+  \{E \in \sE: E_2 \notin \V_1\} \cup \{(I_V, V): V \in \V_2\})
+ \end{align*}
+ Isto é, $\sG(\bar{\V})$ é
+ o grafo obtido retirando de $\sG$ as arestas que apontam para $\V$,
+ $\sG(\bar{\V}_1, \underline{\V}_2)$ é 
+ o grafo obtido retirando de $\sG$ 
+ todas as arestas que apontam para $\V_1$ ou 
+ que saem de $\V_2$, e
+ $\sG(\bar{\V}_1, \V_2^{+})$ é 
+ o grafo obtido adicionando a $\sG$ um novo vértice $I_V$ e
+ uma aresta $I_V \rightarrow V$, para todo $V \in \V_2$, e
+ retirando todas as arestas que apontam para $\V_1$.
+\end{definition}
+
+Com base na \cref{def:do_graph},
+é possível apresentar o do calculus:
+
+\begin{theorem}
+ Seja $(\sG,f)$ um SCM e $\X$, $\Y$, $\W$ e $\Z$ 
+ conjuntos de vértices disjuntos:
+ \label{thm:do_calculus}
+ \begin{enumerate}
+  \item  Se $\Y \dsep \Z | \X \cup \W$ em $\sG(\bar{\X})$, então
+  $f(\Y|do(\X), \Z, \W) = f(\Y|do(\X), \W)$.
+  \item Se $\Y \dsep \W | \Z \cup \X$ em $\sG(\bar{\X}, \underline{\W})$, então
+  $f(\Y|do(\X), do(\W), \Z) = f(\Y|do(\X), \W, \Z)$.
+  \item Se $\Y \dsep I_{\X} | \Z \cup \W$ em $\sG(\bar{\W}, \X^{+})$, então
+  $f(Y|do(\W), do(\X), \Z) = f(Y|do(\W), \Z)$.
+ \end{enumerate}
+\end{theorem}
+
+O seguinte lema mostra como
+o do calculus generaliza 
+certos aspectos do critério backdoor:
+
+\begin{lemma}
+ \label{lemma:do_calculus_backdoor}
+ $X$ satisfaz o item 2 do critério backdoor
+ para medir o efeito causal de $\W$ em $Y$ 
+ se e somente se $Y \dsep \W | X$ em $\sG(\underline{\W})$.
+\end{lemma}
+
+Utilizando o do calculus,
+é possível obter todas 
+as relações de identificação que
+são válidas supondo apenas que
+$f$ é compatível com 
+o grafo causal \citep{Shpitser2006,Shpitser2008}.
+Contudo, às vezes é razoável fazer 
+mais suposições.
+Discutiremos este tipo de situação
+no próximo capítulo.
+
+\subsection{Exercícios}
+
+\begin{exercise}[{\citet{Glymour2016}[p.48]}]
+ \label{ex:d-sep}
+ Considere o modelo estrutural causal
+ em \cref{fig:d-sep}.
+ \begin{enumerate}[label=(\alph*)]
+  \item Para cada um dos pares de variáveis a seguir,
+  determine um conjunto de outras variáveis que
+  as d-separa: $(Z_1,W)$, $(Z_1,Z_2)$, $(Z_1,Y)$, 
+  $(Z_3,W)$, e $(X,Y)$.
+  \item Para cada par de variáveis no item anterior,
+  determine se elas são d-separadas dado
+  todas as demais variáveis.
+  \item Determine conjuntos de variáveis que
+  satisfazem, respectivamente, 
+  o ``backdoor criterion'' e 
+   o ``frontdoor criterion'' para
+  estimar o efeito causal de $X$ em $Y$.
+  \item Considere que para cada variável, $V$, temos que
+  $V \equiv \beta_V \cdot Pa(V) + \epsilon_V$,
+  onde os $\epsilon$ são i.i.d. e normais padrão e
+  $\beta_V$ são vetores conhecidos. Isto é,
+  a distribuição de cada variável é 
+  determinada através de 
+  uma regressão linear simples em seus pais.
+  Determine $f(Y|do(X=x))$ utilizando a fórmula do ajuste
+  nos $2$ casos abordados no item anterior.
+ \end{enumerate}
+\begin{figure}
+ \centering
+ \tikz{
+    \node (z1) {$Z_1$};
+    \node (z3) [below right = of z1] {$Z_3$};
+    \node (z2) [above right = of z3] {$Z_2$};
+    \node (x) [below left = of z3] {$X$};
+    \node (w1) [right = of x] {$W_1$};
+    \node (w2) [below = of w1] {$W_2$};
+    \node (y) [right = of w1] {$Y$};
+    \path (z1) edge (z3);
+    \path (z1) edge (x);
+    \path (z2) edge (z3);
+    \path (z2) edge (y);
+    \path (z3) edge (x);
+    \path (z3) edge (y);
+    \path (x) edge (w1);
+    \path (w1) edge (y);
+    \path (x) edge (w2);
+    \path (w2) edge (y);
+}
+ \caption{Modelo estrutural causal do \cref{ex:d-sep}}
+ \label{fig:d-sep}
+\end{figure}
+\end{exercise}
+
+\begin{exercise}
+ Considere que $\sG = (\sV, \sE)$ é um grafo causal e
+ $\X,\W,\Y \subseteq \sV$. Além disso,
+ para todo caminho, $C = (C_1,\ldots,C_n)$,
+ com $C_1 = X \in \X$, $C_n = Y \in \Y$, e
+ com $X \rightarrow C_2$,
+ $C$ está bloqueado dado $\W$.
+ Prove que $f(\y|do(\X)) 
+ = \int f(\y|\w)f(\w|do(\X))d\w$ e
+ $\E[Y|do(\X)] = \E[\E[Y|\W]|do(\X)]$.
+\end{exercise}
+
+\begin{exercise}
+ \label{lemma:frontdoor_backdoor}
+ Prove que se $\W$ satisfaz o critério frontdoor para
+ medir o efeito causal de $X$ em $Y$, então
+ $f(\W|do(X)) = f(\W|X)$ e
+ $f(Y|do(\W)) = \int f(Y|\W,X=x^*)f(X=x^*)dx^*$.
+\end{exercise}
+
+\begin{exercise}
+ Prove o \cref{lemma:do_calculus_backdoor}.
+\end{exercise}
