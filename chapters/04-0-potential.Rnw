@@ -19,13 +19,13 @@ Contudo, algumas perguntas causais
 não são respondidas utilizando apenas
 os mecanismos desenvolvidos no \cref{cap:intervencao}.
 Por exemplo, qual a probabilidade de que 
-um indivíduo se cure quando rece o tratamento e
+um indivíduo se cure quando recebe o tratamento e
 não se cure quando não o recebe.
 Quando tentamos traduzir esta questão,
 notamos que partes dela envolvem $Y=1$ e $do(X=1)$
 e outras partes envolvem $Y=0$ e $do(X=0)$.
-Se tentarmos ingenuamente traduzir a questão,
-poderíamos obter algo como $\P(Y=1, Y=0|do(X=1),do(X=0))$.
+Se tentarmos uma tradução ingênua,
+podemos obter uma expressão como $\P(Y=1, Y=0|do(X=1),do(X=0))$.
 Contudo, a probabilidade acima não responde à pergunta colocada.
 Em primeiro lugar, não está definido fazermos
 as intervenções $do(X=1)$ e $do(X=0)$ na mesma unidade amostral.
@@ -50,13 +50,17 @@ houvessem \textit{resultados potenciais}\footnote{
 $Y_1$ e $Y_0$, para
 indicar a ocorrência de cura em
 cada cenário considerado.
-Com uso destas variáveis, 
-poderíamos escrever $\P(Y_1 = 1, Y_0 = 0)$.
+Com o uso destas variáveis, 
+poderíamos escrever 
+$\P(Y_1 = 1, Y_0 = 0)$.
 
 O objetivo desta seção é 
 incluir este tipo de variável de forma
 a preservar as ferramentas desenvolvidas
-no \cref{cap:intervencao}.
+no \cref{cap:intervencao}.\footnote{
+ Para tal, adotaremos uma construção
+ baseada em \citet{Galles1998}.
+}
 Neste quesito, a maior dificuldade será
 estabelecer a distribuição conjunta
 entre os resultados potenciais.
@@ -84,7 +88,7 @@ cada vértice, $V$, seja função determinística
 de seus pais e uma variável de ruído, $U_V$.
 Esta abordagem, que está ligada a
 modelos de equações estruturais, é
-apresentada nas \cref{def:grafo_struct,def:scm_struct}.
+apresentada nas \cref{def:grafo_struct,def:scm}.
 
 \begin{definition}
  \label{def:grafo_struct}
@@ -99,9 +103,9 @@ apresentada nas \cref{def:grafo_struct,def:scm_struct}.
 \end{definition} 
  
 \begin{definition}
- \label{def:scm_struct}
- Seja $(\sG,f)$ um SCM.
- Um SCM em equações estruturais para $(\sG,f)$, 
+ \label{def:scm}
+ Seja $(\sG,f)$ um CM.
+ O Modelo Estrutural Causal (SCM) para $(\sG,f)$, 
  $(\sG^+,f^+)$, é tal que
  $\sG^+$ é o grafo causal estrutural de $\sG$,
  $(U_V)_{V \in \sV}$ são independentes segundo $f^+$ e,
@@ -159,16 +163,16 @@ houve intervenção.
 
 \begin{definition}
  \label{def:grafo_potencial}
- Seja $(\sG, f)$ um SCM de grafo causal 
+ Seja $(\sG, f)$ um CM de grafo causal 
  $\sG = (\sV, \sE)$ e
- $(\sG^+, f^+)$ o seu SCM em equações estruturais.
+ $(\sG^+, f^+)$ o seu SCM.
  O grafo de resultados potenciais dado
  por intervenções em $\X \subseteq \sV$,
  $\sG^* = (\sV^*, \sE^*)$ é tal que
  \begin{align*}
   \sV^* &= \{W_{\V=\bv}: W \in \sV, \V \subseteq \X, \bv \in supp(\V)\} \cup \{U_W: W \in \sV\}, \\
   \sE^* &= \{(W_{\V=\bv}, Z_{\V=\bv}): \V \subseteq \X, \bv \in supp(\V),
-  (W, Z) \in \sE{+}, Z \notin \V\}.
+  (W, Z) \in \sE^{+}, Z \notin \V\}.
  \end{align*}
  Para todo $W \in \sV$, abreviamos $W_{\emptyset}$ por $W$.
 \end{definition}
@@ -183,12 +187,12 @@ houve uma intervenção,
 $W_{\V=\bv} \in \V_{\V=\bv}$, removem-se 
 todas as arestas que apontam para $W_{\V=\bv}$.
 Esta remoção ocorre porque, 
-quando realizamos uma intervenção em $\V$,
-o valor de $\V$ é fixado e, assim,
+quando realizamos uma intervenção em $\V$
+o valor desta variável é fixado e, assim,
 não é gerado por suas causas em $\sG$.
 
 \begin{example}
- \label{ex:potential_model}
+ \label{ex:grafo_potencial}
  Considere que $(X,Y) \in \{0,1\}^2$ e 
  o grafo causal é $X \rightarrow Y$.
  Vimos no \cref{ex:eq_struct} que 
@@ -212,7 +216,7 @@ não é gerado por suas causas em $\sG$.
  em que removemos as arestas que
  apontam para a intervenções, $X_0$ e $X_1$.
  
-<<grafo_potencial, fig.pos="t", fig.height=3, fig.width=4, fig.cap="Grafo de resultados potenciais dadas intervenções em $X$.", fig.align="center", echo = FALSE, message = FALSE, warning = FALSE>>==
+<<grafo_potencial, fig.pos="t", fig.height=3, fig.width=4, fig.cap="Grafo de resultados potenciais dadas intervenções em $X \\in \\{0,1\\}$.", fig.align="center", echo = FALSE, message = FALSE, warning = FALSE>>==
 library(dagitty)
 library(ggdag)
 library(ggplot2)
@@ -250,18 +254,18 @@ este vértice é gerado pelo mesmo mecanismo que $W$.
 Isto é, $W_{\V=\bv} = \I(g_W(U_W, Pa^*(W_{\V=\bv})))$.
 Finalmente, se houve uma intervenção em $W_{\V=\bv}$,
 então ela é uma variável degenerada no valor desta intervenção.
-Esta construção é formalizada na \cref{def:scm_potencial}.
+Esta construção é formalizada na \cref{def:pom}.
 
 \begin{definition}
- \label{def:scm_potencial}
+ \label{def:pom}
  Seja $(\sG^+, f^+)$ um
- SCM em equações estruturais para $(\sG, f)$
+ SCM para $(\sG, f)$
  com funções determinísticas, $g$.
  O modelo de resultados potenciais (POM)\footnote{
   utilizamos a sigla POM em referência ao
   termo em inglês ``potential outcomes model''} 
   dado por intervenções em $\X$,
- $(\sG^*, f^*)$ é tal que
+ é um modelo probabilístico em um DAG, $(\sG^*, f^*)$, tal que
  $\sG^*$ é o grafo de resultados potenciais
  dado por intervenções em $\X$ (\cref{def:grafo_potencial}) e
  \begin{align*}
@@ -274,6 +278,21 @@ Esta construção é formalizada na \cref{def:scm_potencial}.
   \end{cases}
  \end{align*}
 \end{definition}
+
+O \cref{ex:pom} ilustra 
+um modelo de resultados potenciais.
+
+\begin{example}
+ \label{ex:pom}
+ Considere o SCM em equações estruturais em \cref{ex:eq_struct}.
+ Na construção do modelo de resultados potenciais,
+ definimos $X, Y, U_X, U_Y$ igualmente a em \cref{ex:eq_struct}.
+ Além disso, para cada $x > 0$,
+ $X_{x} \equiv x$ e $Y_x \equiv -log(U_Y)/X_x$.
+\end{example}
+
+\section{Levando a intuição do SCM ao POM}
+\label{sec:trad_scm_pom}
 
 Ainda que seja uma formalização conveniente,
 o POM é consideravelmente mais complexo que o SCM original.
@@ -299,19 +318,149 @@ ao observamos que $\V=\bv$, aprendemos que
 estamos justamente na hipótese
 de resultados potenciais em que $\V=\bv$.
 
+Um outro resultado essencial é
+o de que $\sV_{\V=\bv}$ tem
+a distribuição de quando
+realizamos a intervenção $do(\V=\bv)$.
+Esta resultado é estabelecido
+no \cref{lemma:po_do}.
+
 \begin{lemma}
+ \label{lemma:po_do}
+ No modelo de resultados potenciais (\cref{def:pom}):
  \begin{align*}
-  f(\sV_{\V=\bv})
-  &= f(\sV|do(\V=\bv))
+  f^*(\sV_{\V=\bv})
+  &\equiv f(\sV|do(\V=\bv)).
  \end{align*}
 \end{lemma}
 
-\begin{lemma}[Ignorabilidade condicional]
- Se $\Z$ satisfaz o critério backdoor para 
- medir o efeito causal de $X$ em $Y$, 
- então para todo $x$,
- $Y_{X=x} \dsep X | \Z$.
+O \cref{lemma:po_do} fornece 
+uma outra forma de pensar sobre o efeito causal.
+Decorre do \cref{lemma:po_do} que
+$\E[Y_{X=x}] = \E[Y|do(X=x)]$. Assim,
+se por exemplo $X$ é binário,
+$\ACE = \E[Y_1] - \E[Y_0]$.
+Em outras palavras, 
+como o \cref{def:pom} cria 
+variáveis aleatórias que tem a distribuição intervencional,
+ele permite que imaginemos o efeito causal
+em termos destas variáveis.
+Como na \cref{cap:intervencao} 
+não havia acesso aos resultados potenciais, 
+era necessário imaginar o efeito causal
+somente em termos da distribuição intervencional.
+Assim, a \cref{def:pom} oferece
+mais formas de pensar sobre o efeito causal.\footnote{
+ Esta outra forma de pensar sobre o efeito causal é
+ tão relevante que outras construções de Inferência Causal,
+ como o Rubin Causal Model \citep{Holland1986} partem
+ diretamente dela.
+}
+
+Uma forma alternativa de pensar sobre
+identificação causal está
+na definição de \textit{ignorabilidade}.
+Dizemos que $X$ é ignorável para
+medir o efeito causal em $Y$ se
+ele é independente dos resultados potenciais $Y_{x}$.
+Em outras palavras, 
+saber o valor de $X$ não traz informação sobre
+o resultado de $Y$ em uma outra realidade em que
+realizamos uma intervenção sobre $X$.
+
+\begin{definition}[Ignorabilidade]
+ \label{def:ignore}
+ Dizemos que $X$ é \textit{ignorável} para
+ medir o efeito causal em $Y$ se
+ $Y_x \dsep X$.
+\end{definition}
+
+O critério da ignorabilidade é equivalente a
+afirmar que $X$ e $Y$ não tem um ancestral comum.
+Em outras palavras, $X$ é ignorável se
+e somente se $\emptyset$ satisfaz o critério backdoor para
+medir o efeito causal de $X$ em $Y$.
+
+\begin{lemma}
+ \label{lemma:ignore_backdoor}
+ As seguintes afirmações são equivalentes:
+ \begin{enumerate}
+  \item $\emptyset$ satisfaz o critério backdoor para
+  medir o efeito causal de $X$ em $Y$,
+  \item $Anc(X) \cap Anc(Y) = \emptyset$, isto é,
+  $X$ e $Y$ não tem um ancestral em comum, e
+  \item $X$ é ignorável para medir o efeito causal em $Y$.
+ \end{enumerate}
 \end{lemma}
+
+Assim, decorre do fato de que $X$ é ignorável para 
+o efeito causal em $Y$ que
+a distribuição intervencional de $Y$ dado $X$ é
+equivalente à sua distribuição observacional.
+Em outras palavras, dizer que $X$ é ignorável tem
+consequências similares a dizer que
+$X$ é atribuído por aleatorização.
+
+\begin{corollary}
+ Se $X$ é ignorável para medir o efeito causal em $Y$, então
+ \begin{align*}
+  f(y|do(x)) &= f(y|x).
+ \end{align*}
+\end{corollary}
+
+A \textit{ignorabilidade condicional} oferece
+uma generalização da \cref{def:ignore}.
+Dizemos que, dado $\Z$, 
+$X$ é ignorável para medir o efeito causal em $Y$ se
+$X$ é independente de todo $Y_x$ dado $\Z$.
+
+\begin{definition}[Ignorabilidade condicional]
+ \label{def:cignore}
+ Dizemos que $X$ é \textit{condicionalmente ignorável} para
+ medir o efeito causal em $Y$ dado $\Z$ se
+ $Y_x \dsep X | \Z$.
+\end{definition}
+
+Se $\Z$ não tem descendentes de $X$, 
+a ignorabilidade condicional é
+uma restrição mais forte que o critério backdoor,
+conforme formalizado no \cref{lemma:cignore_backdoor}.
+
+\begin{lemma}
+ \label{lemma:cignore_backdoor}
+ Suponha que $X \notin Anc(\Z)$.
+ Se $X$ é condicionalmente ignorável para 
+ medir o efeito causal em $Y$ dado $\Z$, então
+ $\Z$ satisfaz o critério backdoor para
+ medir o efeito causal de $X$ em $Y$.
+\end{lemma}
+
+Apesar do critério backdoor e
+das ignorabilidade condicional não serem equivalentes,
+eles induzem o mesmo tipo de identificação causal.
+
+\begin{lemma}
+ \label{lemma:cignore_do}
+ Se $X$ é condicionalmente ignorável para 
+ medir o efeito causal em $Y$ dado $\Z$, então
+ \begin{align*}
+  f(y|do(x),\z) &= f(y|x,\z), \text{ e } \\
+  f(\z|do(x)) &= f(\z),
+ \end{align*}
+\end{lemma}
+
+Decorre do \cref{lemma:cignore_do} que
+todas as estratégia de estimação do efeito causal
+estudadas na \cref{sec:backdoor} também
+podem ser usadas sob 
+a suposição de ignorabilidade condicional.
+Em outras palavras, 
+ignorabilidade condicional fornece 
+um critério alternativo para
+justificar o tipo de identificação causal
+obtida pelo critério backdoor. 
+
+\subsection{Variáveis Instrumentais}
 
 \subsection{Exercícios}
 
@@ -324,4 +473,18 @@ de resultados potenciais em que $\V=\bv$.
  a distribuição de $(X,Y)$ no SCM 
  em equações estruturais é igual 
  àquela no SCM original.
+\end{exercise}
+
+\begin{exercise}
+ Exiba um exemplo em que
+ $X$ é condicionalmente ignorável para $Y$ dado $\Z$ mas
+ $\Z$ não satisfaz o critério backdoor para
+ medir o efeito causal de $X$ em $Y$.
+\end{exercise}
+
+\begin{exercise}
+ Exiba um exemplo em que
+ $\Z$ satisfaz o critério backdoor para
+ medir o efeito causal de $X$ em $Y$ mas
+ $X$ não é condicionalmente ignorável para $Y$ dado $\Z$.
 \end{exercise}

@@ -42,7 +42,7 @@ dt %>%
   ftable() %>% 
   print()
 @
- \caption{Tabela de frequência conjunta 
+ \caption{Frequência conjunta 
  das variáveis binárias $T$, $C$, e $Z$.}
  \label{tabs:simpson}
 \end{table}

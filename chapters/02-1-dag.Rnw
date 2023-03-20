@@ -1,4 +1,4 @@
-\chapter{Modelo Estrutural Causal (SCM)}
+\chapter{Modelo Causal (\CM)}
 \label{cap:dag}
 
 No \cref{cap:intro} vimos que 
@@ -9,7 +9,7 @@ Contudo, como podemos especificar
 relações causais formalmente?
 
 Como resposta a esta pergunta iremos
-definir o Modelo Estrutural Causal (SCM),
+definir o Modelo Causal (\CM),
 que permite especificar formalmente relações causais.
 Para tal, será necessário primeiro introduzir
 modelos probabilísticos em grafos.
@@ -267,7 +267,38 @@ Esta intuição é formalizada em \cref{def:compativel}:
  $$f(v_1,\ldots,v_n) = \prod_{i=1}^n f(v_i|Pa(v_i))$$
 \end{definition}
 
-Na prática, pode ser difícil verificar 
+\begin{example}
+ \label{ex:compativel_1}
+ Considere que $X \sim \text{Bernoulli}(0.5)$,
+ $Y|X = 1 \sim \text{Bernoulli}(0.99)$ e
+ $Y|X = 0 \sim \text{Bernoulli}(0.01)$.
+ Neste caso,
+ \begin{align*}
+  f(Y=1) 
+  &= f(X=0,Y=1) + f(X=1,Y=1) \\
+  &= f(X=0)f(Y=1|X=0) + f(X=1)f(Y=1|X=1) \\
+  &= 0.5 \cdot 0.01 + 0.5 \cdot 0.99 = 0.5
+ \end{align*}
+ Como $f(X=1,Y=1) = 0.5 \cdot 0.99 \neq 0.5 \cdot 0.5 = f(X=1)f(Y=1)$,
+ decorre da \cref{def:compativel} que
+ $f$ não é compatível com o DAG sem arestas em que $\sV = \{X,Y\}$.
+ Em outras palavras, $X$ e $Y$ não são independentes.
+ Como sempre é verdade que $f(x,y) = f(x)f(y|x)$ e que
+ $f(x,y) = f(y)f(x|y)$, 
+ $f$ é compatível com os DAGs 
+ $X \rightarrow Y$ e com $X \leftarrow Y$.
+\end{example}
+
+\begin{example}
+ \label{ex:compativel_2}
+ Considere que $f(x,y) = f(x)f(y)$.
+ Isto é, $(X,Y)$ são independentes segundo $f$.
+ Neste caso, $f$ é compatível com qualquer DAG 
+ sobre $\sV = \{X,Y\}$.
+\end{example}
+
+Quando $\sV$ tem muitos elementos, 
+pode ser difícil verificar 
 se a \cref{def:compativel} está satisfeita 
 Para esses casos,
 pode ser útil aplicar o 
@@ -279,10 +310,44 @@ pode ser útil aplicar o
  compatível com um DAG, $\sG$,
  se e somente se, existem funções,
  $g_1,\ldots,g_n$ tais que:
- $$f(v_1,\ldots,v_n) = \prod_{i=1}^n g_i(v_i, Pa(v_i))$$
+ \begin{align*}
+  f(v_1,\ldots,v_n) 
+  &= \prod_{i=1}^n g_i(v_i, Pa(v_i)).
+ \end{align*}
 \end{lemma}
 
-O seguinte lema também é útil
+\begin{example}
+ \label{ex:compativel_3}
+ Considere que 
+ \begin{align*}
+  f(x_1,x_2,x_3) &= 0.5 \cdot 0.9^{\I(x_1 = x_2)} \cdot 0.1^{\I(x_1 \neq x_2)} 
+  \cdot 0.8^{\I(x_2 = x_3)} \cdot 0.2^{\I(x_2 \neq x_3)}.
+ \end{align*}
+ Tome $\sG = X_1 \rightarrow X_2 \rightarrow X_3$. Para $\sG$,
+ $Pa(X_1) = \emptyset$, $Pa(X_2) = \{X_1\}$ e $Pa(X_3) = \{X_2\}$.
+ Assim, tomando $g_1(x_1, Pa(x_1)) = 0.5$,
+ $g_2(x_2, Pa(x_2)) = 0.9^{\I(x_1 = x_2)} \cdot 0.1^{\I(x_1 \neq x_2)}$ e
+ $g_3(x_3, Pa(x_3)) = 0.8^{\I(x_2 = x_3)} \cdot 0.2^{\I(x_2 \neq x_3)}$,
+ temos que
+ \begin{align*}
+  f(x_1,x_2,x_3)
+  &= g_1(x_1, Pa(x_1)) \cdot g_2(x_2, Pa(x_2)) \cdot g_3(x_3, Pa(x_3))
+ \end{align*}
+ Isto é, decorre do \cref{lem:compativel-equiv} que
+ $f$ é compatível com $\sG$.
+\end{example}
+
+\begin{exercise}
+ Usando a mesma $f$ do \cref{ex:compativel_3},
+ prove que $f$ é compatível com o DAG
+ $X_1 \leftarrow X_2 \leftarrow X_3$.
+ Temos que $f$ é compatível com quais outros DAG's?
+\end{exercise}
+
+Se $\sA$ é ancestral em um DAG, então
+$f(\sA)$ pode ser decomposto de forma similar a $f(\sV)$.
+Este fato será útil e é
+formalizado no \cref{lem:anc_fat}.
 
 \begin{lemma}
  \label{lem:anc_fat}
@@ -692,32 +757,32 @@ Esta associação não significa que
 infectar um indivíduo com uma das doenças
 reduz a probabilidade que ele tenha a outra.
 
-\subsection{Modelo Estrutural Causal (Structural Causal Model)}
+\subsection{Modelo Causal (Causal Model)}
 
 Com base nos conceitos abordados anteriormente,
 finalmente podemos definir formalmente
-o Modelo Estrutural Causal (SCM):
+o Modelo Causal (\CM):
 
 \begin{definition}
- \label{def:scm}
- Um SCM é um par $(\sG,f)$ tal que
+ \label{def:cm}
+ Um \CM é um par $(\sG,f)$ tal que
  $\sG = (\sV, \sE)$ é um DAG (\cref{def:dag}) e
  $f$ é uma função de densidade sobre $\sV$
  compatível com $\sG$ (\cref{def:compativel}).
  Neste caso, é comum chamarmos $\sG$ de
- \textbf{grafo causal} do SCM $(\sG,f)$.
+ \textbf{grafo causal} do \CM $(\sG,f)$.
 \end{definition}
 
-Note pela \cref{def:scm} que
-um SCM é formalmente um modelo probabilístico em um DAG.
-O principal atributo de um SCM que 
+Note pela \cref{def:cm} que
+um \CM é formalmente um modelo probabilístico em um DAG.
+O principal atributo de um \CM que 
 o diferencia de um modelo probabilístico genérico em um DAG é
 como o interpretamos.
-Existe uma aresta de $V_1$ em $V_2$ em um SCM
+Existe uma aresta de $V_1$ em $V_2$ em um \CM
 se e somente se $V_1$ é uma causa direta de $V_2$.
 
 \begin{definition}
- Dizemos que $(\sG,f)$ é um SCM linear Gaussiano se,
+ Dizemos que $(\sG,f)$ é um \CM linear Gaussiano se,
  existe matriz diagonal positiva, $\Sigma$, e
  $\beta \in \Re^{n \times n}$ tal que,
  para todo vértice $V_i$,
@@ -728,7 +793,7 @@ se e somente se $V_1$ é uma causa direta de $V_2$.
 \end{definition}
 
 \begin{lemma}
- Se $(\sG,f)$ é um SCM linear Gaussiano, então
+ Se $(\sG,f)$ é um \CM linear Gaussiano, então
  $\sV \sim N(0, (I-\beta)^{-1}\Sigma((I-\beta)^{-1})^t)$.
  
 \end{lemma}
@@ -775,6 +840,16 @@ será fundamental nos capítulos posteriores.
 
 \begin{exercise}
  Prove o \cref{lem:anc_fat}.
+\end{exercise}
+
+\begin{exercise}
+ Prove que, para qualquer $\V \subseteq \sV$,
+ $Anc(\V) = Anc(Anc(\V))$.
+\end{exercise}
+
+\begin{exercise}
+ Prove que $\V$ é ancestral se e somente se
+ $Anc(\V) = \V$.
 \end{exercise}
 
 \begin{exercise}

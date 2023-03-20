@@ -145,7 +145,7 @@ podemos definir o modelo de probabilidade sob intervenção:
 \begin{definition}
  \label{def:intervencao}
  Seja $\sG = (\sV, \sE)$ um DAG,
- $(\sG,f)$ um SCM (\cref{def:scm}), e
+ $(\sG,f)$ um \CM (\cref{def:cm}), e
  $\V_1 \subseteq \sV$. 
  O modelo de probabilidade obtido após
  uma intervenção em $\V_1$ é dado por:

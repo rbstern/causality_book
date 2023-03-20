@@ -10,7 +10,7 @@ conhecido o valor de $\Y$,
 observar quaisquer valores de $\X$ não traz 
 informação sobre os demais valores.
 Nesta seção veremos que 
-as relações de independência condicional em um SCM
+as relações de independência condicional em um \CM
 estão diretamente ligadas ao seu grafo.
 
 \subsection{Independência Condicional}
@@ -59,7 +59,7 @@ muitas das relações de independência condicional.
 
 \subsection{D-separação}
 
-Em um SCM, é possível indicar 
+Em um \CM, é possível indicar 
 as relações de independência incondicional em $\sV$
 por meio do grafo associado.
 Intuitivamente, haverá uma dependência

@@ -244,7 +244,7 @@ a de que o modelo intervencional é equivalente
 ao condicionamento usual no SCM aumentado.
 
 \begin{definition}
- \label{def:scm_star}
+ \label{def:cm_star}
  Seja $(\sG_*, f_*)$ um SCM expandido tal que
  $\sG_* = (\sV \cup \{I_X: X \in \X\}, \sE_*)$, e
  $\sE_* = \sE \cup \{(I_X \rightarrow X: X \in \X)\}$.
@@ -273,7 +273,7 @@ ao condicionamento usual no SCM aumentado.
 
 \begin{lemma}
  \label{lemma:backdoor_1}
- Se $(\sG_*, f_*)$ é tal qual em \cref{def:scm_star}, então:
+ Se $(\sG_*, f_*)$ é tal qual em \cref{def:cm_star}, então:
  \begin{align*}
   f(\sV|do(X=x)) &= f_*(\sV|I_{\X}=1)
  \end{align*}
@@ -284,7 +284,7 @@ ao condicionamento usual no SCM aumentado.
   f_*(\sV|I_{\X} = 1) 
   &= \frac{f_*(\sV, I_{\X}=1)}{f(I_{\X}=1)} \\
   &= \frac{f(I_{\X}=1)\prod_{X \in \X}\I(X = x)\prod_{V \notin \X}f(V|Pa(V))}{f(I=1)}
-  & \text{\cref{def:scm_star}} \\
+  & \text{\cref{def:cm_star}} \\
   &= \prod_{X \in \X}\I(X = x) \cdot \prod_{V \notin \V_1}f(V|Pa(V)) \\
   &= f(\sV|do(\X=\x)) 
   & \text{\cref{def:intervencao}}
@@ -293,7 +293,7 @@ ao condicionamento usual no SCM aumentado.
 
 \begin{lemma}
  \label{lemma:backdoor_2}
- Se $(\sG_*, f_*)$ é tal qual em \cref{def:scm_star}, então:
+ Se $(\sG_*, f_*)$ é tal qual em \cref{def:cm_star}, então:
  \begin{align*}
   f_*(\sV|I_{\X}=0) &= f(\sV).
  \end{align*}
@@ -305,9 +305,9 @@ ao condicionamento usual no SCM aumentado.
   &= \frac{f_*(\sV, I_{\X}=0)}{f_*(I_{\X}=0)} \\
   &= \frac{f_*(I_{\X}=0)\prod_{X \in \X}f_*(X|Pa(X),I_{X}=0)
   \prod_{V \notin \X} f(V|Pa(V))}{f_*(I=0)}
-  & \text{\cref{def:scm_star}} \\
+  & \text{\cref{def:cm_star}} \\
   &= \prod_{X \in \X}f(X|Pa(X))\prod_{V \notin \X} f(V|Pa(V))
-  & \text{\cref{def:scm_star}} \\
+  & \text{\cref{def:cm_star}} \\
   &= \prod_{V \in \sV} f(V|Pa(V)) \\
   &= f(\sV) 
   & \text{\cref{def:compativel}}
@@ -316,7 +316,7 @@ ao condicionamento usual no SCM aumentado.
 
 \begin{lemma}
  \label{lemma:backdoor_3}
- Se $(\sG_*, f_*)$ é tal qual em \cref{def:scm_star} e
+ Se $(\sG_*, f_*)$ é tal qual em \cref{def:cm_star} e
  $\Z$ satisfaz o segundo item do critério backdoor para
  medir o efeito causal de $X$ em $Y$, então $I \dsep Y | X, \Z$.
 \end{lemma}
@@ -364,7 +364,7 @@ ao condicionamento usual no SCM aumentado.
 
 \begin{lemma}
  \label{lemma:backdoor_4}
- Se $(\sG_*, f_*)$ é tal qual em \cref{def:scm_star} e
+ Se $(\sG_*, f_*)$ é tal qual em \cref{def:cm_star} e
  $\X \notin Anc(\Z)$, então:
  \begin{align*}
   f_*(\z) &= f(\z)
@@ -375,7 +375,7 @@ ao condicionamento usual no SCM aumentado.
  Seja $\Z_* = Anc(\Z)$ e
  $\V = \sV - (\{X\} \cup \Z_*)$.
  Como $X \notin \Z_*$, decorre 
- da \cref{def:scm_star} que $I \notin \Z_*$.
+ da \cref{def:cm_star} que $I \notin \Z_*$.
  Portanto,
  \begin{align*}
   f_*(\z_*) 
@@ -383,7 +383,7 @@ ao condicionamento usual no SCM aumentado.
   &= \int \left(\prod_{z \in \z_*} f(z|Pa(z))\right)
   \left(f_*(I)f_*(X|I,Pa(X))
   \prod_{v \in \bv} f(v|Pa(v))\right)d(I,X,\bv)
-  & \text{\cref{def:scm_star}} \\
+  & \text{\cref{def:cm_star}} \\
   &= \left(\prod_{z \in \z_*} f(z|Pa(z))\right) 
   \int \left(f_*(I)f_*(X|I,Pa(X)) 
   \prod_{v \in \bv} f(v|Pa(v))\right)d(I,X,\bv) 
@@ -399,7 +399,7 @@ ao condicionamento usual no SCM aumentado.
 
 \begin{lemma}
  \label{lemma:backdoor_5}
- Se $(\sG_*, f_*)$ é tal qual em \cref{def:scm_star} e
+ Se $(\sG_*, f_*)$ é tal qual em \cref{def:cm_star} e
  $\Z$ satisfaz o critério backdoor para
  medir o efeito causal de $X$ em $Y$, então $I \dsep \Z$.
 \end{lemma}
@@ -926,4 +926,152 @@ ao condicionamento usual no SCM aumentado.
   &= \int \frac{Y f(\W|x)}{f(\W|X)} f(Y,\W,X) d(Y \times \W \times Y) \\
   &= \E\left[\frac{Y f(\W|x)}{f(\W|X)} \right]
  \end{align*}
+\end{proof}
+
+\section{Relativas à \cref{sec:trad_scm_pom}}
+
+\begin{proof}[Prova do \cref{lemma:obs_to_potential}]
+ Para realizar a demonstração, provaremos que,
+ dado $\V=\bv$, $\sV \equiv \sV_{\V=\bv}$.
+ Para tal, primeiramente note que,
+ dado que $\V=\bv$, para todo
+ $\V \equiv \I(V = \bv) \equiv \V_{\bv}$.
+ 
+ A seguir, induziremos uma ordem sobre $\sV-\V$.
+ Definimos $\sV^{(0)} = \{V \in \sV-\V: Pa(V) \subset \emptyset\}$,
+ isto é $\sV^{(0)}$ são vértices no DAG que são raízes e
+ que não estão em $\V$.
+ Além disso, para todo $1 \leq i \leq n$,
+ $\sV^{(i)} = \{V \in \sV-\V: Pa(V)-\V \subseteq \sV^{(i-1)}\}$.
+ Isto é, todos os pais de $\sV^{(1)}$ não em $\V$ são raízes,
+ todos os avós de $\sV^{(2)}$ não em $\V$ são raízes, e assim por diante.
+ Como $\sV$ é finito, $\sV^{(n)} \equiv \sV-\V$.
+ 
+ A seguir, provaremos por indução finita que,
+ dado $\V=\bv$, para todo $i$, 
+ $\sV^{(i)} \equiv \sV^{(i)}_{\bv}$.
+ Primeiramente, para todo $V \in \sV^{(0)}$,
+ decorre da \cref{def:pom} que
+ $V \equiv g_V(U_V) \equiv V_{\bv}$.
+ Portanto, $\sV^{(0)} \equiv \sV^{(0)}_{\bv}$.
+ A seguir, suponha que 
+ $\sV^{(i-1)} \equiv \sV^{(i-1)}_{\bv}$ e
+ tome $V \in \sV^{(i)}$.
+ Por definição de $\sV^{(i)}$, 
+ $Pa(V) \subseteq \sV^{(i-1)} \cup \V$.
+ Por hipótese de indução,
+ $\sV^{(i-1)} \equiv \sV^{(i-1)}_{\bv}$ e
+ provamos que $\V \equiv \V_{\bv}$.
+ Portanto, $Pa(V) \equiv Pa_{\bv}(V)$.
+ Utilizando a \cref{def:pom}, conclua que
+ $V \equiv g_V(U_V, Pa(V)) \equiv
+ g_V(U_V, Pa_{\bv}(V)) \equiv V_{\bv}$.
+ Como $V$ era arbitrário,
+ conclua que $\sV^{(i)} \equiv \sV^{(i)}_{\bv}$.
+ 
+ Desta forma, dado que $\V = \bv$,
+ $\V \equiv \V_{\bv}$,
+ $\sV^{(n)} = \sV - \V$, e
+ $\sV^{(n)} \equiv \sV^{(n)}_{\bv}$.
+ Conclua que $\sV \equiv \sV_{\bv}$.
+\end{proof}
+
+\begin{proof}[Prova do \cref{lemma:po_do}]
+ \begin{align*}
+  f(\sV_{\bv})
+  &= \I(\V = \bv) \cdot \prod_{V \in \sV-\V} f^*(V_{\bv}|Pa^*(V_{\bv}))
+  & \text{\cref{def:pom}} \\
+  &= \I(V = \bv) \cdot \prod_{V \in \sV-\V} f(V|Pa(V))
+  & \text{\cref{def:scm,def:pom}} \\
+  &= f(\sV|do(\V=\bv))
+  & \text{\cref{def:intervencao}}
+ \end{align*}
+\end{proof}
+
+\begin{proof}[Prova do \cref{lemma:ignore_backdoor}]
+ ($1 \rightarrow 2$)
+ Para realizar esta demonstração provaremos que
+ a negação de $2$ implica a negação de $1$.
+ Suponha que exista um ascendente comum de $X$ e $Y$.
+ Portanto, existe $V \in \sV$,
+ um caminho direcionado de $V$ em $X$, 
+ $C^X = (V, C^X_2, \ldots, C^X_{n-1},X)$, e
+ um caminho direcionado de $V$ em $Y$,
+ $C^Y = (V, C^Y_2, \ldots, C^Y_{m-1},Y)$.
+ Defina
+ $C = (X, C^X_{n-1}, \ldots, C^X_2, V, C^Y_2, \ldots C^Y_{m-1}, Y)$.
+ Como $C^X$ é um caminho direcionado, $(C^X_{n-1}, X) \in \sE$.
+ Além disso, como $C^X$ e $C^Y$ são caminhos direcionados,
+ não há colisor em $C$.
+ Conclua que $C$ está bloqueado dado $\emptyset$.
+ Isto é, $\emptyset$ não satisfaz o critério backdoor
+ para medir o efeito causal de $X$ em $Y$.
+ 
+ ($2 \rightarrow 3$)
+ Para realizar esta demonstração provaremos que
+ a negação de $3$ implica a negação de $2$.
+ Suponha que no grafo potencial, $\sG^*$,
+ existe um caminho não bloqueado de $X$ a $Y_x$, $C$.
+ Portanto, existe $V \in \sV$ tal que
+ $C = X, \ldots V \leftarrow U_V \rightarrow V_x, \ldots Y_x$.
+ Como $C$ não está bloqueado, não há colisor em $C$.
+ Portanto,
+ \begin{align*}
+  C &= X \leftarrow \ldots \leftarrow V \leftarrow U_V 
+  \rightarrow V_x \rightarrow \ldots \rightarrow Y_x.
+ \end{align*}
+ Decorre da \cref{def:grafo_potencial} que
+ $V$ é ancestral comum de $X$ e $Y$.
+ Para constatar essa última afirmação basta
+ remover $U_V$ e $V_x$ do caminho e
+ substituir cada vértice potencial 
+ a partir de $V_x$ por sua cópia em $\sV$.
+ 
+ ($3 \rightarrow 1$)
+ Esta demonstração decorre do \cref{lemma:cignore_backdoor},
+ provado a seguir, tomando $\Z = \emptyset$.
+\end{proof}
+
+\begin{proof}[Prova do \cref{lemma:cignore_backdoor}]
+ Suponha que $\Z$ não satisfaz 
+ o critério backdoor para medir o efeito causal de $X$ em $Y$.
+ Como $X \notin Anc(\Z)$, existe 
+ um caminho não bloqueado de $X$ em $Y$ dado $\Z$,
+ $C = (X, C_2, \ldots, C_{n-1}, Y)$ tal que
+ $X \leftarrow C_2$.
+ Há dois casos para considerar:
+ $C_{n-1} \leftarrow Y$ e $C_{n-1} \rightarrow Y$.
+ 
+ Se $C_{n-1} \leftarrow Y$, então
+ não há colisor em 
+ $C_{n-1} \leftarrow Y \leftarrow U_Y \rightarrow Y_x$.
+ Portanto, $C^* = (X, C_2, \ldots, C_{n-1}, Y, U_Y, Y_x)$ é
+ um caminho desbloqueado de $X$ a $Y_x$ no grafo potencial.
+ 
+ A seguir, considere que $C_{n-1} \rightarrow Y$.
+ Tome $m = \max(\{1\} \cup \{i: C_i \text{ é colisor} \})$. 
+ Assim, $C_m \leftarrow C_{m+1} \ldots C_{n-1} \rightarrow Y$.
+ Pelo diagrama acima, existe $p > m$ tal que 
+ $C_{p-1} \leftarrow C_p \rightarrow C_{p+1}$.
+ Defina $C^* = (X_x, (C_2)_x, \ldots, (C_{n-1})_x, Y_x)$.
+ Não há colisor em 
+ $C_{p-1} \leftarrow C_p \leftarrow U_{C_p} \rightarrow C^*_p$.
+ Também, como não há colisor em $(C_p, C_{p+1}, \ldots, Y)$,
+ decorre da \cref{def:grafo_potencial} que
+ não há colisor em $(C^*_p, C^*_{p+1}, \ldots Y)$.
+ Portanto, não há colisor em
+ $(C_p, U_{C_p}, C^*_p, C^*_{p+1}, \ldots Y)$.
+ Defina 
+ \begin{align*}
+  C^+ &= (X, C_2, \ldots, C_p, U_{C_p}, C^*_p, C^*_{p+1}, \ldots Y).
+ \end{align*}
+ Como $C$ está bloqueado dado $\Z$,
+ para todo $i \leq p$, $C_i \in \Z$ 
+ se e somente se $C_i$ é um colisor em $C$.
+ Além disso, para todo $i > p$,
+ $C^+_i$ não é colisor e 
+ $C^+_i$ não está em $\Z$, pois
+ é um resultado potencial ou uma variável em $U$.
+ Assim $C^+_i$ não está bloqueado dado $\Z$ e
+ é um caminho de $X$ a $Y_x$.
 \end{proof}

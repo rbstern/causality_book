@@ -169,7 +169,7 @@ algumas modificações sobre o grafo causal.
 
 \begin{definition}
  \label{def:do_graph}
- Seja $(\sG,f)$ um SCM tal que $\sG = (\sV,\sE)$:
+ Seja $(\sG,f)$ um \CM tal que $\sG = (\sV,\sE)$:
  \begin{align*}
   \sG(\bar{\V}) 
   &:= (\sV, \{E \in \sE: E_2 \notin \V\}) \\
@@ -195,7 +195,7 @@ Com base na \cref{def:do_graph},
 é possível apresentar o do calculus:
 
 \begin{theorem}
- Seja $(\sG,f)$ um SCM e $\X$, $\Y$, $\W$ e $\Z$ 
+ Seja $(\sG,f)$ um \CM e $\X$, $\Y$, $\W$ e $\Z$ 
  conjuntos de vértices disjuntos:
  \label{thm:do_calculus}
  \begin{enumerate}
@@ -246,8 +246,8 @@ no próximo capítulo.
   todas as demais variáveis.
   \item Determine conjuntos de variáveis que
   satisfazem, respectivamente, 
-  o ``backdoor criterion'' e 
-   o ``frontdoor criterion'' para
+  o critério backdoor e 
+  o critério frontdoor para
   estimar o efeito causal de $X$ em $Y$.
   \item Considere que para cada variável, $V$, temos que
   $V \equiv \beta_V \cdot Pa(V) + \epsilon_V$,

@@ -54,7 +54,7 @@ Para tal, a seguir estudaremos um exemplo de \citet{Glymour2016}.
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
- \caption{Tabela de frequência conjunta 
+ \caption{Frequência conjunta 
  das variáveis binárias $T$, $C$, e $Z$.}
  \label{tabs:simpson}
 \end{table}
@@ -207,7 +207,7 @@ Esta questão será tratada no \cref{cap:dag}.
  Justifique sua resposta em palavras.
 \end{exercise}
 
-\chapter{Modelo Estrutural Causal (SCM)}
+\chapter{Modelo Causal (\CM)}
 \label{cap:dag}
 
 No \cref{cap:intro} vimos que 
@@ -218,7 +218,7 @@ Contudo, como podemos especificar
 relações causais formalmente?
 
 Como resposta a esta pergunta iremos
-definir o Modelo Estrutural Causal (SCM),
+definir o Modelo Causal (\CM),
 que permite especificar formalmente relações causais.
 Para tal, será necessário primeiro introduzir
 modelos probabilísticos em grafos.
@@ -488,7 +488,38 @@ Esta intuição é formalizada em \cref{def:compativel}:
  $$f(v_1,\ldots,v_n) = \prod_{i=1}^n f(v_i|Pa(v_i))$$
 \end{definition}
 
-Na prática, pode ser difícil verificar 
+\begin{example}
+ \label{ex:compativel_1}
+ Considere que $X \sim \text{Bernoulli}(0.5)$,
+ $Y|X = 1 \sim \text{Bernoulli}(0.99)$ e
+ $Y|X = 0 \sim \text{Bernoulli}(0.01)$.
+ Neste caso,
+ \begin{align*}
+  f(Y=1) 
+  &= f(X=0,Y=1) + f(X=1,Y=1) \\
+  &= f(X=0)f(Y=1|X=0) + f(X=1)f(Y=1|X=1) \\
+  &= 0.5 \cdot 0.01 + 0.5 \cdot 0.99 = 0.5
+ \end{align*}
+ Como $f(X=1,Y=1) = 0.5 \cdot 0.99 \neq 0.5 \cdot 0.5 = f(X=1)f(Y=1)$,
+ decorre da \cref{def:compativel} que
+ $f$ não é compatível com o DAG sem arestas em que $\sV = \{X,Y\}$.
+ Em outras palavras, $X$ e $Y$ não são independentes.
+ Como sempre é verdade que $f(x,y) = f(x)f(y|x)$ e que
+ $f(x,y) = f(y)f(x|y)$, 
+ $f$ é compatível com os DAGs 
+ $X \rightarrow Y$ e com $X \leftarrow Y$.
+\end{example}
+
+\begin{example}
+ \label{ex:compativel_2}
+ Considere que $f(x,y) = f(x)f(y)$.
+ Isto é, $(X,Y)$ são independentes segundo $f$.
+ Neste caso, $f$ é compatível com qualquer DAG 
+ sobre $\sV = \{X,Y\}$.
+\end{example}
+
+Quando $\sV$ tem muitos elementos, 
+pode ser difícil verificar 
 se a \cref{def:compativel} está satisfeita 
 Para esses casos,
 pode ser útil aplicar o 
@@ -500,10 +531,44 @@ pode ser útil aplicar o
  compatível com um DAG, $\sG$,
  se e somente se, existem funções,
  $g_1,\ldots,g_n$ tais que:
- $$f(v_1,\ldots,v_n) = \prod_{i=1}^n g_i(v_i, Pa(v_i))$$
+ \begin{align*}
+  f(v_1,\ldots,v_n) 
+  &= \prod_{i=1}^n g_i(v_i, Pa(v_i)).
+ \end{align*}
 \end{lemma}
 
-O seguinte lema também é útil
+\begin{example}
+ \label{ex:compativel_3}
+ Considere que 
+ \begin{align*}
+  f(x_1,x_2,x_3) &= 0.5 \cdot 0.9^{\I(x_1 = x_2)} \cdot 0.1^{\I(x_1 \neq x_2)} 
+  \cdot 0.8^{\I(x_2 = x_3)} \cdot 0.2^{\I(x_2 \neq x_3)}.
+ \end{align*}
+ Tome $\sG = X_1 \rightarrow X_2 \rightarrow X_3$. Para $\sG$,
+ $Pa(X_1) = \emptyset$, $Pa(X_2) = \{X_1\}$ e $Pa(X_3) = \{X_2\}$.
+ Assim, tomando $g_1(x_1, Pa(x_1)) = 0.5$,
+ $g_2(x_2, Pa(x_2)) = 0.9^{\I(x_1 = x_2)} \cdot 0.1^{\I(x_1 \neq x_2)}$ e
+ $g_3(x_3, Pa(x_3)) = 0.8^{\I(x_2 = x_3)} \cdot 0.2^{\I(x_2 \neq x_3)}$,
+ temos que
+ \begin{align*}
+  f(x_1,x_2,x_3)
+  &= g_1(x_1, Pa(x_1)) \cdot g_2(x_2, Pa(x_2)) \cdot g_3(x_3, Pa(x_3))
+ \end{align*}
+ Isto é, decorre do \cref{lem:compativel-equiv} que
+ $f$ é compatível com $\sG$.
+\end{example}
+
+\begin{exercise}
+ Usando a mesma $f$ do \cref{ex:compativel_3},
+ prove que $f$ é compatível com o DAG
+ $X_1 \leftarrow X_2 \leftarrow X_3$.
+ Temos que $f$ é compatível com quais outros DAG's?
+\end{exercise}
+
+Se $\sA$ é ancestral em um DAG, então
+$f(\sA)$ pode ser decomposto de forma similar a $f(\sV)$.
+Este fato será útil e é
+formalizado no \cref{lem:anc_fat}.
 
 \begin{lemma}
  \label{lem:anc_fat}
@@ -895,32 +960,32 @@ Esta associação não significa que
 infectar um indivíduo com uma das doenças
 reduz a probabilidade que ele tenha a outra.
 
-\subsection{Modelo Estrutural Causal (Structural Causal Model)}
+\subsection{Modelo Causal (Causal Model)}
 
 Com base nos conceitos abordados anteriormente,
 finalmente podemos definir formalmente
-o Modelo Estrutural Causal (SCM):
+o Modelo Causal (\CM):
 
 \begin{definition}
- \label{def:scm}
- Um SCM é um par $(\sG,f)$ tal que
+ \label{def:cm}
+ Um \CM é um par $(\sG,f)$ tal que
  $\sG = (\sV, \sE)$ é um DAG (\cref{def:dag}) e
  $f$ é uma função de densidade sobre $\sV$
  compatível com $\sG$ (\cref{def:compativel}).
  Neste caso, é comum chamarmos $\sG$ de
- \textbf{grafo causal} do SCM $(\sG,f)$.
+ \textbf{grafo causal} do \CM $(\sG,f)$.
 \end{definition}
 
-Note pela \cref{def:scm} que
-um SCM é formalmente um modelo probabilístico em um DAG.
-O principal atributo de um SCM que 
+Note pela \cref{def:cm} que
+um \CM é formalmente um modelo probabilístico em um DAG.
+O principal atributo de um \CM que 
 o diferencia de um modelo probabilístico genérico em um DAG é
 como o interpretamos.
-Existe uma aresta de $V_1$ em $V_2$ em um SCM
+Existe uma aresta de $V_1$ em $V_2$ em um \CM
 se e somente se $V_1$ é uma causa direta de $V_2$.
 
 \begin{definition}
- Dizemos que $(\sG,f)$ é um SCM linear Gaussiano se,
+ Dizemos que $(\sG,f)$ é um \CM linear Gaussiano se,
  existe matriz diagonal positiva, $\Sigma$, e
  $\beta \in \Re^{n \times n}$ tal que,
  para todo vértice $V_i$,
@@ -931,7 +996,7 @@ se e somente se $V_1$ é uma causa direta de $V_2$.
 \end{definition}
 
 \begin{lemma}
- Se $(\sG,f)$ é um SCM linear Gaussiano, então
+ Se $(\sG,f)$ é um \CM linear Gaussiano, então
  $\sV \sim N(0, (I-\beta)^{-1}\Sigma((I-\beta)^{-1})^t)$.
  
 \end{lemma}
@@ -978,6 +1043,16 @@ será fundamental nos capítulos posteriores.
 
 \begin{exercise}
  Prove o \cref{lem:anc_fat}.
+\end{exercise}
+
+\begin{exercise}
+ Prove que, para qualquer $\V \subseteq \sV$,
+ $Anc(\V) = Anc(Anc(\V))$.
+\end{exercise}
+
+\begin{exercise}
+ Prove que $\V$ é ancestral se e somente se
+ $Anc(\V) = \V$.
 \end{exercise}
 
 \begin{exercise}
@@ -1049,7 +1124,7 @@ conhecido o valor de $\Y$,
 observar quaisquer valores de $\X$ não traz 
 informação sobre os demais valores.
 Nesta seção veremos que 
-as relações de independência condicional em um SCM
+as relações de independência condicional em um \CM
 estão diretamente ligadas ao seu grafo.
 
 \subsection{Independência Condicional}
@@ -1098,7 +1173,7 @@ muitas das relações de independência condicional.
 
 \subsection{D-separação}
 
-Em um SCM, é possível indicar 
+Em um \CM, é possível indicar 
 as relações de independência incondicional em $\sV$
 por meio do grafo associado.
 Intuitivamente, haverá uma dependência
@@ -1542,7 +1617,7 @@ podemos definir o modelo de probabilidade sob intervenção:
 \begin{definition}
  \label{def:intervencao}
  Seja $\sG = (\sV, \sE)$ um DAG,
- $(\sG,f)$ um SCM (\cref{def:scm}), e
+ $(\sG,f)$ um \CM (\cref{def:cm}), e
  $\V_1 \subseteq \sV$. 
  O modelo de probabilidade obtido após
  uma intervenção em $\V_1$ é dado por:
@@ -3134,7 +3209,7 @@ algumas modificações sobre o grafo causal.
 
 \begin{definition}
  \label{def:do_graph}
- Seja $(\sG,f)$ um SCM tal que $\sG = (\sV,\sE)$:
+ Seja $(\sG,f)$ um \CM tal que $\sG = (\sV,\sE)$:
  \begin{align*}
   \sG(\bar{\V}) 
   &:= (\sV, \{E \in \sE: E_2 \notin \V\}) \\
@@ -3160,7 +3235,7 @@ Com base na \cref{def:do_graph},
 é possível apresentar o do calculus:
 
 \begin{theorem}
- Seja $(\sG,f)$ um SCM e $\X$, $\Y$, $\W$ e $\Z$ 
+ Seja $(\sG,f)$ um \CM e $\X$, $\Y$, $\W$ e $\Z$ 
  conjuntos de vértices disjuntos:
  \label{thm:do_calculus}
  \begin{enumerate}
@@ -3211,8 +3286,8 @@ no próximo capítulo.
   todas as demais variáveis.
   \item Determine conjuntos de variáveis que
   satisfazem, respectivamente, 
-  o ``backdoor criterion'' e 
-   o ``frontdoor criterion'' para
+  o critério backdoor e 
+  o critério frontdoor para
   estimar o efeito causal de $X$ em $Y$.
   \item Considere que para cada variável, $V$, temos que
   $V \equiv \beta_V \cdot Pa(V) + \epsilon_V$,
@@ -3295,13 +3370,13 @@ Contudo, algumas perguntas causais
 não são respondidas utilizando apenas
 os mecanismos desenvolvidos no \cref{cap:intervencao}.
 Por exemplo, qual a probabilidade de que 
-um indivíduo se cure quando rece o tratamento e
+um indivíduo se cure quando recebe o tratamento e
 não se cure quando não o recebe.
 Quando tentamos traduzir esta questão,
 notamos que partes dela envolvem $Y=1$ e $do(X=1)$
 e outras partes envolvem $Y=0$ e $do(X=0)$.
-Se tentarmos ingenuamente traduzir a questão,
-poderíamos obter algo como $\P(Y=1, Y=0|do(X=1),do(X=0))$.
+Se tentarmos uma tradução ingênua,
+podemos obter uma expressão como $\P(Y=1, Y=0|do(X=1),do(X=0))$.
 Contudo, a probabilidade acima não responde à pergunta colocada.
 Em primeiro lugar, não está definido fazermos
 as intervenções $do(X=1)$ e $do(X=0)$ na mesma unidade amostral.
@@ -3326,13 +3401,17 @@ houvessem \textit{resultados potenciais}\footnote{
 $Y_1$ e $Y_0$, para
 indicar a ocorrência de cura em
 cada cenário considerado.
-Com uso destas variáveis, 
-poderíamos escrever $\P(Y_1 = 1, Y_0 = 0)$.
+Com o uso destas variáveis, 
+poderíamos escrever 
+$\P(Y_1 = 1, Y_0 = 0)$.
 
 O objetivo desta seção é 
 incluir este tipo de variável de forma
 a preservar as ferramentas desenvolvidas
-no \cref{cap:intervencao}.
+no \cref{cap:intervencao}.\footnote{
+ Para tal, adotaremos uma construção
+ baseada em \citet{Galles1998}.
+}
 Neste quesito, a maior dificuldade será
 estabelecer a distribuição conjunta
 entre os resultados potenciais.
@@ -3360,7 +3439,7 @@ cada vértice, $V$, seja função determinística
 de seus pais e uma variável de ruído, $U_V$.
 Esta abordagem, que está ligada a
 modelos de equações estruturais, é
-apresentada nas \cref{def:grafo_struct,def:scm_struct}.
+apresentada nas \cref{def:grafo_struct,def:scm}.
 
 \begin{definition}
  \label{def:grafo_struct}
@@ -3375,9 +3454,9 @@ apresentada nas \cref{def:grafo_struct,def:scm_struct}.
 \end{definition} 
  
 \begin{definition}
- \label{def:scm_struct}
- Seja $(\sG,f)$ um SCM.
- Um SCM em equações estruturais para $(\sG,f)$, 
+ \label{def:scm}
+ Seja $(\sG,f)$ um CM.
+ O Modelo Estrutural Causal (SCM) para $(\sG,f)$, 
  $(\sG^+,f^+)$, é tal que
  $\sG^+$ é o grafo causal estrutural de $\sG$,
  $(U_V)_{V \in \sV}$ são independentes segundo $f^+$ e,
@@ -3435,16 +3514,16 @@ houve intervenção.
 
 \begin{definition}
  \label{def:grafo_potencial}
- Seja $(\sG, f)$ um SCM de grafo causal 
+ Seja $(\sG, f)$ um CM de grafo causal 
  $\sG = (\sV, \sE)$ e
- $(\sG^+, f^+)$ o seu SCM em equações estruturais.
+ $(\sG^+, f^+)$ o seu SCM.
  O grafo de resultados potenciais dado
  por intervenções em $\X \subseteq \sV$,
  $\sG^* = (\sV^*, \sE^*)$ é tal que
  \begin{align*}
   \sV^* &= \{W_{\V=\bv}: W \in \sV, \V \subseteq \X, \bv \in supp(\V)\} \cup \{U_W: W \in \sV\}, \\
   \sE^* &= \{(W_{\V=\bv}, Z_{\V=\bv}): \V \subseteq \X, \bv \in supp(\V),
-  (W, Z) \in \sE{+}, Z \notin \V\}.
+  (W, Z) \in \sE^{+}, Z \notin \V\}.
  \end{align*}
  Para todo $W \in \sV$, abreviamos $W_{\emptyset}$ por $W$.
 \end{definition}
@@ -3459,12 +3538,12 @@ houve uma intervenção,
 $W_{\V=\bv} \in \V_{\V=\bv}$, removem-se 
 todas as arestas que apontam para $W_{\V=\bv}$.
 Esta remoção ocorre porque, 
-quando realizamos uma intervenção em $\V$,
-o valor de $\V$ é fixado e, assim,
+quando realizamos uma intervenção em $\V$
+o valor desta variável é fixado e, assim,
 não é gerado por suas causas em $\sG$.
 
 \begin{example}
- \label{ex:potential_model}
+ \label{ex:grafo_potencial}
  Considere que $(X,Y) \in \{0,1\}^2$ e 
  o grafo causal é $X \rightarrow Y$.
  Vimos no \cref{ex:eq_struct} que 
@@ -3495,7 +3574,7 @@ não é gerado por suas causas em $\sG$.
 
 }
 
-\caption[Grafo de resultados potenciais dadas intervenções em $X$]{Grafo de resultados potenciais dadas intervenções em $X$.}\label{fig:grafo_potencial}
+\caption[Grafo de resultados potenciais dadas intervenções em $X \in \{0,1\}$]{Grafo de resultados potenciais dadas intervenções em $X \in \{0,1\}$.}\label{fig:grafo_potencial}
 \end{figure}
 
 \end{knitrout}
@@ -3513,18 +3592,18 @@ este vértice é gerado pelo mesmo mecanismo que $W$.
 Isto é, $W_{\V=\bv} = \I(g_W(U_W, Pa^*(W_{\V=\bv})))$.
 Finalmente, se houve uma intervenção em $W_{\V=\bv}$,
 então ela é uma variável degenerada no valor desta intervenção.
-Esta construção é formalizada na \cref{def:scm_potencial}.
+Esta construção é formalizada na \cref{def:pom}.
 
 \begin{definition}
- \label{def:scm_potencial}
+ \label{def:pom}
  Seja $(\sG^+, f^+)$ um
- SCM em equações estruturais para $(\sG, f)$
+ SCM para $(\sG, f)$
  com funções determinísticas, $g$.
  O modelo de resultados potenciais (POM)\footnote{
   utilizamos a sigla POM em referência ao
   termo em inglês ``potential outcomes model''} 
   dado por intervenções em $\X$,
- $(\sG^*, f^*)$ é tal que
+ é um modelo probabilístico em um DAG, $(\sG^*, f^*)$, tal que
  $\sG^*$ é o grafo de resultados potenciais
  dado por intervenções em $\X$ (\cref{def:grafo_potencial}) e
  \begin{align*}
@@ -3537,6 +3616,21 @@ Esta construção é formalizada na \cref{def:scm_potencial}.
   \end{cases}
  \end{align*}
 \end{definition}
+
+O \cref{ex:pom} ilustra 
+um modelo de resultados potenciais.
+
+\begin{example}
+ \label{ex:pom}
+ Considere o SCM em equações estruturais em \cref{ex:eq_struct}.
+ Na construção do modelo de resultados potenciais,
+ definimos $X, Y, U_X, U_Y$ igualmente a em \cref{ex:eq_struct}.
+ Além disso, para cada $x > 0$,
+ $X_{x} \equiv x$ e $Y_x \equiv -log(U_Y)/X_x$.
+\end{example}
+
+\section{Levando a intuição do SCM ao POM}
+\label{sec:trad_scm_pom}
 
 Ainda que seja uma formalização conveniente,
 o POM é consideravelmente mais complexo que o SCM original.
@@ -3562,19 +3656,149 @@ ao observamos que $\V=\bv$, aprendemos que
 estamos justamente na hipótese
 de resultados potenciais em que $\V=\bv$.
 
+Um outro resultado essencial é
+o de que $\sV_{\V=\bv}$ tem
+a distribuição de quando
+realizamos a intervenção $do(\V=\bv)$.
+Esta resultado é estabelecido
+no \cref{lemma:po_do}.
+
 \begin{lemma}
+ \label{lemma:po_do}
+ No modelo de resultados potenciais (\cref{def:pom}):
  \begin{align*}
-  f(\sV_{\V=\bv})
-  &= f(\sV|do(\V=\bv))
+  f^*(\sV_{\V=\bv})
+  &\equiv f(\sV|do(\V=\bv)).
  \end{align*}
 \end{lemma}
 
-\begin{lemma}[Ignorabilidade condicional]
- Se $\Z$ satisfaz o critério backdoor para 
- medir o efeito causal de $X$ em $Y$, 
- então para todo $x$,
- $Y_{X=x} \dsep X | \Z$.
+O \cref{lemma:po_do} fornece 
+uma outra forma de pensar sobre o efeito causal.
+Decorre do \cref{lemma:po_do} que
+$\E[Y_{X=x}] = \E[Y|do(X=x)]$. Assim,
+se por exemplo $X$ é binário,
+$\ACE = \E[Y_1] - \E[Y_0]$.
+Em outras palavras, 
+como o \cref{def:pom} cria 
+variáveis aleatórias que tem a distribuição intervencional,
+ele permite que imaginemos o efeito causal
+em termos destas variáveis.
+Como na \cref{cap:intervencao} 
+não havia acesso aos resultados potenciais, 
+era necessário imaginar o efeito causal
+somente em termos da distribuição intervencional.
+Assim, a \cref{def:pom} oferece
+mais formas de pensar sobre o efeito causal.\footnote{
+ Esta outra forma de pensar sobre o efeito causal é
+ tão relevante que outras construções de Inferência Causal,
+ como o Rubin Causal Model \citep{Holland1986} partem
+ diretamente dela.
+}
+
+Uma forma alternativa de pensar sobre
+identificação causal está
+na definição de \textit{ignorabilidade}.
+Dizemos que $X$ é ignorável para
+medir o efeito causal em $Y$ se
+ele é independente dos resultados potenciais $Y_{x}$.
+Em outras palavras, 
+saber o valor de $X$ não traz informação sobre
+o resultado de $Y$ em uma outra realidade em que
+realizamos uma intervenção sobre $X$.
+
+\begin{definition}[Ignorabilidade]
+ \label{def:ignore}
+ Dizemos que $X$ é \textit{ignorável} para
+ medir o efeito causal em $Y$ se
+ $Y_x \dsep X$.
+\end{definition}
+
+O critério da ignorabilidade é equivalente a
+afirmar que $X$ e $Y$ não tem um ancestral comum.
+Em outras palavras, $X$ é ignorável se
+e somente se $\emptyset$ satisfaz o critério backdoor para
+medir o efeito causal de $X$ em $Y$.
+
+\begin{lemma}
+ \label{lemma:ignore_backdoor}
+ As seguintes afirmações são equivalentes:
+ \begin{enumerate}
+  \item $\emptyset$ satisfaz o critério backdoor para
+  medir o efeito causal de $X$ em $Y$,
+  \item $Anc(X) \cap Anc(Y) = \emptyset$, isto é,
+  $X$ e $Y$ não tem um ancestral em comum, e
+  \item $X$ é ignorável para medir o efeito causal em $Y$.
+ \end{enumerate}
 \end{lemma}
+
+Assim, decorre do fato de que $X$ é ignorável para 
+o efeito causal em $Y$ que
+a distribuição intervencional de $Y$ dado $X$ é
+equivalente à sua distribuição observacional.
+Em outras palavras, dizer que $X$ é ignorável tem
+consequências similares a dizer que
+$X$ é atribuído por aleatorização.
+
+\begin{corollary}
+ Se $X$ é ignorável para medir o efeito causal em $Y$, então
+ \begin{align*}
+  f(y|do(x)) &= f(y|x).
+ \end{align*}
+\end{corollary}
+
+A \textit{ignorabilidade condicional} oferece
+uma generalização da \cref{def:ignore}.
+Dizemos que, dado $\Z$, 
+$X$ é ignorável para medir o efeito causal em $Y$ se
+$X$ é independente de todo $Y_x$ dado $\Z$.
+
+\begin{definition}[Ignorabilidade condicional]
+ \label{def:cignore}
+ Dizemos que $X$ é \textit{condicionalmente ignorável} para
+ medir o efeito causal em $Y$ dado $\Z$ se
+ $Y_x \dsep X | \Z$.
+\end{definition}
+
+Se $\Z$ não tem descendentes de $X$, 
+a ignorabilidade condicional é
+uma restrição mais forte que o critério backdoor,
+conforme formalizado no \cref{lemma:cignore_backdoor}.
+
+\begin{lemma}
+ \label{lemma:cignore_backdoor}
+ Suponha que $X \notin Anc(\Z)$.
+ Se $X$ é condicionalmente ignorável para 
+ medir o efeito causal em $Y$ dado $\Z$, então
+ $\Z$ satisfaz o critério backdoor para
+ medir o efeito causal de $X$ em $Y$.
+\end{lemma}
+
+Apesar do critério backdoor e
+das ignorabilidade condicional não serem equivalentes,
+eles induzem o mesmo tipo de identificação causal.
+
+\begin{lemma}
+ \label{lemma:cignore_do}
+ Se $X$ é condicionalmente ignorável para 
+ medir o efeito causal em $Y$ dado $\Z$, então
+ \begin{align*}
+  f(y|do(x),\z) &= f(y|x,\z), \text{ e } \\
+  f(\z|do(x)) &= f(\z),
+ \end{align*}
+\end{lemma}
+
+Decorre do \cref{lemma:cignore_do} que
+todas as estratégia de estimação do efeito causal
+estudadas na \cref{sec:backdoor} também
+podem ser usadas sob 
+a suposição de ignorabilidade condicional.
+Em outras palavras, 
+ignorabilidade condicional fornece 
+um critério alternativo para
+justificar o tipo de identificação causal
+obtida pelo critério backdoor. 
+
+\subsection{Variáveis Instrumentais}
 
 \subsection{Exercícios}
 
@@ -3587,6 +3811,20 @@ de resultados potenciais em que $\V=\bv$.
  a distribuição de $(X,Y)$ no SCM 
  em equações estruturais é igual 
  àquela no SCM original.
+\end{exercise}
+
+\begin{exercise}
+ Exiba um exemplo em que
+ $X$ é condicionalmente ignorável para $Y$ dado $\Z$ mas
+ $\Z$ não satisfaz o critério backdoor para
+ medir o efeito causal de $X$ em $Y$.
+\end{exercise}
+
+\begin{exercise}
+ Exiba um exemplo em que
+ $\Z$ satisfaz o critério backdoor para
+ medir o efeito causal de $X$ em $Y$ mas
+ $X$ não é condicionalmente ignorável para $Y$ dado $\Z$.
 \end{exercise}
 
 \bibliographystyle{apalike}
@@ -3839,7 +4077,7 @@ a de que o modelo intervencional é equivalente
 ao condicionamento usual no SCM aumentado.
 
 \begin{definition}
- \label{def:scm_star}
+ \label{def:cm_star}
  Seja $(\sG_*, f_*)$ um SCM expandido tal que
  $\sG_* = (\sV \cup \{I_X: X \in \X\}, \sE_*)$, e
  $\sE_* = \sE \cup \{(I_X \rightarrow X: X \in \X)\}$.
@@ -3868,7 +4106,7 @@ ao condicionamento usual no SCM aumentado.
 
 \begin{lemma}
  \label{lemma:backdoor_1}
- Se $(\sG_*, f_*)$ é tal qual em \cref{def:scm_star}, então:
+ Se $(\sG_*, f_*)$ é tal qual em \cref{def:cm_star}, então:
  \begin{align*}
   f(\sV|do(X=x)) &= f_*(\sV|I_{\X}=1)
  \end{align*}
@@ -3879,7 +4117,7 @@ ao condicionamento usual no SCM aumentado.
   f_*(\sV|I_{\X} = 1) 
   &= \frac{f_*(\sV, I_{\X}=1)}{f(I_{\X}=1)} \\
   &= \frac{f(I_{\X}=1)\prod_{X \in \X}\I(X = x)\prod_{V \notin \X}f(V|Pa(V))}{f(I=1)}
-  & \text{\cref{def:scm_star}} \\
+  & \text{\cref{def:cm_star}} \\
   &= \prod_{X \in \X}\I(X = x) \cdot \prod_{V \notin \V_1}f(V|Pa(V)) \\
   &= f(\sV|do(\X=\x)) 
   & \text{\cref{def:intervencao}}
@@ -3888,7 +4126,7 @@ ao condicionamento usual no SCM aumentado.
 
 \begin{lemma}
  \label{lemma:backdoor_2}
- Se $(\sG_*, f_*)$ é tal qual em \cref{def:scm_star}, então:
+ Se $(\sG_*, f_*)$ é tal qual em \cref{def:cm_star}, então:
  \begin{align*}
   f_*(\sV|I_{\X}=0) &= f(\sV).
  \end{align*}
@@ -3900,9 +4138,9 @@ ao condicionamento usual no SCM aumentado.
   &= \frac{f_*(\sV, I_{\X}=0)}{f_*(I_{\X}=0)} \\
   &= \frac{f_*(I_{\X}=0)\prod_{X \in \X}f_*(X|Pa(X),I_{X}=0)
   \prod_{V \notin \X} f(V|Pa(V))}{f_*(I=0)}
-  & \text{\cref{def:scm_star}} \\
+  & \text{\cref{def:cm_star}} \\
   &= \prod_{X \in \X}f(X|Pa(X))\prod_{V \notin \X} f(V|Pa(V))
-  & \text{\cref{def:scm_star}} \\
+  & \text{\cref{def:cm_star}} \\
   &= \prod_{V \in \sV} f(V|Pa(V)) \\
   &= f(\sV) 
   & \text{\cref{def:compativel}}
@@ -3911,7 +4149,7 @@ ao condicionamento usual no SCM aumentado.
 
 \begin{lemma}
  \label{lemma:backdoor_3}
- Se $(\sG_*, f_*)$ é tal qual em \cref{def:scm_star} e
+ Se $(\sG_*, f_*)$ é tal qual em \cref{def:cm_star} e
  $\Z$ satisfaz o segundo item do critério backdoor para
  medir o efeito causal de $X$ em $Y$, então $I \dsep Y | X, \Z$.
 \end{lemma}
@@ -3959,7 +4197,7 @@ ao condicionamento usual no SCM aumentado.
 
 \begin{lemma}
  \label{lemma:backdoor_4}
- Se $(\sG_*, f_*)$ é tal qual em \cref{def:scm_star} e
+ Se $(\sG_*, f_*)$ é tal qual em \cref{def:cm_star} e
  $\X \notin Anc(\Z)$, então:
  \begin{align*}
   f_*(\z) &= f(\z)
@@ -3970,7 +4208,7 @@ ao condicionamento usual no SCM aumentado.
  Seja $\Z_* = Anc(\Z)$ e
  $\V = \sV - (\{X\} \cup \Z_*)$.
  Como $X \notin \Z_*$, decorre 
- da \cref{def:scm_star} que $I \notin \Z_*$.
+ da \cref{def:cm_star} que $I \notin \Z_*$.
  Portanto,
  \begin{align*}
   f_*(\z_*) 
@@ -3978,7 +4216,7 @@ ao condicionamento usual no SCM aumentado.
   &= \int \left(\prod_{z \in \z_*} f(z|Pa(z))\right)
   \left(f_*(I)f_*(X|I,Pa(X))
   \prod_{v \in \bv} f(v|Pa(v))\right)d(I,X,\bv)
-  & \text{\cref{def:scm_star}} \\
+  & \text{\cref{def:cm_star}} \\
   &= \left(\prod_{z \in \z_*} f(z|Pa(z))\right) 
   \int \left(f_*(I)f_*(X|I,Pa(X)) 
   \prod_{v \in \bv} f(v|Pa(v))\right)d(I,X,\bv) 
@@ -3994,7 +4232,7 @@ ao condicionamento usual no SCM aumentado.
 
 \begin{lemma}
  \label{lemma:backdoor_5}
- Se $(\sG_*, f_*)$ é tal qual em \cref{def:scm_star} e
+ Se $(\sG_*, f_*)$ é tal qual em \cref{def:cm_star} e
  $\Z$ satisfaz o critério backdoor para
  medir o efeito causal de $X$ em $Y$, então $I \dsep \Z$.
 \end{lemma}
@@ -4521,6 +4759,154 @@ ao condicionamento usual no SCM aumentado.
   &= \int \frac{Y f(\W|x)}{f(\W|X)} f(Y,\W,X) d(Y \times \W \times Y) \\
   &= \E\left[\frac{Y f(\W|x)}{f(\W|X)} \right]
  \end{align*}
+\end{proof}
+
+\section{Relativas à \cref{sec:trad_scm_pom}}
+
+\begin{proof}[Prova do \cref{lemma:obs_to_potential}]
+ Para realizar a demonstração, provaremos que,
+ dado $\V=\bv$, $\sV \equiv \sV_{\V=\bv}$.
+ Para tal, primeiramente note que,
+ dado que $\V=\bv$, para todo
+ $\V \equiv \I(V = \bv) \equiv \V_{\bv}$.
+ 
+ A seguir, induziremos uma ordem sobre $\sV-\V$.
+ Definimos $\sV^{(0)} = \{V \in \sV-\V: Pa(V) \subset \emptyset\}$,
+ isto é $\sV^{(0)}$ são vértices no DAG que são raízes e
+ que não estão em $\V$.
+ Além disso, para todo $1 \leq i \leq n$,
+ $\sV^{(i)} = \{V \in \sV-\V: Pa(V)-\V \subseteq \sV^{(i-1)}\}$.
+ Isto é, todos os pais de $\sV^{(1)}$ não em $\V$ são raízes,
+ todos os avós de $\sV^{(2)}$ não em $\V$ são raízes, e assim por diante.
+ Como $\sV$ é finito, $\sV^{(n)} \equiv \sV-\V$.
+ 
+ A seguir, provaremos por indução finita que,
+ dado $\V=\bv$, para todo $i$, 
+ $\sV^{(i)} \equiv \sV^{(i)}_{\bv}$.
+ Primeiramente, para todo $V \in \sV^{(0)}$,
+ decorre da \cref{def:pom} que
+ $V \equiv g_V(U_V) \equiv V_{\bv}$.
+ Portanto, $\sV^{(0)} \equiv \sV^{(0)}_{\bv}$.
+ A seguir, suponha que 
+ $\sV^{(i-1)} \equiv \sV^{(i-1)}_{\bv}$ e
+ tome $V \in \sV^{(i)}$.
+ Por definição de $\sV^{(i)}$, 
+ $Pa(V) \subseteq \sV^{(i-1)} \cup \V$.
+ Por hipótese de indução,
+ $\sV^{(i-1)} \equiv \sV^{(i-1)}_{\bv}$ e
+ provamos que $\V \equiv \V_{\bv}$.
+ Portanto, $Pa(V) \equiv Pa_{\bv}(V)$.
+ Utilizando a \cref{def:pom}, conclua que
+ $V \equiv g_V(U_V, Pa(V)) \equiv
+ g_V(U_V, Pa_{\bv}(V)) \equiv V_{\bv}$.
+ Como $V$ era arbitrário,
+ conclua que $\sV^{(i)} \equiv \sV^{(i)}_{\bv}$.
+ 
+ Desta forma, dado que $\V = \bv$,
+ $\V \equiv \V_{\bv}$,
+ $\sV^{(n)} = \sV - \V$, e
+ $\sV^{(n)} \equiv \sV^{(n)}_{\bv}$.
+ Conclua que $\sV \equiv \sV_{\bv}$.
+\end{proof}
+
+\begin{proof}[Prova do \cref{lemma:po_do}]
+ \begin{align*}
+  f(\sV_{\bv})
+  &= \I(\V = \bv) \cdot \prod_{V \in \sV-\V} f^*(V_{\bv}|Pa^*(V_{\bv}))
+  & \text{\cref{def:pom}} \\
+  &= \I(V = \bv) \cdot \prod_{V \in \sV-\V} f(V|Pa(V))
+  & \text{\cref{def:scm,def:pom}} \\
+  &= f(\sV|do(\V=\bv))
+  & \text{\cref{def:intervencao}}
+ \end{align*}
+\end{proof}
+
+\begin{proof}[Prova do \cref{lemma:ignore_backdoor}]
+ ($1 \rightarrow 2$)
+ Para realizar esta demonstração provaremos que
+ a negação de $2$ implica a negação de $1$.
+ Suponha que exista um ascendente comum de $X$ e $Y$.
+ Portanto, existe $V \in \sV$,
+ um caminho direcionado de $V$ em $X$, 
+ $C^X = (V, C^X_2, \ldots, C^X_{n-1},X)$, e
+ um caminho direcionado de $V$ em $Y$,
+ $C^Y = (V, C^Y_2, \ldots, C^Y_{m-1},Y)$.
+ Defina
+ $C = (X, C^X_{n-1}, \ldots, C^X_2, V, C^Y_2, \ldots C^Y_{m-1}, Y)$.
+ Como $C^X$ é um caminho direcionado, $(C^X_{n-1}, X) \in \sE$.
+ Além disso, como $C^X$ e $C^Y$ são caminhos direcionados,
+ não há colisor em $C$.
+ Conclua que $C$ está bloqueado dado $\emptyset$.
+ Isto é, $\emptyset$ não satisfaz o critério backdoor
+ para medir o efeito causal de $X$ em $Y$.
+ 
+ ($2 \rightarrow 3$)
+ Para realizar esta demonstração provaremos que
+ a negação de $3$ implica a negação de $2$.
+ Suponha que no grafo potencial, $\sG^*$,
+ existe um caminho não bloqueado de $X$ a $Y_x$, $C$.
+ Portanto, existe $V \in \sV$ tal que
+ $C = X, \ldots V \leftarrow U_V \rightarrow V_x, \ldots Y_x$.
+ Como $C$ não está bloqueado, não há colisor em $C$.
+ Portanto,
+ \begin{align*}
+  C &= X \leftarrow \ldots \leftarrow V \leftarrow U_V 
+  \rightarrow V_x \rightarrow \ldots \rightarrow Y_x.
+ \end{align*}
+ Decorre da \cref{def:grafo_potencial} que
+ $V$ é ancestral comum de $X$ e $Y$.
+ Para constatar essa última afirmação basta
+ remover $U_V$ e $V_x$ do caminho e
+ substituir cada vértice potencial 
+ a partir de $V_x$ por sua cópia em $\sV$.
+ 
+ ($3 \rightarrow 1$)
+ Esta demonstração decorre do \cref{lemma:cignore_backdoor},
+ provado a seguir, tomando $\Z = \emptyset$.
+\end{proof}
+
+\begin{proof}[Prova do \cref{lemma:cignore_backdoor}]
+ Suponha que $\Z$ não satisfaz 
+ o critério backdoor para medir o efeito causal de $X$ em $Y$.
+ Como $X \notin Anc(\Z)$, existe 
+ um caminho não bloqueado de $X$ em $Y$ dado $\Z$,
+ $C = (X, C_2, \ldots, C_{n-1}, Y)$ tal que
+ $X \leftarrow C_2$.
+ Há dois casos para considerar:
+ $C_{n-1} \leftarrow Y$ e $C_{n-1} \rightarrow Y$.
+ 
+ Se $C_{n-1} \leftarrow Y$, então
+ não há colisor em 
+ $C_{n-1} \leftarrow Y \leftarrow U_Y \rightarrow Y_x$.
+ Portanto, $C^* = (X, C_2, \ldots, C_{n-1}, Y, U_Y, Y_x)$ é
+ um caminho desbloqueado de $X$ a $Y_x$ no grafo potencial.
+ 
+ A seguir, considere que $C_{n-1} \rightarrow Y$.
+ Tome $m = \max(\{1\} \cup \{i: C_i \text{ é colisor} \})$. 
+ Assim, $C_m \leftarrow C_{m+1} \ldots C_{n-1} \rightarrow Y$.
+ Pelo diagrama acima, existe $p > m$ tal que 
+ $C_{p-1} \leftarrow C_p \rightarrow C_{p+1}$.
+ Defina $C^* = (X_x, (C_2)_x, \ldots, (C_{n-1})_x, Y_x)$.
+ Não há colisor em 
+ $C_{p-1} \leftarrow C_p \leftarrow U_{C_p} \rightarrow C^*_p$.
+ Também, como não há colisor em $(C_p, C_{p+1}, \ldots, Y)$,
+ decorre da \cref{def:grafo_potencial} que
+ não há colisor em $(C^*_p, C^*_{p+1}, \ldots Y)$.
+ Portanto, não há colisor em
+ $(C_p, U_{C_p}, C^*_p, C^*_{p+1}, \ldots Y)$.
+ Defina 
+ \begin{align*}
+  C^+ &= (X, C_2, \ldots, C_p, U_{C_p}, C^*_p, C^*_{p+1}, \ldots Y).
+ \end{align*}
+ Como $C$ está bloqueado dado $\Z$,
+ para todo $i \leq p$, $C_i \in \Z$ 
+ se e somente se $C_i$ é um colisor em $C$.
+ Além disso, para todo $i > p$,
+ $C^+_i$ não é colisor e 
+ $C^+_i$ não está em $\Z$, pois
+ é um resultado potencial ou uma variável em $U$.
+ Assim $C^+_i$ não está bloqueado dado $\Z$ e
+ é um caminho de $X$ a $Y_x$.
 \end{proof}
 
 \end{document}
