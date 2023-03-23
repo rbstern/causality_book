@@ -299,24 +299,45 @@ o POM é consideravelmente mais complexo que o SCM original.
 Para ganhar intuição sobre o POM,
 alguns lemas de tradução são fundamentais.
 
-\begin{lemma}
+\begin{lemma} 
  \label{lemma:obs_to_potential}
- Para toda intervenção, $\V=\bv$,
- $\P(\sV = \sV_{\V=\bv}|\V = \bv) = 1$.
+ Se $\V, \Z \subseteq \sV$ e
+ $\V \cap \Z = \emptyset$, então
+ $\P(\sV_{\V=\bv} = \sV_{\Z=\bz, \V=\bv}|\Z_{\V=\bv}=\bz) = 1$.
+ Em particular,
+ \begin{align*}
+  \P(\sV = \sV_{\Z=\bz}|\Z = \bz) &= 1.
+ \end{align*}
 \end{lemma}
 
 O \cref{lemma:obs_to_potential} conecta
 o dado observacional em $\sV$ ao
-resultado potencial $\sV_{\V=\bv}$.
+resultado potencial $\sV_{\Z=\bz}$.
 Mais especificamente, quando 
-observamos que $\V=\bv$, então
+observamos que $\Z=\bz$, então
 os resultados potenciais dada a
-intervenção $\V=\bv$ são
+intervenção $\Z=\bz$ são
 idênticos aos resultados observados.
 Em outras palavras,
-ao observamos que $\V=\bv$, aprendemos que
+ao observamos que $\Z=\bz$, aprendemos que
 estamos justamente na hipótese
-de resultados potenciais em que $\V=\bv$.
+de resultados potenciais em que $\Z=\bz$.
+
+\begin{lemma}
+ \label{lemma:obs_to_potential_prev}
+ Se $\V, \Z \subseteq \sV$ e
+ $\V \cap \Z = \emptyset$, então
+ para todo $W \in \sV$,
+ \begin{align*}
+  W_{\V=\bv} \I(\Z_{\V=\bv} = \bz)
+  &\equiv W_{\Z = \bz, \V=\bv} \I(\Z_{\V=\bv} = \bz)
+ \end{align*}
+\end{lemma}
+
+O \cref{lemma:obs_to_potential_prev} é extremamente útil,
+ainda que de natureza mais técnica.
+Ele permite que relacionemos resultados potenciais em que
+diferentes tipos de intervenção são adotados.
 
 Um outro resultado essencial é
 o de que $\sV_{\V=\bv}$ tem
@@ -461,6 +482,83 @@ justificar o tipo de identificação causal
 obtida pelo critério backdoor. 
 
 \subsection{Variáveis Instrumentais}
+\label{sec:instrument}
+
+Há situações em que 
+não nos sentimentos confortáveis com
+a suposição de que observamos
+todos os confundidores ou
+todos os mediadores de $X$ a $Y$.
+Nestes casos, não é possível
+justificar os métodos baseados
+nos critérios backdoor e frontdoor
+vistos na \cref{cap:intervencao}.
+Variáveis instrumentais são 
+um modo de evitar esse tipo de suposição.
+
+Intuitivamente, uma variável instrumental, $I$, tem
+todo o seu efeito causal sobre $Y$ mediado por $X$.
+Em outra palavras, a única forma em que $I$ tem
+efeito sobre $Y$ é na medida em que 
+$I$ tem efeito sobre $X$ e, por sua vez,
+$X$ tem efeito sobre $Y$.
+Por exemplo, \citet{Angrist1990} estuda
+como participar da guerra do Vietnam, $X$, 
+tem efeito sobre a renda de um indivíduo, $Y$.
+Para tal, o estudo considera 
+os sorteios que foram realizados para
+determinar quem era recrutado para a guerra.
+O único efeito que o sorteio tem
+sobre a renda de um indivíduo é indireto,
+apenas na medida em que afeta
+a probabilidade de este indivíduo ir para a guerra.
+
+Com base neste tipo de variável,
+sob certas circunstâncias 
+é possível estimar o efeito causal de $X$ em $Y$.
+A ideia básica é a de que,
+fazendo intervenções em $I$,
+vemos mudanças tanto em $X$ quanto em $Y$.
+Como as mudanças em $Y$ devem-se apenas 
+às mudanças que ocorreram em $X$,
+pode ser possível estimar o efeito causal de $X$ em $Y$.
+
+Dada esta intuição, podemos
+definir formalmente uma variável instrumental.
+Para tal, iremos seguir de perto 
+a abordagem em \citet{Angrist1996}.
+
+\begin{definition}
+ \label{def:instrument}
+ Dizemos que $I$ é um instrumento para
+ medir o efeito causal de $X$ em $Y$ se
+ \begin{enumerate}
+  \item $Y_{I=i,X=x} \equiv Y_{X=x}$,
+  para todo $f$ compatível com $\sG$.
+  \item $Cov[I,X] \neq 0$.
+  \item $I$ é ignorável para medir o efeito em $Y$.
+ \end{enumerate}
+\end{definition}
+
+\begin{lemma}
+ \label{lemma:exclusion_dag}
+ Todo caminho direcionado de $I$ a $Y$, $C$,
+ é tal que existe $j$ com $C_j = X$ se e somente se
+ para todo $f$ compatível com $\sG$, 
+ $Y_{I=i, X=x} \equiv Y_{X=x}$.
+\end{lemma}
+
+\begin{theorem}
+ \label{thm:instrument}
+ Se $I \in\ \{0,1\}$ é um instrumento para
+ medir o efeito causal de $X \in \{0,1\}$ em $Y$ e,
+ $I$ é ignorável para medir o efeito em $Y$, e
+ $I$ é ignorável para medir o efeito em $X$, e
+ também, $\P(X_{I=1} > X_{I=0}) = 1$, então
+ \begin{align*}
+  \ACE &= \frac{\E[Y|I=1]-\E[Y|I=0]}{\E[X|I=1]-\E[X|I=0]}
+ \end{align*}
+\end{theorem}
 
 \subsection{Exercícios}
 

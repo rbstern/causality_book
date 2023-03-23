@@ -20,6 +20,7 @@ A seguir, estudaremos resultados
 essenciais destes modelos.
 
 \section{Elementos de Modelos Probabilísticos em Grafos}
+\label{sec:dag}
 
 \subsection{Grafo Direcionado}
 
@@ -311,8 +312,9 @@ pode ser útil aplicar o
  se e somente se, existem funções,
  $g_1,\ldots,g_n$ tais que:
  \begin{align*}
-  f(v_1,\ldots,v_n) 
-  &= \prod_{i=1}^n g_i(v_i, Pa(v_i)).
+  f(v_1,\ldots,v_n)
+  &= \prod_{i=1}^n g_i(v_i, Pa(v_i)) \text{, e}
+  & \int g_i(v_i, Pa(v_i)) dv_i = 1
  \end{align*}
 \end{lemma}
 
@@ -416,51 +418,12 @@ resultados a seguir:
  $V_1 \ind V_3 | V_2$.
 \end{lemma}
 
-\begin{proof}
- \begin{align*}
-  f(v_1,v_3|v_2) 
-  &= \frac{f(v_1,v_2,v_3)}{f(v_2)} \\
-  &= \frac{f(v_2)f(v_1|v_2)f(v_3|v_2)}{f(v_2)} 
-  & \text{\cref{def:compativel}} \\
-  &= f(v_1|v_2)f(v_3|v_2)
- \end{align*}
-\end{proof}
-
 \begin{lemma}
  \label{lem:conf-dep}
  Existe ao menos uma probabilidade compatível com
  o DAG na \cref{fig:confundidor} tal que
  $V_1 \not\ind V_3$.
 \end{lemma}
-
-\begin{proof}
- Considere que $V_2 \sim \text{Bernoulli}(0.02)$.
- Além disso, $V_1, V_3 \in \{0,1\}$ são independentes dado $V_2$. 
- Também,
- $\P(V_1 = 1|V_2 = 1) = \P(V_3 = 1|V_2 = 1) = 0.9$ e
- $\P(V_1 = 1|V_2 = 0) = \P(V_3 = 1|V_2 = 0) = 0.05$.
- Note que, por construção, $\P$ é 
- compatível com \cref{fig:confundidor}.
- Isto é, $P(v_1,v_2,v_3) = \P(v_2)\P(v_1|v_2)\P(v_3|v_2)$.
- Além disso,
- \begin{align*}
-  \P(V_1 = 1) &= \P(V_1 = 1, V_2 = 1) + \P(V_1 = 1, V_2 = 0) \\
-              &= \P(V_2=1)\P(V_1=1|V_2=1)
-               +\P(V_2=0)\P(V_1=1|V_2=0) \\
-              &= 0.02 \cdot 0.9 + 0.98 \cdot 0.05= 0.067
- \end{align*}
- Por simetria, $\P(V_3=1) = 0.067$. Além disso,
- \begin{align*}
-  \P(V_1 = 1, V_3 = 1)
-  &= \P(V_1 = 1, V_3 = 1, V_2 = 1) 
-  +  \P(V_1 = 1, V_3 = 1, V_2 = 0) \\
-  &= \P(V_2 = 1)\P(V_1 = 1|V_2 = 1)\P(V_3 = 1|V_2 = 1)
-  +  \P(V_2 = 0)\P(V_1 = 1|V_2 = 0)\P(V_3 = 1|V_2 = 0) \\
-  &= 0.02 \cdot 0.9 \cdot 0.9 + 0.98 \cdot 0.05 \cdot 0.05 = 0.01865
- \end{align*}
- Como $\P(V_1=1)\P(V_3=1) = 0.067 \cdot 0.067 \approx 0.0045 \neq 0.01865 = \P(V_1=1,V_3=1)$,
- temos que $V_1$ e $V_3$ não são independentes.
-\end{proof}
 
 Combinando os \cref{lem:conf-ind,lem:conf-dep} é 
 possível compreender melhor como 
@@ -531,51 +494,12 @@ resultados a seguir:
  $V_1 \ind V_3 | V_2$.
 \end{lemma}
 
-\begin{proof}
- \begin{align*}
-  f(v_3|v_1,v_2) 
-  &= \frac{f(v_1,v_2,v_3)}{f(v_1,v_2)} \\
-  &= \frac{f(v_1)f(v_2|v_1)f(v_3|v_2)}{f(v_1)f(v_2|v_1)} 
-  & \text{\cref{def:compativel}} \\
-  &= f(v_3|v_2)
- \end{align*}
-\end{proof}
-
 \begin{lemma}
  \label{lem:med-dep}
  Existe ao menos uma probabilidade compatível com
  o DAG na \cref{fig:cadeia} tal que
  $V_1 \not\ind V_3$.
 \end{lemma}
-
-\begin{proof}
- Considere que $V_1 \sim \text{Bernoulli}(0.5)$,
- $\P(V_2=1|V_1=1)=0.9$, $\P(V_2=1|V_1=0)=0.05$,
- $\P(V_3=1|V_2=1,V_1)=0.9$, e $\P(V_3=1|V_2=0,V_1)=0.05$.
- Note que $(V_1,V_2,V_3)$ formam uma Cadeia de Markov.
- Note que, por construção, $\P$ é 
- compatível com \cref{fig:cadeia}.
- Isto é, $P(v_1,v_2,v_3) = \P(v_1)\P(v_2|v_1)\P(v_3|v_2)$.
- Além disso,
- \begin{align*}
-  \P(V_3 = 1) &= \P(V_1=0, V_2=0, V_3=1) + \P(V_1=0, V_2=1, V_3=1) \\
-              &+ \P(V_1=1, V_2=0, V_3=1) + \P(V_1=1, V_2=1, V_3=1) \\
-              &= 0.5 \cdot 0.9 \cdot 0.05 + 0.5 \cdot 0.05 \cdot 0.9 \\
-              &+ 0.5 \cdot 0.05 \cdot 0.05 + 0.5 \cdot 0.9 \cdot 0.9 
-              = 0.45125
- \end{align*}
- Além disso,
- \begin{align*}
-  \P(V_1 = 1, V_3 = 1)
-  &= \P(V_1 = 1, V_2 = 0, V_3 = 1) 
-  +  \P(V_1 = 1, V_2 = 1, V_3 = 1) \\
-  &= 0.5 \cdot 0.05 \cdot 0.9 + 0.5 \cdot 0.9 \cdot 0.9
-  = 0.40625
- \end{align*}
- Como $\P(V_1=1)\P(V_3=1) = 0.5 \cdot 0.45125 \approx 0.226 \neq 
- 0.40625 = \P(V_1=1,V_3=1)$,
- temos que $V_1$ e $V_3$ não são independentes.
-\end{proof}
 
 Combinando os \cref{lem:med-ind,lem:med-dep} é 
 possível compreender melhor como 
@@ -645,32 +569,12 @@ resultados a seguir:
  $V_1 \ind V_3$.
 \end{lemma}
 
-\begin{proof}
- \begin{align*}
-  f(v_1,v_3) 
-  &= \int f(v_1, v_2, v_3) dv_2 \\
-  &= \int f(v_1)f(v_3)f(v_2|v_1,v_3) dv_2 
-  & \text{\cref{def:compativel}} \\
-  &= f(v_1)f(v_3) \int f(v_2|v_1,v_3) dv_2 \\
-  &= f(v_1)f(v_3)
- \end{align*}
-\end{proof}
-
 \begin{lemma}
  \label{lem:col-dep}
  Existe ao menos uma probabilidade compatível com
  o DAG na \cref{fig:colisor} tal que
  $V_1 \not\ind V_3 | V_2$.
 \end{lemma}
-
-\begin{proof}
- Considere que $V_1$ e $V_3$ são
- independentes e tem distribuição $\text{Bernoulli}(0.5)$.
- Além disso, $V_2 \equiv V_1+V_3$.
- Como $\P(V_3 = 1) = 0.5$ e
- $\P(V_3=1|V_1=1,V_2=2) = 1$, conclua que
- $V_1 \not\ind V_3 | V_2$.
-\end{proof}
 
 Combinando os \cref{lem:col-ind,lem:col-dep} vemos 
 como utilizaremos confundidores num contexto causal.
@@ -760,7 +664,7 @@ reduz a probabilidade que ele tenha a outra.
 \subsection{Modelo Causal (Causal Model)}
 
 Com base nos conceitos abordados anteriormente,
-finalmente podemos definir formalmente
+finalmente podemos definir
 o Modelo Causal (\CM):
 
 \begin{definition}
@@ -795,7 +699,6 @@ se e somente se $V_1$ é uma causa direta de $V_2$.
 \begin{lemma}
  Se $(\sG,f)$ é um \CM linear Gaussiano, então
  $\sV \sim N(0, (I-\beta)^{-1}\Sigma((I-\beta)^{-1})^t)$.
- 
 \end{lemma}
 
 No próximo capítulo estudaremos consequências desta interpretação causal.
@@ -830,8 +733,8 @@ será fundamental nos capítulos posteriores.
  $\sG_2 = (\sV, \sE_2)$ grafos
  tais que $\sE_1 \subseteq \sE_2$.
  Prove que se 
- $f$ é compatível com $\sG_2$, então 
- $f$ é compatível com $\sG_1$.
+ $f$ é compatível com $\sG_1$, então 
+ $f$ é compatível com $\sG_2$.
 \end{exercise}
 
 \begin{exercise}

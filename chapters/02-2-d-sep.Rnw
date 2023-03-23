@@ -121,24 +121,25 @@ ggdag(grafo, layout = "circle") +
   xlab("") + ylab("")
 @
 
-Com base na \cref{def:caminho-cat}, é
-possível compreender se um caminho permite a
-passagem de informação.
+Com base nas conclusões da \cref{sec:dag-ex},
+é possível compreender a racionalidade
+da \cref{def:caminho-cat}.
 Na \cref{sec:dag-ex} vimos que,
-se $V_2$ não é um colisor entre
-$V_1$ e $V_3$, então
-$V_1$ e $V_3$ são independentes dado $V_2$.
+se $Z$ não é um colisor entre
+$X$ e $Y$, então
+$X$ e $Y$ são independentes dado $Z$.
 Por analogia, podemos intuir que um vértice que
 não é um colisor num caminho
 não permite a passagem de informação
 quando seu valor é conhecido.
 Similarmente, na \cref{sec:dag-ex},
-se $V_2$ é um colisor entre
-$V_1$ e $V_3$, então 
-$V_1$ e $V_3$ são independentes.
+se $Z$ é um colisor entre
+$X$ e $Y$, então 
+$X$ e $Y$ são independentes.
 Assim, também podemos intuir que um vértice que
 é um colisor em um caminho não permite
-a passagem de informação quando seu valor é desconhecido.
+a passagem de informação quando seu valor e
+o de seus descendentes é desconhecido.
 Finalmente, a informação não passa pelo caminho quando
 ela não passa por pelo menos um de seus vértices.
 Neste caso, dizemos que o caminho está \textit{bloqueado}:

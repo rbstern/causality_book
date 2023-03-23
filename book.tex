@@ -229,6 +229,7 @@ A seguir, estudaremos resultados
 essenciais destes modelos.
 
 \section{Elementos de Modelos Probabilísticos em Grafos}
+\label{sec:dag}
 
 \subsection{Grafo Direcionado}
 
@@ -532,8 +533,9 @@ pode ser útil aplicar o
  se e somente se, existem funções,
  $g_1,\ldots,g_n$ tais que:
  \begin{align*}
-  f(v_1,\ldots,v_n) 
-  &= \prod_{i=1}^n g_i(v_i, Pa(v_i)).
+  f(v_1,\ldots,v_n)
+  &= \prod_{i=1}^n g_i(v_i, Pa(v_i)) \text{, e}
+  & \int g_i(v_i, Pa(v_i)) dv_i = 1
  \end{align*}
 \end{lemma}
 
@@ -631,51 +633,12 @@ resultados a seguir:
  $V_1 \ind V_3 | V_2$.
 \end{lemma}
 
-\begin{proof}
- \begin{align*}
-  f(v_1,v_3|v_2) 
-  &= \frac{f(v_1,v_2,v_3)}{f(v_2)} \\
-  &= \frac{f(v_2)f(v_1|v_2)f(v_3|v_2)}{f(v_2)} 
-  & \text{\cref{def:compativel}} \\
-  &= f(v_1|v_2)f(v_3|v_2)
- \end{align*}
-\end{proof}
-
 \begin{lemma}
  \label{lem:conf-dep}
  Existe ao menos uma probabilidade compatível com
  o DAG na \cref{fig:confundidor} tal que
  $V_1 \not\ind V_3$.
 \end{lemma}
-
-\begin{proof}
- Considere que $V_2 \sim \text{Bernoulli}(0.02)$.
- Além disso, $V_1, V_3 \in \{0,1\}$ são independentes dado $V_2$. 
- Também,
- $\P(V_1 = 1|V_2 = 1) = \P(V_3 = 1|V_2 = 1) = 0.9$ e
- $\P(V_1 = 1|V_2 = 0) = \P(V_3 = 1|V_2 = 0) = 0.05$.
- Note que, por construção, $\P$ é 
- compatível com \cref{fig:confundidor}.
- Isto é, $P(v_1,v_2,v_3) = \P(v_2)\P(v_1|v_2)\P(v_3|v_2)$.
- Além disso,
- \begin{align*}
-  \P(V_1 = 1) &= \P(V_1 = 1, V_2 = 1) + \P(V_1 = 1, V_2 = 0) \\
-              &= \P(V_2=1)\P(V_1=1|V_2=1)
-               +\P(V_2=0)\P(V_1=1|V_2=0) \\
-              &= 0.02 \cdot 0.9 + 0.98 \cdot 0.05= 0.067
- \end{align*}
- Por simetria, $\P(V_3=1) = 0.067$. Além disso,
- \begin{align*}
-  \P(V_1 = 1, V_3 = 1)
-  &= \P(V_1 = 1, V_3 = 1, V_2 = 1) 
-  +  \P(V_1 = 1, V_3 = 1, V_2 = 0) \\
-  &= \P(V_2 = 1)\P(V_1 = 1|V_2 = 1)\P(V_3 = 1|V_2 = 1)
-  +  \P(V_2 = 0)\P(V_1 = 1|V_2 = 0)\P(V_3 = 1|V_2 = 0) \\
-  &= 0.02 \cdot 0.9 \cdot 0.9 + 0.98 \cdot 0.05 \cdot 0.05 = 0.01865
- \end{align*}
- Como $\P(V_1=1)\P(V_3=1) = 0.067 \cdot 0.067 \approx 0.0045 \neq 0.01865 = \P(V_1=1,V_3=1)$,
- temos que $V_1$ e $V_3$ não são independentes.
-\end{proof}
 
 Combinando os \cref{lem:conf-ind,lem:conf-dep} é 
 possível compreender melhor como 
@@ -740,51 +703,12 @@ resultados a seguir:
  $V_1 \ind V_3 | V_2$.
 \end{lemma}
 
-\begin{proof}
- \begin{align*}
-  f(v_3|v_1,v_2) 
-  &= \frac{f(v_1,v_2,v_3)}{f(v_1,v_2)} \\
-  &= \frac{f(v_1)f(v_2|v_1)f(v_3|v_2)}{f(v_1)f(v_2|v_1)} 
-  & \text{\cref{def:compativel}} \\
-  &= f(v_3|v_2)
- \end{align*}
-\end{proof}
-
 \begin{lemma}
  \label{lem:med-dep}
  Existe ao menos uma probabilidade compatível com
  o DAG na \cref{fig:cadeia} tal que
  $V_1 \not\ind V_3$.
 \end{lemma}
-
-\begin{proof}
- Considere que $V_1 \sim \text{Bernoulli}(0.5)$,
- $\P(V_2=1|V_1=1)=0.9$, $\P(V_2=1|V_1=0)=0.05$,
- $\P(V_3=1|V_2=1,V_1)=0.9$, e $\P(V_3=1|V_2=0,V_1)=0.05$.
- Note que $(V_1,V_2,V_3)$ formam uma Cadeia de Markov.
- Note que, por construção, $\P$ é 
- compatível com \cref{fig:cadeia}.
- Isto é, $P(v_1,v_2,v_3) = \P(v_1)\P(v_2|v_1)\P(v_3|v_2)$.
- Além disso,
- \begin{align*}
-  \P(V_3 = 1) &= \P(V_1=0, V_2=0, V_3=1) + \P(V_1=0, V_2=1, V_3=1) \\
-              &+ \P(V_1=1, V_2=0, V_3=1) + \P(V_1=1, V_2=1, V_3=1) \\
-              &= 0.5 \cdot 0.9 \cdot 0.05 + 0.5 \cdot 0.05 \cdot 0.9 \\
-              &+ 0.5 \cdot 0.05 \cdot 0.05 + 0.5 \cdot 0.9 \cdot 0.9 
-              = 0.45125
- \end{align*}
- Além disso,
- \begin{align*}
-  \P(V_1 = 1, V_3 = 1)
-  &= \P(V_1 = 1, V_2 = 0, V_3 = 1) 
-  +  \P(V_1 = 1, V_2 = 1, V_3 = 1) \\
-  &= 0.5 \cdot 0.05 \cdot 0.9 + 0.5 \cdot 0.9 \cdot 0.9
-  = 0.40625
- \end{align*}
- Como $\P(V_1=1)\P(V_3=1) = 0.5 \cdot 0.45125 \approx 0.226 \neq 
- 0.40625 = \P(V_1=1,V_3=1)$,
- temos que $V_1$ e $V_3$ não são independentes.
-\end{proof}
 
 Combinando os \cref{lem:med-ind,lem:med-dep} é 
 possível compreender melhor como 
@@ -848,32 +772,12 @@ resultados a seguir:
  $V_1 \ind V_3$.
 \end{lemma}
 
-\begin{proof}
- \begin{align*}
-  f(v_1,v_3) 
-  &= \int f(v_1, v_2, v_3) dv_2 \\
-  &= \int f(v_1)f(v_3)f(v_2|v_1,v_3) dv_2 
-  & \text{\cref{def:compativel}} \\
-  &= f(v_1)f(v_3) \int f(v_2|v_1,v_3) dv_2 \\
-  &= f(v_1)f(v_3)
- \end{align*}
-\end{proof}
-
 \begin{lemma}
  \label{lem:col-dep}
  Existe ao menos uma probabilidade compatível com
  o DAG na \cref{fig:colisor} tal que
  $V_1 \not\ind V_3 | V_2$.
 \end{lemma}
-
-\begin{proof}
- Considere que $V_1$ e $V_3$ são
- independentes e tem distribuição $\text{Bernoulli}(0.5)$.
- Além disso, $V_2 \equiv V_1+V_3$.
- Como $\P(V_3 = 1) = 0.5$ e
- $\P(V_3=1|V_1=1,V_2=2) = 1$, conclua que
- $V_1 \not\ind V_3 | V_2$.
-\end{proof}
 
 Combinando os \cref{lem:col-ind,lem:col-dep} vemos 
 como utilizaremos confundidores num contexto causal.
@@ -963,7 +867,7 @@ reduz a probabilidade que ele tenha a outra.
 \subsection{Modelo Causal (Causal Model)}
 
 Com base nos conceitos abordados anteriormente,
-finalmente podemos definir formalmente
+finalmente podemos definir
 o Modelo Causal (\CM):
 
 \begin{definition}
@@ -998,7 +902,6 @@ se e somente se $V_1$ é uma causa direta de $V_2$.
 \begin{lemma}
  Se $(\sG,f)$ é um \CM linear Gaussiano, então
  $\sV \sim N(0, (I-\beta)^{-1}\Sigma((I-\beta)^{-1})^t)$.
- 
 \end{lemma}
 
 No próximo capítulo estudaremos consequências desta interpretação causal.
@@ -1228,24 +1131,25 @@ no segundo $V_2$ é uma cadeia
 
 \end{knitrout}
 
-Com base na \cref{def:caminho-cat}, é
-possível compreender se um caminho permite a
-passagem de informação.
+Com base nas conclusões da \cref{sec:dag-ex},
+é possível compreender a racionalidade
+da \cref{def:caminho-cat}.
 Na \cref{sec:dag-ex} vimos que,
-se $V_2$ não é um colisor entre
-$V_1$ e $V_3$, então
-$V_1$ e $V_3$ são independentes dado $V_2$.
+se $Z$ não é um colisor entre
+$X$ e $Y$, então
+$X$ e $Y$ são independentes dado $Z$.
 Por analogia, podemos intuir que um vértice que
 não é um colisor num caminho
 não permite a passagem de informação
 quando seu valor é conhecido.
 Similarmente, na \cref{sec:dag-ex},
-se $V_2$ é um colisor entre
-$V_1$ e $V_3$, então 
-$V_1$ e $V_3$ são independentes.
+se $Z$ é um colisor entre
+$X$ e $Y$, então 
+$X$ e $Y$ são independentes.
 Assim, também podemos intuir que um vértice que
 é um colisor em um caminho não permite
-a passagem de informação quando seu valor é desconhecido.
+a passagem de informação quando seu valor e
+o de seus descendentes é desconhecido.
 Finalmente, a informação não passa pelo caminho quando
 ela não passa por pelo menos um de seus vértices.
 Neste caso, dizemos que o caminho está \textit{bloqueado}:
@@ -3637,24 +3541,45 @@ o POM é consideravelmente mais complexo que o SCM original.
 Para ganhar intuição sobre o POM,
 alguns lemas de tradução são fundamentais.
 
-\begin{lemma}
+\begin{lemma} 
  \label{lemma:obs_to_potential}
- Para toda intervenção, $\V=\bv$,
- $\P(\sV = \sV_{\V=\bv}|\V = \bv) = 1$.
+ Se $\V, \Z \subseteq \sV$ e
+ $\V \cap \Z = \emptyset$, então
+ $\P(\sV_{\V=\bv} = \sV_{\Z=\bz, \V=\bv}|\Z_{\V=\bv}=\bz) = 1$.
+ Em particular,
+ \begin{align*}
+  \P(\sV = \sV_{\Z=\bz}|\Z = \bz) &= 1.
+ \end{align*}
 \end{lemma}
 
 O \cref{lemma:obs_to_potential} conecta
 o dado observacional em $\sV$ ao
-resultado potencial $\sV_{\V=\bv}$.
+resultado potencial $\sV_{\Z=\bz}$.
 Mais especificamente, quando 
-observamos que $\V=\bv$, então
+observamos que $\Z=\bz$, então
 os resultados potenciais dada a
-intervenção $\V=\bv$ são
+intervenção $\Z=\bz$ são
 idênticos aos resultados observados.
 Em outras palavras,
-ao observamos que $\V=\bv$, aprendemos que
+ao observamos que $\Z=\bz$, aprendemos que
 estamos justamente na hipótese
-de resultados potenciais em que $\V=\bv$.
+de resultados potenciais em que $\Z=\bz$.
+
+\begin{lemma}
+ \label{lemma:obs_to_potential_prev}
+ Se $\V, \Z \subseteq \sV$ e
+ $\V \cap \Z = \emptyset$, então
+ para todo $W \in \sV$,
+ \begin{align*}
+  W_{\V=\bv} \I(\Z_{\V=\bv} = \bz)
+  &\equiv W_{\Z = \bz, \V=\bv} \I(\Z_{\V=\bv} = \bz)
+ \end{align*}
+\end{lemma}
+
+O \cref{lemma:obs_to_potential_prev} é extremamente útil,
+ainda que de natureza mais técnica.
+Ele permite que relacionemos resultados potenciais em que
+diferentes tipos de intervenção são adotados.
 
 Um outro resultado essencial é
 o de que $\sV_{\V=\bv}$ tem
@@ -3799,6 +3724,83 @@ justificar o tipo de identificação causal
 obtida pelo critério backdoor. 
 
 \subsection{Variáveis Instrumentais}
+\label{sec:instrument}
+
+Há situações em que 
+não nos sentimentos confortáveis com
+a suposição de que observamos
+todos os confundidores ou
+todos os mediadores de $X$ a $Y$.
+Nestes casos, não é possível
+justificar os métodos baseados
+nos critérios backdoor e frontdoor
+vistos na \cref{cap:intervencao}.
+Variáveis instrumentais são 
+um modo de evitar esse tipo de suposição.
+
+Intuitivamente, uma variável instrumental, $I$, tem
+todo o seu efeito causal sobre $Y$ mediado por $X$.
+Em outra palavras, a única forma em que $I$ tem
+efeito sobre $Y$ é na medida em que 
+$I$ tem efeito sobre $X$ e, por sua vez,
+$X$ tem efeito sobre $Y$.
+Por exemplo, \citet{Angrist1990} estuda
+como participar da guerra do Vietnam, $X$, 
+tem efeito sobre a renda de um indivíduo, $Y$.
+Para tal, o estudo considera 
+os sorteios que foram realizados para
+determinar quem era recrutado para a guerra.
+O único efeito que o sorteio tem
+sobre a renda de um indivíduo é indireto,
+apenas na medida em que afeta
+a probabilidade de este indivíduo ir para a guerra.
+
+Com base neste tipo de variável,
+sob certas circunstâncias 
+é possível estimar o efeito causal de $X$ em $Y$.
+A ideia básica é a de que,
+fazendo intervenções em $I$,
+vemos mudanças tanto em $X$ quanto em $Y$.
+Como as mudanças em $Y$ devem-se apenas 
+às mudanças que ocorreram em $X$,
+pode ser possível estimar o efeito causal de $X$ em $Y$.
+
+Dada esta intuição, podemos
+definir formalmente uma variável instrumental.
+Para tal, iremos seguir de perto 
+a abordagem em \citet{Angrist1996}.
+
+\begin{definition}
+ \label{def:instrument}
+ Dizemos que $I$ é um instrumento para
+ medir o efeito causal de $X$ em $Y$ se
+ \begin{enumerate}
+  \item $Y_{I=i,X=x} \equiv Y_{X=x}$,
+  para todo $f$ compatível com $\sG$.
+  \item $Cov[I,X] \neq 0$.
+  \item $I$ é ignorável para medir o efeito em $Y$.
+ \end{enumerate}
+\end{definition}
+
+\begin{lemma}
+ \label{lemma:exclusion_dag}
+ Todo caminho direcionado de $I$ a $Y$, $C$,
+ é tal que existe $i$ com $C_i = X$ se e somente se
+ para todo $f$ compatível com $\sG$, 
+ $Y_{I=i,X=x} \equiv Y_{X=x}$.
+\end{lemma}
+
+\begin{theorem}
+ \label{thm:instrument}
+ Se $I \in\ \{0,1\}$ é um instrumento para
+ medir o efeito causal de $X \in \{0,1\}$ em $Y$ e,
+ $I$ é ignorável para medir o efeito em $Y$, e
+ $I$ é ignorável para medir o efeito em $X$, e
+ também, $\P(X_{I=1} > X_{I=0}) = 1$, então
+ \begin{align*}
+  \ACE &= \frac{\E[Y|I=1]-\E[Y|I=0]}{\E[X|I=1]-\E[X|I=0]}
+ \end{align*}
+\end{theorem}
 
 \subsection{Exercícios}
 
@@ -3834,6 +3836,106 @@ obtida pelo critério backdoor.
 \appendix
 
 \chapter{Demonstrações}
+
+\section{Relativas à \text{\cref{sec:dag-ex}}}
+
+\begin{proof}[Prova do \cref{lem:conf-ind}]
+ \begin{align*}
+  f(v_1,v_3|v_2) 
+  &= \frac{f(v_1,v_2,v_3)}{f(v_2)} \\
+  &= \frac{f(v_2)f(v_1|v_2)f(v_3|v_2)}{f(v_2)} 
+  & \text{\cref{def:compativel}} \\
+  &= f(v_1|v_2)f(v_3|v_2)
+ \end{align*}
+\end{proof}
+
+\begin{proof}[Prova do \cref{lem:conf-dep}]
+ Considere que $V_2 \sim \text{Bernoulli}(0.02)$.
+ Além disso, $V_1, V_3 \in \{0,1\}$ são independentes dado $V_2$. 
+ Também,
+ $\P(V_1 = 1|V_2 = 1) = \P(V_3 = 1|V_2 = 1) = 0.9$ e
+ $\P(V_1 = 1|V_2 = 0) = \P(V_3 = 1|V_2 = 0) = 0.05$.
+ Note que, por construção, $\P$ é 
+ compatível com \cref{fig:confundidor}.
+ Isto é, $P(v_1,v_2,v_3) = \P(v_2)\P(v_1|v_2)\P(v_3|v_2)$.
+ Além disso,
+ \begin{align*}
+  \P(V_1 = 1) &= \P(V_1 = 1, V_2 = 1) + \P(V_1 = 1, V_2 = 0) \\
+              &= \P(V_2=1)\P(V_1=1|V_2=1)
+               +\P(V_2=0)\P(V_1=1|V_2=0) \\
+              &= 0.02 \cdot 0.9 + 0.98 \cdot 0.05= 0.067
+ \end{align*}
+ Por simetria, $\P(V_3=1) = 0.067$. Além disso,
+ \begin{align*}
+  \P(V_1 = 1, V_3 = 1)
+  &= \P(V_1 = 1, V_3 = 1, V_2 = 1) 
+  +  \P(V_1 = 1, V_3 = 1, V_2 = 0) \\
+  &= \P(V_2 = 1)\P(V_1 = 1|V_2 = 1)\P(V_3 = 1|V_2 = 1)
+  +  \P(V_2 = 0)\P(V_1 = 1|V_2 = 0)\P(V_3 = 1|V_2 = 0) \\
+  &= 0.02 \cdot 0.9 \cdot 0.9 + 0.98 \cdot 0.05 \cdot 0.05 = 0.01865
+ \end{align*}
+ Como $\P(V_1=1)\P(V_3=1) = 0.067 \cdot 0.067 \approx 0.0045 \neq 0.01865 = \P(V_1=1,V_3=1)$,
+ temos que $V_1$ e $V_3$ não são independentes.
+\end{proof}
+
+\begin{proof}[Prova do \cref{lem:med-ind}]
+ \begin{align*}
+  f(v_3|v_1,v_2) 
+  &= \frac{f(v_1,v_2,v_3)}{f(v_1,v_2)} \\
+  &= \frac{f(v_1)f(v_2|v_1)f(v_3|v_2)}{f(v_1)f(v_2|v_1)} 
+  & \text{\cref{def:compativel}} \\
+  &= f(v_3|v_2)
+ \end{align*}
+\end{proof}
+
+\begin{proof}[Prova do \cref{lem:med-dep}]
+ Considere que $V_1 \sim \text{Bernoulli}(0.5)$,
+ $\P(V_2=1|V_1=1)=0.9$, $\P(V_2=1|V_1=0)=0.05$,
+ $\P(V_3=1|V_2=1,V_1)=0.9$, e $\P(V_3=1|V_2=0,V_1)=0.05$.
+ Note que $(V_1,V_2,V_3)$ formam uma Cadeia de Markov.
+ Note que, por construção, $\P$ é 
+ compatível com \cref{fig:cadeia}.
+ Isto é, $P(v_1,v_2,v_3) = \P(v_1)\P(v_2|v_1)\P(v_3|v_2)$.
+ Além disso,
+ \begin{align*}
+  \P(V_3 = 1) &= \P(V_1=0, V_2=0, V_3=1) + \P(V_1=0, V_2=1, V_3=1) \\
+              &+ \P(V_1=1, V_2=0, V_3=1) + \P(V_1=1, V_2=1, V_3=1) \\
+              &= 0.5 \cdot 0.9 \cdot 0.05 + 0.5 \cdot 0.05 \cdot 0.9 \\
+              &+ 0.5 \cdot 0.05 \cdot 0.05 + 0.5 \cdot 0.9 \cdot 0.9 
+              = 0.45125
+ \end{align*}
+ Além disso,
+ \begin{align*}
+  \P(V_1 = 1, V_3 = 1)
+  &= \P(V_1 = 1, V_2 = 0, V_3 = 1) 
+  +  \P(V_1 = 1, V_2 = 1, V_3 = 1) \\
+  &= 0.5 \cdot 0.05 \cdot 0.9 + 0.5 \cdot 0.9 \cdot 0.9
+  = 0.40625
+ \end{align*}
+ Como $\P(V_1=1)\P(V_3=1) = 0.5 \cdot 0.45125 \approx 0.226 \neq 
+ 0.40625 = \P(V_1=1,V_3=1)$,
+ temos que $V_1$ e $V_3$ não são independentes.
+\end{proof}
+
+\begin{proof}[Prova do \cref{lem:col-ind}]
+ \begin{align*}
+  f(v_1,v_3) 
+  &= \int f(v_1, v_2, v_3) dv_2 \\
+  &= \int f(v_1)f(v_3)f(v_2|v_1,v_3) dv_2 
+  & \text{\cref{def:compativel}} \\
+  &= f(v_1)f(v_3) \int f(v_2|v_1,v_3) dv_2 \\
+  &= f(v_1)f(v_3)
+ \end{align*}
+\end{proof}
+
+\begin{proof}[Prova do \cref{lem:col-dep}]
+ Considere que $V_1$ e $V_3$ são
+ independentes e tem distribuição $\text{Bernoulli}(0.5)$.
+ Além disso, $V_2 \equiv V_1+V_3$.
+ Como $\P(V_3 = 1) = 0.5$ e
+ $\P(V_3=1|V_1=1,V_2=2) = 1$, conclua que
+ $V_1 \not\ind V_3 | V_2$.
+\end{proof}
 
 \section{Relativas à \text{\cref{sec:d-sep}}}
 
@@ -4567,7 +4669,7 @@ ao condicionamento usual no SCM aumentado.
  Definindo $g_{X_i}(X_i) = \I(X_i=x_i)$, para todo $X_i \in \X$ e
  $g_V(V,Pa(V)) = f(v|Pa(V))$, note que
  \begin{align*}
-  f^*(\sV) 
+  f^*(\sV)
   &= \prod_{X_i \in \X}g_{X_i}(X_i)
   \prod_{V \notin \X}g_V(V,Pa(V)) 
  \end{align*}
@@ -4763,50 +4865,85 @@ ao condicionamento usual no SCM aumentado.
 
 \section{Relativas à \cref{sec:trad_scm_pom}}
 
-\begin{proof}[Prova do \cref{lemma:obs_to_potential}]
- Para realizar a demonstração, provaremos que,
- dado $\V=\bv$, $\sV \equiv \sV_{\V=\bv}$.
- Para tal, primeiramente note que,
- dado que $\V=\bv$, para todo
- $\V \equiv \I(V = \bv) \equiv \V_{\bv}$.
+\begin{proof}[Prova do \cref{lemma:obs_to_potential_prev}]
+ Se $\Z_{\V=\bv}(\omega) \neq \bz$, então
+ $\I(\Z_{\V=\bv}(\omega) = \bz) = 0$ e
+ \begin{align*}
+  W_{\V=\bv}(\omega) \I(\Z_{\V=\bv}(\omega) = \bz)
+  &= 0 = W_{\Z = \bz, \V=\bv}(\omega) 
+  \I(\Z_{\V=\bv}(\omega) = \bz)
+ \end{align*}
+ Se $\Z_{\V=\bv}(\omega) = \bz$, então
+ $\I(\Z_{\V=\bv}(\omega) = \bz) = 1$ e
+ basta provar que
+ $W_{\V=\bv}(\omega) = W_{\Z = \bz, \V=\bv}(\omega)$.
+
+ Para tal, considere primeiramente que $W \in \Z$.
+ Pela definição de $\omega$, 
+ $\Z_{\V=\bv}(\omega) = \bz = \Z_{\Z = \bz, \V=\bv}(\omega)$.
+ Portanto, $W_{\V=\bv}(\omega) = W_{\Z = \bz, \V=\bv}(\omega)$.
+ Similarmente, se $W \in \V$, decorre da \cref{def:pom} que
+ $\V_{\V=\bv}(\omega) = \bv =\V_{\Z = \bz, \V=\bv}(\omega)$.
+ Portanto, $W_{\V=\bv}(\omega) = W_{\Z = \bz, \V=\bv}(\omega)$.
+ Assim, resta considerar o caso em que
+ $W \notin (\Z \cup \V)$.
  
- A seguir, induziremos uma ordem sobre $\sV-\V$.
- Definimos $\sV^{(0)} = \{V \in \sV-\V: Pa(V) \subset \emptyset\}$,
- isto é $\sV^{(0)}$ são vértices no DAG que são raízes e
- que não estão em $\V$.
+ Para provar este fato,
+ construíremos uma ordem sobre $\sV-(\Z \cup \V)$.
+ Defina $\sV^{(0)} = \{W \in \sV-(\Z \cup \V): Pa(W) = \emptyset\}$,
+ isto é $\sV^{(0)}$ são vértices no DAG que 
+ não estão em $\Z \cup \V$ e que são raízes.
  Além disso, para todo $1 \leq i \leq n$,
- $\sV^{(i)} = \{V \in \sV-\V: Pa(V)-\V \subseteq \sV^{(i-1)}\}$.
- Isto é, todos os pais de $\sV^{(1)}$ não em $\V$ são raízes,
- todos os avós de $\sV^{(2)}$ não em $\V$ são raízes, e assim por diante.
- Como $\sV$ é finito, $\sV^{(n)} \equiv \sV-\V$.
+ $\sV^{(i)} = \{W \in \sV-(\Z \cup \V): 
+ Pa(W) \subseteq \sV^{(i-1)} \cup (\Z \cup \V)\}$.
+ Isto é, todos os pais de $\sV^{(1)}$ são raízes
+ ou estão em $(\Z \cup \V)$,
+ todos os avós de $\sV^{(2)}$ 
+ são raízes ou estão em $(\Z \cup \V)$, e assim por diante.
+ Como $\sV$ é finito, existe $n$ tal que
+ $\sV^{(n)} \equiv \sV-(\U \cup \V)$.
  
- A seguir, provaremos por indução finita que,
- dado $\V=\bv$, para todo $i$, 
- $\sV^{(i)} \equiv \sV^{(i)}_{\bv}$.
- Primeiramente, para todo $V \in \sV^{(0)}$,
+ Completaremos a prova por indução finita.
+ Primeiramente, se $W \in \sV^{(0)}$,
  decorre da \cref{def:pom} que
- $V \equiv g_V(U_V) \equiv V_{\bv}$.
- Portanto, $\sV^{(0)} \equiv \sV^{(0)}_{\bv}$.
+ $W_{\V=\bv} \equiv g_W(U_W) \equiv W_{\Z=\bz,\V=\bv}$.
+ Em particular,
+ $W_{\V=\bv}(\omega) = W_{\Z=\bz,\V=\bv}(\omega)$.
  A seguir, suponha que 
- $\sV^{(i-1)} \equiv \sV^{(i-1)}_{\bv}$ e
- tome $V \in \sV^{(i)}$.
+ para todo $W \in \sV^{(i-1)}$,
+ $W_{\V=\bv}(\omega) =  W_{\Z=\bz,\V=\bv}(\omega)$ e
+ tome $W \in \sV^{(i)}$.
  Por definição de $\sV^{(i)}$, 
- $Pa(V) \subseteq \sV^{(i-1)} \cup \V$.
+ $Pa(W) \subseteq \sV^{(i-1)} \cup (\Z \cup \V)$.
+ Tome $W^* \in Pa(W)$.
  Por hipótese de indução,
- $\sV^{(i-1)} \equiv \sV^{(i-1)}_{\bv}$ e
- provamos que $\V \equiv \V_{\bv}$.
- Portanto, $Pa(V) \equiv Pa_{\bv}(V)$.
- Utilizando a \cref{def:pom}, conclua que
- $V \equiv g_V(U_V, Pa(V)) \equiv
- g_V(U_V, Pa_{\bv}(V)) \equiv V_{\bv}$.
- Como $V$ era arbitrário,
- conclua que $\sV^{(i)} \equiv \sV^{(i)}_{\bv}$.
- 
- Desta forma, dado que $\V = \bv$,
- $\V \equiv \V_{\bv}$,
- $\sV^{(n)} = \sV - \V$, e
- $\sV^{(n)} \equiv \sV^{(n)}_{\bv}$.
- Conclua que $\sV \equiv \sV_{\bv}$.
+ se $W^* \in \sV^{(i-1)}$, então
+ $W^*_{\V=\bv}(\omega) =  W^*_{\Z=\bz,\V=\bv}(\omega)$.
+ Também provamos que, se $W^* \in \Z \cup \V$, então
+ $W^*_{\V=\bv}(\omega) =  W^*_{\Z=\bz,\V=\bv}(\omega)$.
+ Conclua que 
+ $Pa^*(W_{\V=\bv})(\omega) = Pa^*(W_{\Z=\bz,\V=\bv})(\omega)$.
+ Como decorre da \cref{def:pom} que
+ $W_{\V=\bv} \equiv g_W(U_W, Pa^*(W_{\V=\bv}))$ e
+ $W_{\Z=\bz,\V=\bv} \equiv g_W(U_W, Pa^*(W_{\Z=\bz,\V=\bv}))$ e
+ $Pa^*(W_{\V=\bv})(\omega) = Pa(W^*_{\Z=\bz,\V=\bv})(\omega)$,
+ conclua que
+ $W_{\V=\bv}(\omega) = W_{\Z=\bz,\V=\bv}(\omega)$.
+ A prova está completa observando que
+ $W \in \sV^(n) = \sV - (\Z \cup \V)$.
+\end{proof}
+
+\begin{proof}[Prova do \cref{lemma:obs_to_potential}]
+ \begin{align*}
+  &\P(\sV_{\V=\bv} = \sV_{\Z=\bz, \V=\bv}|\Z_{\V=\bv}=\bz) \\
+  =& \P(W_{\V=\bv} = W_{\Z=\bz, \V=\bv}, 
+  \forall W \in \sV |\Z_{\V=\bv}=\bz) \\
+  =& \P(W_{\V=\bv}\I(\Z_{\V=\bv}=\bz) 
+  = W_{\Z=\bz, \V=\bv}\I(\Z_{\V=\bv}=\bz), 
+  \forall W \in \sV |\Z_{\V=\bv}=\bz) \\
+  =& 1 
+  & \text{\cref{lemma:obs_to_potential_prev}}
+ \end{align*}
 \end{proof}
 
 \begin{proof}[Prova do \cref{lemma:po_do}]
@@ -4908,5 +5045,12 @@ ao condicionamento usual no SCM aumentado.
  Assim $C^+_i$ não está bloqueado dado $\Z$ e
  é um caminho de $X$ a $Y_x$.
 \end{proof}
+
+\section{Relativas à \cref{sec:instrument}}
+
+\begin{proof}[Prova do \cref{lemma:exclusion_dag}]
+ 1
+\end{proof}
+
 
 \end{document}
