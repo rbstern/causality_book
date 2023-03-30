@@ -39,6 +39,15 @@ opts_chunk$set(cache=TRUE,fig.path="./figures/")
 \bibliographystyle{apalike}
 \bibliography{book}
 
-\Sexpr{knit_child("chapters/0A-proofs.Rnw")}
+\appendix
+\chapter{Demonstrações}
+\Sexpr{knit_child("chapters/0A-proofs-1-dag.Rnw")}
+\Sexpr{knit_child("chapters/0A-proofs-2-dsep.Rnw")}
+\Sexpr{knit_child("chapters/0A-proofs-3-intervencoes.Rnw")}
+\Sexpr{knit_child("chapters/0A-proofs-3-backdoor-id.Rnw")}
+\Sexpr{knit_child("chapters/0A-proofs-4-backdoor-est.Rnw")}
+\Sexpr{knit_child("chapters/0A-proofs-5-backdoor-rdd.Rnw")}
+\Sexpr{knit_child("chapters/0A-proofs-6-do-frontdoor.Rnw")}
+\Sexpr{knit_child("chapters/0A-proofs-7-pom.Rnw")}
 
 \end{document}

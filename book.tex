@@ -207,7 +207,7 @@ Esta questão será tratada no \cref{cap:dag}.
  Justifique sua resposta em palavras.
 \end{exercise}
 
-\chapter{Modelo Causal (\CM)}
+\chapter{Modelo Causal (CM)}
 \label{cap:dag}
 
 No \cref{cap:intro} vimos que 
@@ -865,6 +865,7 @@ infectar um indivíduo com uma das doenças
 reduz a probabilidade que ele tenha a outra.
 
 \subsection{Modelo Causal (Causal Model)}
+\label{sec:cm}
 
 Com base nos conceitos abordados anteriormente,
 finalmente podemos definir
@@ -888,20 +889,45 @@ como o interpretamos.
 Existe uma aresta de $V_1$ em $V_2$ em um \CM
 se e somente se $V_1$ é uma causa direta de $V_2$.
 
+Dentre os modelos causais, 
+é de particular interesse
+o modelo linear Gaussiano.
+
 \begin{definition}
- Dizemos que $(\sG,f)$ é um \CM linear Gaussiano se,
- existe matriz diagonal positiva, $\Sigma$, e
- $\beta \in \Re^{n \times n}$ tal que,
- para todo vértice $V_i$,
- $\beta_{i,j} = 0$ quando $V_j \notin Pa(V_i)$ e
+ \label{def:cm_linear}
+ Dizemos que $(\sG,f)$ é um \CM linear Gaussiano 
+ de parâmetros $\mu$ e $\beta$ se,
+ existe matriz diagonal positiva, $\Sigma$, 
+ $\mu \in \Re^{|\sV|}$, e
+ $\beta \in \Re^{|\sV| \times |\sV|}$ tal que,
+ para todo vértice $V$,
+ $\beta_{V,W} = 0$ quando $W \notin Pa(V)$ e
  \begin{align*}
-  V_i|Pa(V) &\sim N(\beta_i, \Sigma_{i,i})
+  V|Pa(V) &\sim N\left(\mu_V + \sum_{W \in Pa(V)} \beta_{V,W} \cdot W, \Sigma_{i,i}\right)
  \end{align*}
 \end{definition}
 
+O modelo causal linear Gaussiano tem
+algumas propriedades especiais, que
+tornam mais simples suas compreensão.
+Algumas destas são apresentadas abaixo:
+
 \begin{lemma}
+ \label{lemma:cm_linear_normal}
  Se $(\sG,f)$ é um \CM linear Gaussiano, então
- $\sV \sim N(0, (I-\beta)^{-1}\Sigma((I-\beta)^{-1})^t)$.
+ $\sV$ segue distribuição normal multivariada.
+\end{lemma}
+
+\begin{lemma}
+ \label{lemma:cm_linear_esp}
+ Seja $(\sG,f)$ um \CM linear Gaussiano com coeficientes $\beta$.
+ Para cada $V, Y \in \sV$, defina $\mathbb{C}_{V,Y}$ como 
+ o conjunto de todos os caminhos direcionados de $V$ a $Y$.
+ \begin{align*}
+  \E[Y] &= \sum_{V \in \mathbb{\sV}} 
+  \sum_{C \in \mathbb{C}_{V,Y}}
+  \mu_V \cdot \prod_{i=1}^{|C|-1} \beta_{C_{i+1},C_i}
+ \end{align*}
 \end{lemma}
 
 No próximo capítulo estudaremos consequências desta interpretação causal.
@@ -936,8 +962,8 @@ será fundamental nos capítulos posteriores.
  $\sG_2 = (\sV, \sE_2)$ grafos
  tais que $\sE_1 \subseteq \sE_2$.
  Prove que se 
- $f$ é compatível com $\sG_2$, então 
- $f$ é compatível com $\sG_1$.
+ $f$ é compatível com $\sG_1$, então 
+ $f$ é compatível com $\sG_2$.
 \end{exercise}
 
 \begin{exercise}
@@ -1013,6 +1039,10 @@ será fundamental nos capítulos posteriores.
  entre $V_1$ e $V_2$, 
  $V_4$ tem como único pai $V_2$ e
  $V_1$ e $V_3$ são dependentes dado $V_4$.
+\end{exercise}
+
+\begin{exercise}
+ Prove o \cref{lemma:cm_linear_normal}.
 \end{exercise}
 
 \section{Independência Condicional e D-separação}
@@ -1395,6 +1425,7 @@ Esta conclusão é apresentada no
 % Add: Demonstração IPW
 
 \section{O modelo de probabilidade para intervenções}
+\label{sec:intervencao}
 
 Com base no modelo estrutural causal discutido 
 no \cref{cap:dag}, agora estabeleceremos
@@ -1554,6 +1585,19 @@ a densidade de $\V_2$ dada uma intervenção em $\V_1$ é
 dada o produto somente nos vértices de $\V_2$
 das densidades do vértice dadas suas causas.
 
+Esta análise é formalizada no \cref{lemma:do_calculus_0}:
+
+\begin{lemma}
+ \label{lemma:do_calculus_0}
+ Seja $\sG(\bar{\X})$ o grafo obtido
+ retirando-se de $\sG$ 
+ todas as arestas que apontam para 
+ algum vértice em $\X$.
+ A densidade $f^* \equiv f(\sV|do(\X=\x))$ é 
+ compatível com $\sG(\bar{\X})$. 
+ Além disso, $\X$ é degenerada em $\x$ segundo $f^*$.
+\end{lemma}
+
 Com base na discussão acima, podemos definir
 o \textbf{efeito causal} que um conjunto de variáveis, $\X$,
 tem em outro conjunto, $\Y$:
@@ -1565,7 +1609,7 @@ tem em outro conjunto, $\Y$:
 
 \begin{definition}
  \label{def:ace}
- O efeito causal médio, \ACE,\footnote{
+ O efeito causal médio, \ACE$_{X,Y}$,\footnote{
  A sigla ACE tem como origem a expressão em inglês,
  \textit{Average Causal Effect}. Optamos por manter a sigla 
  sem tradução para facilitar a comparação com artigos da área.
@@ -1573,7 +1617,7 @@ tem em outro conjunto, $\Y$:
  \textit{Average Treatment Effect} e recebe o acrônimo ATE.}
  de $X \in \Re$ em $Y \in \Re$ é dado por:
  \begin{align*}
-  \ACE &=
+  \ACE_{X,Y} &=
   \begin{cases}
    \E[Y|do(X=1)] - \E[Y|do(X=0)]
    & \text{, se $X$ é binário}, \\
@@ -1581,6 +1625,8 @@ tem em outro conjunto, $\Y$:
    & \text{, se $X$ é contínuo}.
   \end{cases}
  \end{align*}
+ Quando não há ambiguidade, escrevemos simplesmente
+ $\ACE$ ao invés de $\ACE_{X,Y}$.
 \end{definition}
 
 Com a \cref{def:ace} podemos finalmente desvendar
@@ -1702,6 +1748,36 @@ assim trazendo clareza ao Paradoxo.
  a discussão qualitativa desenvolvida na \cref{sec:simpson}.
  Não há paradoxo!
 \end{example}
+
+Se $(\sG,f)$ é um \CM linear Gaussiano, então é
+possível obter uma equação direta para o $\ACE$.
+Este resultado é apresentado no \cref{thm:ace_linear} abaixo.
+
+\begin{theorem}
+ \label{thm:ace_linear}
+ Se $(\sG,f)$ é um \CM linear Gaussiano
+ de parâmetros $\mu$ e $\beta$ e
+ $\mathbb{C}_{X,Y}$ é o conjunto de
+ todos os caminhos direcionados de $X$ a $Y$, então
+ \begin{align*}
+  \ACE_{X,Y} &=
+  \sum_{C \in \mathbb{C}_{X,Y}} \prod_{i=1}^{|C|-1} \beta_{C_{i+1},C_i}.
+ \end{align*}
+\end{theorem}
+
+O \cref{thm:ace_linear} indica um algoritmo 
+para calcular o $\ACE_{X,Y}$ em um \CM linear Gaussiano.
+Primeiramente, para cada caminho direcionado 
+de $X$ em $Y$ calcula-se 
+o produto dos coeficientes de regressão ligados a este caminho.
+Se imaginarmos os vértices no meio do caminho como mediadores, então 
+estamos combinando o efeito de $X$ em $C_{2}$, de $C_{2}$ em $C_{3}$ \ldots
+e de $C_{m-1}$ em $Y$ para obter
+o efeito total de $X$ em $Y$ por este caminho.
+Ao final, somamos os efeitos totais obtidos por todos os caminhos.
+Cada caminho direcionado indica uma forma em que $X$ pode ter efeito sobre $Y$.
+Ao levarmos todoas as formas em consideração, 
+obtemos o efeito causal médio.
 
 Além do efeito causal médio, 
 às vezes desejamos determinar 
@@ -2640,6 +2716,11 @@ no \cref{ex:backdoor_est_ipw}.
 
 \begin{exercise}
  Prove o \cref{lemma:backdoor_pais}.
+\end{exercise}
+
+\begin{exercise}
+ \label{ex:ace_sem_causa}
+ Prove que se $X \notin Anc(Y)$, então $\ACE = 0$.
 \end{exercise}
 
 \begin{exercise}
@@ -3665,6 +3746,7 @@ consequências similares a dizer que
 $X$ é atribuído por aleatorização.
 
 \begin{corollary}
+ \label{cor:ignore}
  Se $X$ é ignorável para medir o efeito causal em $Y$, então
  \begin{align*}
   f(y|do(x)) &= f(y|x).
@@ -3723,7 +3805,34 @@ um critério alternativo para
 justificar o tipo de identificação causal
 obtida pelo critério backdoor. 
 
-\subsection{Variáveis Instrumentais}
+\subsection{Exercícios}
+
+\begin{exercise}
+ Prove o \cref{lemma:simulacao}.
+\end{exercise}
+
+\begin{exercise}
+ Mostre que no \cref{ex:eq_struct} 
+ a distribuição de $(X,Y)$ no SCM 
+ em equações estruturais é igual 
+ àquela no SCM original.
+\end{exercise}
+
+\begin{exercise}
+ Exiba um exemplo em que
+ $X$ é condicionalmente ignorável para $Y$ dado $\Z$ mas
+ $\Z$ não satisfaz o critério backdoor para
+ medir o efeito causal de $X$ em $Y$.
+\end{exercise}
+
+\begin{exercise}
+ Exiba um exemplo em que
+ $\Z$ satisfaz o critério backdoor para
+ medir o efeito causal de $X$ em $Y$ mas
+ $X$ não é condicionalmente ignorável para $Y$ dado $\Z$.
+\end{exercise}
+
+\section{Variáveis Instrumentais}
 \label{sec:instrument}
 
 Há situações em que 
@@ -3775,66 +3884,123 @@ a abordagem em \citet{Angrist1996}.
  Dizemos que $I$ é um instrumento para
  medir o efeito causal de $X$ em $Y$ se
  \begin{enumerate}
+  \item $I$ é ignorável para medir o efeito em $Y$.
   \item $Y_{I=i,X=x} \equiv Y_{X=x}$,
   para todo $f$ compatível com $\sG$.
   \item $Cov[I,X] \neq 0$.
-  \item $I$ é ignorável para medir o efeito em $Y$.
  \end{enumerate}
 \end{definition}
 
+Apesar de as condições na \cref{def:instrument} terem sido
+utilizadas originalmente por \citet{Angrist1996},
+é possível reinterpretá-las utilizando o grafo causal.
+Já vimos no \cref{lemma:ignore_backdoor} que
+a primeira condição é equivalente a dizer que
+$\emptyset$ satisfaz o critério backdoor para 
+medir o efeito causal de $I$ em $Y$.
+Isto é, $I$ e $Y$ não tem 
+ascendentes em comum no grafo causal.
+Além disso, a segunda condição é
+equivalente a afirmar que no grafo causal
+todo caminho direcionado de $I$ a $Y$
+passa por $X$. Isto é,
+$X$ é o mediador do efeito causal de $I$ em $Y$.
+Este resultado é apresentado no \cref{lemma:exclusion_dag}.
+
 \begin{lemma}
  \label{lemma:exclusion_dag}
- Todo caminho direcionado de $I$ a $Y$, $C$,
- é tal que existe $i$ com $C_i = X$ se e somente se
- para todo $f$ compatível com $\sG$, 
- $Y_{I=i,X=x} \equiv Y_{X=x}$.
+ $Y_{I=i, X=x} \equiv Y_{X=x}$,
+ para todo $f$ compatível com $\sG$ se e somente se
+ todo caminho direcionado de $I$ a $Y$, $C$,
+ é tal que existe $j$ com $C_j = X$.
 \end{lemma}
 
+Sob algumas circunstâncias,
+a existência de um instrumento é
+suficiente para que
+seja possível identificar o efeito causal.
+Uma suposição usual é de que
+estamos analisando um
+\CM linear Gaussiano (\cref{def:cm_linear}).
+
 \begin{theorem}
- \label{thm:instrument}
- Se $I \in\ \{0,1\}$ é um instrumento para
- medir o efeito causal de $X \in \{0,1\}$ em $Y$ e,
- $I$ é ignorável para medir o efeito em $Y$, e
- $I$ é ignorável para medir o efeito em $X$, e
- também, $\P(X_{I=1} > X_{I=0}) = 1$, então
+ \label{thm:linear_instrument}
+ Se $(\sG,f)$ é um \CM linear Gaussiano e
+ $I$ é um instrumento para
+ medir o efeito causal de $X$ em $Y$, então
  \begin{align*}
-  \ACE &= \frac{\E[Y|I=1]-\E[Y|I=0]}{\E[X|I=1]-\E[X|I=0]}
+  \ACE &= \frac{Cov[I,Y]}{Cov[I,X]}
  \end{align*}
 \end{theorem}
 
-\subsection{Exercícios}
+Caso o modelo causal não seja linear Gaussiano,
+então mais suposições são necessárias
+para identificar o efeito causal 
+com base em um instrumento,
+Uma suposição usual é
+a de monotonicidade do instrumento.
+Segundo esta, ao aumentar 
+o valor do instrumento por uma intervenção,
+o valor de $X$ necessariamente irá aumentar
 
-\begin{exercise}
- Prove o \cref{lemma:simulacao}.
-\end{exercise}
+\begin{definition}
+ \label{def:monotone}
+ $I$ é um instrumento monotônico para
+ medir o efeito causal de $X$ em $Y$ se,
+ para todo $i_1 > i_0$,
+ \begin{align*}
+  \P(X_{I = i_1} > X_{I = i_0}) = 1.
+ \end{align*}
+\end{definition}
 
-\begin{exercise}
- Mostre que no \cref{ex:eq_struct} 
- a distribuição de $(X,Y)$ no SCM 
- em equações estruturais é igual 
- àquela no SCM original.
-\end{exercise}
+O Instrumento monotônico foi originalmente contextualizado
+em uma aplicação a alistados na Guerra do Vietnam \cite{Angrist1990}.
+Pode-se imaginar que a população é dividida em $4$ grupos.
+Pessoas que sempre iriam à guerra (always-taker),
+que nunca iriam à guerra (never-taker),
+que iriam à guerra somente se alistados (compliers),
+e que iriam à guerra somente se não alistados (defiers).
+Neste caso, o alistamento ser um instrumento monotônico corresponde
+a afirmar que não existem pessoas no último grupo.
 
-\begin{exercise}
- Exiba um exemplo em que
- $X$ é condicionalmente ignorável para $Y$ dado $\Z$ mas
- $\Z$ não satisfaz o critério backdoor para
- medir o efeito causal de $X$ em $Y$.
-\end{exercise}
+Quando o instrumento é monotônico e
+$X$ e $I$ são binários, é
+possível identificar o efeito causal de
+$X$ em $Y$ em uma sub-população.
+Especificamente, é possível identificar
+o efeito de $X$ em $Y$ na sub-população em que
+o resultado potencial de $X$ é
+diferente para cada intervenção em $I$.
+No exemplo da Guerra do Vietnam,
+esta é a sub-população dos \textit{compliers}, isto é,
+indivíduos que iriam à guerra somente se alistados.
+A definição de Local Average Treatment Effect (\LACE)
+é formalizada abaixo:
 
-\begin{exercise}
- Exiba um exemplo em que
- $\Z$ satisfaz o critério backdoor para
- medir o efeito causal de $X$ em $Y$ mas
- $X$ não é condicionalmente ignorável para $Y$ dado $\Z$.
-\end{exercise}
+\begin{definition}
+ \label{def:lace}
+ Se $X, I \in \{0,1\}$, então
+ \begin{align*}
+  \LACE &= \E[Y_{X=1}-Y_{X=0}|X_{I=1}-X_{I=0} = 1].
+ \end{align*}
+\end{definition}
+
+O \cref{thm:instrument} mostra como
+identificar o \LACE \ por meio de um instrumento monotônico.
+
+\begin{theorem}
+ \label{thm:instrument}
+ Se $I \in\ \{0,1\}$ é um instrumento monotônico para
+ o efeito causal de $X \in \{0,1\}$ em $Y$, então
+ \begin{align*}
+  \LACE &= \frac{\E[Y|I=1]-\E[Y|I=0]}{\E[X|I=1]-\E[X|I=0]}
+ \end{align*}
+\end{theorem}
 
 \bibliographystyle{apalike}
 \bibliography{book}
 
-
 \appendix
-
 \chapter{Demonstrações}
 
 \section{Relativas à \text{\cref{sec:dag-ex}}}
@@ -3935,6 +4101,61 @@ a abordagem em \citet{Angrist1996}.
  Como $\P(V_3 = 1) = 0.5$ e
  $\P(V_3=1|V_1=1,V_2=2) = 1$, conclua que
  $V_1 \not\ind V_3 | V_2$.
+\end{proof}
+
+\section{Relativas à \text{\cref{sec:cm}}}
+
+\begin{proof}[Prova do \cref{lemma:cm_linear_esp}]
+ Realizaremos a demonstração por indução.
+ Para tal, defina 
+ $\sV^{(1)} = \{V \in \sV: Pa(V) = \emptyset\}$, e
+ para cada $i > 2$,
+ $\sV^{(i)} = \{V \in \sV: Pa(V) \subseteq \sV^{(i-1)}\}$.
+ 
+ Se $Y \in \sV^{(1)}$, então por construção
+ $\E[Y] = \mu_Y$. Também, como $Pa(Y) = \emptyset$,
+ $\mathbb{C}_{V,Y} = \emptyset$, para todo $V \neq Y$, e
+ $\mathbb{C}_{Y,Y}$ tem apenas o caminho unitário, $C^* = (Y)$.
+ Assim,
+ \begin{align*}
+  \sum_{V \in \mathbb{\sV}} 
+  \sum_{C \in \mathbb{C}_{V,Y}}
+  \mu_V \cdot \prod_{i=1}^{|C|-1} \beta_{C_{i+1},C_i} 
+  &= \mu_Y \cdot \prod_{i=1}^{|C^*|-1} \beta_{C^*_{i+1},C^*_i} \\
+  &= \mu_Y
+ \end{align*}
+ A seguir, suponha que para todo
+ $W \in \sV^{(i-1)}$,
+ $\E[W] = \sum_{V \in \mathbb{\sV}}\sum_{C \in \mathbb{C}_{V,W}} \mu_V \cdot 
+ \prod_{i=1}^{|C|-1} \beta_{C_{i+1},C_i}$ e
+ tome $Y \in \sV^{(i)}$. Como todo caminho direcionado que 
+ chega em $Y$ a partir de $V \neq Y$
+ tem como penúltimo elemento um pai de $Y$,
+ podemos escrever
+ \begin{align}
+  \label{eq:path_equiv}
+  \mathbb{C}_{V,Y} 
+  &= \cup_{W \in Pa(Y)} \{(C,Y): C \in \mathbb{C}_{V,W}\}
+ \end{align}
+ Portanto, obtemos:
+ \begin{align*}
+  &\sum_{V \in \mathbb{\sV}}\sum_{C \in \mathbb{C}_{V,Y}} \mu_V \cdot 
+  \prod_{i=1}^{|C|-1} \beta_{C_{i+1},C_i} \\
+  =& \mu_Y 
+  + \sum_{V \neq Y} \sum_{\cup_{W \in Pa(Y)} \{C^* = (C,Y): C \in \mathbb{C}_{V,W}\}} 
+  \mu_V \cdot \left(\prod_{i=1}^{|C^*|-1} \beta_{C^*_{i+1},C^*_i}\right) 
+  & \text{\cref{eq:path_equiv}} \\
+  =& \mu_Y + \sum_{V \neq Y} \sum_{W \in Pa(Y)} \sum_{C \in \mathbb{C}_{V,W}}
+  \mu_V \cdot \left(\prod_{i=1}^{|C|-1} \beta_{C_{i+1},C_i}\right) \cdot \beta_{Y, W} \\
+  =& \mu_Y + \sum_{W \in Pa(Y)} \beta_{Y, W} 
+  \sum_{V \in \sV} \sum_{C \in \mathbb{C}_{V,W}}
+  \mu_V \cdot \left(\prod_{i=1}^{|C|-1} \beta_{C_{i+1},C_i}\right) \\
+  =& \mu_Y + \sum_{W \in Pa(Y)} \beta_{Y,W} \E[W]
+  & W \in \sV^{(i-1)} \\
+  =& \E\left[\mu_Y + \sum_{W \in Pa(Y)} \beta_{Y,W} W\right] \\
+  =& \E[\E[Y|Pa(Y)]] = \E[Y]
+  & \text{\cref{def:cm_linear}}
+ \end{align*}
 \end{proof}
 
 \section{Relativas à \text{\cref{sec:d-sep}}}
@@ -4164,6 +4385,109 @@ Como $\V^*_1 \ind^f \V^*_2 | \V_3$,
 \begin{proof}[Prova do \cref{thm:d-sep}]
  Decorre dos 
  \cref{lem:dsep_indep,lemma:d-sep-volta}.
+\end{proof}
+
+\section{Relativas à \cref{sec:intervencao}}
+
+\begin{proof}[Prova do \cref{lemma:do_calculus_0}]
+ Decorre da \cref{def:intervencao} que
+ $f^*(\sV) = \I(\X=\x) \prod_{V \notin \X}f(V|Pa(V))$.
+ Definindo $g_{X_i}(X_i) = \I(X_i=x_i)$, para todo $X_i \in \X$ e
+ $g_V(V,Pa(V)) = f(v|Pa(V))$, note que
+ \begin{align*}
+  f^*(\sV)
+  &= \prod_{X_i \in \X}g_{X_i}(X_i)
+  \prod_{V \notin \X}g_V(V,Pa(V)) 
+ \end{align*}
+ Portanto, decorre do \cref{lem:compativel-equiv} que
+ $f^*$ é compatível com um grafo em que
+ todo $X_i \in \X$ não tem pais e
+ todo $V \notin \X$ tem os mesmos pais que em $\sG$.
+ Isto é, $\sG$ é compatível com $\sG(\bar{\X})$.
+ 
+ Além disso, tomando $\V = \sV - \X$,
+ \begin{align*}
+  f^*(\X)
+  &= \int f^*(sV) d\V \\
+  &= \int \I(\X=\x) \prod_{V \in \V}f(V|Pa(V)) d\V \\
+  &= \I(\X=\x) \int \prod_{V \in \V}f(V|Pa(V)) d\V \\
+  &= \I(\X=\x).
+ \end{align*}
+ Portanto, $\X$ é degenerado em $\x$ segundo $f^*$.
+\end{proof}
+
+\subsection{Relativas ao \cref{thm:ace_linear}}
+
+\begin{lemma}
+ \label{lemma:linear_do}
+ Considere que $(\sG,f)$ é 
+ um \CM linear Gaussiano e que
+ $f^* = f(\sV|do(\X=\x))$.
+ Se $\sG(\bar{\X})$ é 
+ como no \cref{lemma:do_calculus_0}, então
+ $(\sG(\bar{\X}),f^*)$ é
+ um \CM linear Gaussiano tal que,
+ para todo $V \notin \X$,
+ $\E_f[V|Pa(V)] = \E_{f^{*}}[V|Pa(V)]$ e
+ $\E[\X] = \x$.
+\end{lemma}
+
+\begin{proof}
+ Decorre do \cref{lemma:do_calculus_0} que
+ $f^*$ é compatível com $\sG(\bar{\X})$.
+ Além disso, também 
+ decorre do \cref{lemma:do_calculus_0} que
+ para todo $V \notin \X$,
+ $f(V|Pa(V)) = f^*(V|Pa(V))$. Portanto,
+ $\E_f[V|Pa(V)] = \E_{f^{*}}[V|Pa(V)]$.
+ Finalmente, segundo o \cref{lemma:do_calculus_0},
+ $\X$ é degenerado em $\x$. 
+ Assim, $\E[\X] = \x$.
+\end{proof}
+
+\begin{proof}[Prova do \cref{thm:ace_linear}]
+ Defina $f^*_x = f(\sV|do(X=x))$. Assim,
+ \begin{align}
+  \label{eq:thm_ace_linear_1}
+  \ACE_{X,Y}
+  &= \frac{d\E[Y|do(X=x)]}{dx} 
+  \nonumber \\
+  &= \frac{d\E_{f^*_x}[Y]}{dx}
+ \end{align}
+ Além disso, decorre do \cref{lemma:linear_do} que
+ $f^*$ é um \CM linear Gaussiano
+ no grafo $\sG(\bar{X})$.
+ 
+ Como $X$ não tem pais no grafo $\sG(\bar{X})$,
+ os únicos caminhos direcionados de $X$ a $Y$ que 
+ passam por $X$ são aqueles que se iniciam em $X$.
+ Formalmente, defina $\mathbb{C}$ como o conjunto de 
+ todos os caminhos direcionados em $\sG$.
+ Além disso, $\mathbb{C}_{X} = 
+ \{C \in \mathbb{C}: C_i = X \text{, para algum } i\}$. 
+ Obtemos
+ \begin{align}
+  \label{eq:thm_ace_linear_2}
+  \cup_{V \in \sV} \mathbb{C}_{V,Y} \cap \mathbb{C}_X 
+  &= \mathbb{C}_{X,Y}.
+ \end{align}
+ Portanto,
+ \begin{align*}
+  \ACE_{X,Y}
+  &= \frac{d\E_{f^*_x}[Y]}{dx}
+  & \text{\cref{eq:thm_ace_linear_1}} \\
+  &= \frac{d \sum_{V \in \mathbb{\sV}} 
+  \sum_{C \in \mathbb{C}_{V,Y}}
+  \mu_V \cdot \prod_{i=1}^{|C|-1} \beta_{C_{i+1},C_i}}{dx}
+  & \text{\cref{lemma:cm_linear_esp,lemma:linear_do}} \\
+  &= \frac{d \sum_{C \in \mathbb{C}_{X,Y}}
+  \mu_X \cdot \prod_{i=1}^{|C|-1} \beta_{C_{i+1},C_i}}{dx}
+  & \text{\cref{eq:thm_ace_linear_2}} \\
+  &= \frac{d \sum_{C \in \mathbb{C}_{X,Y}}
+  x \cdot \prod_{i=1}^{|C|-1} \beta_{C_{i+1},C_i}}{dx}
+  & \text{\cref{lemma:linear_do}} \\
+  &= \sum_{C \in \mathbb{C}_{X,Y}} \prod_{i=1}^{|C|-1} \beta_{C_{i+1},C_i}
+ \end{align*}
 \end{proof}
 
 \section{Relativas à \cref{sec:backdoor}}
@@ -4657,40 +4981,6 @@ ao condicionamento usual no SCM aumentado.
 \subsection{Relativas ao \text{\cref{thm:do_calculus}}}
 
 \begin{lemma}
- \label{lemma:do_calculus_0}
- $f^* \equiv f(\sV|do(\X=\x))$ é 
- compatível com $\sG(\bar{\X})$. 
- Além disso, $\X$ é degenerada em $\x$ segundo $f^*$.
-\end{lemma}
-
-\begin{proof}
- Decorre da \cref{def:intervencao} que
- $f^*(\sV) = \I(\X=\x) \prod_{V \notin \X}f(V|Pa(V))$.
- Definindo $g_{X_i}(X_i) = \I(X_i=x_i)$, para todo $X_i \in \X$ e
- $g_V(V,Pa(V)) = f(v|Pa(V))$, note que
- \begin{align*}
-  f^*(\sV)
-  &= \prod_{X_i \in \X}g_{X_i}(X_i)
-  \prod_{V \notin \X}g_V(V,Pa(V)) 
- \end{align*}
- Portanto, decorre do \cref{lem:compativel-equiv} que
- $f^*$ é compatível com um grafo em que
- todo $X_i \in \X$ não tem pais e
- todo $V \notin \X$ tem os mesmos pais que em $\sG$.
- Isto é, $\sG$ é compatível com $\sG(\bar{\X})$.
- 
- Além disso, tomando $\V = \sV - \X$,
- \begin{align*}
-  f^*(\X)
-  &= \int f^*(sV) d\V \\
-  &= \int \I(\X=\x) \prod_{V \in \V}f(V|Pa(V)) d\V \\
-  &= \I(\X=\x) \int \prod_{V \in \V}f(V|Pa(V)) d\V \\
-  &= \I(\X=\x).
- \end{align*}
- Portanto, $\X$ é degenerado em $\x$ segundo $f^*$.
-\end{proof}
-
-\begin{lemma}
  \label{lemma:do_calculus_1}
  Se $\Y \dsep \Z | \X \cup \W$ em $\sG(\bar{\X})$, então
  \begin{align*}
@@ -5048,9 +5338,283 @@ ao condicionamento usual no SCM aumentado.
 
 \section{Relativas à \cref{sec:instrument}}
 
-\begin{proof}[Prova do \cref{lemma:exclusion_dag}]
- 1
+\begin{definition}
+ \label{def:pom_partition}
+ $\U = \{U_V: V \in \sV\}$,
+ $\sV^{(1)} = \{V \in \sV: Pa(V) = \emptyset\}$, e
+ $\sV^{(i)} = \{V \in \sV: Pa(V) \subseteq \sV^{(i-1)}\}$.
+\end{definition}
+
+\begin{lemma}
+ \label{lemma:pom_anc}
+ No modelo de resultados potenciais (\cref{def:pom})
+ se $Anc^*(Y_{\X=\x}) \cap \U = Anc^*(\Y_{\X=\x,\Z=\z}) \cap \U$,
+ então para cada $V \in Pa(Y)$,
+ $Anc^*(V_{\X=\x}) \cap \U = Anc^*(V_{\X=\x,\Z=\z}) \cap \U$.
+\end{lemma}
+
+\begin{proof}
+ Primeiramente, note que
+ para todo $Z \in \Z$, 
+ tem-se que $U_Z \notin Anc^*(Y_{\X=\x,\Z=\z}) = Anc^*(Y_{\X=\x})$.
+ Assim, como $Anc^*(V_{\X=\x}) \subseteq Anc^*(Y_{\X=\x})$,
+ $U_Z \notin Anc^*(V_{\X=\x})$. Isto é,
+ $\Z_{\X=\x} \cap Anc^*(V_{\X=\x}) = \emptyset$.
+ 
+ A seguir, por construção da \cref{def:pom},
+ $Anc^*(V_{\X=\x,\Z=\z}) \cap \U \subseteq Anc^*(V_{\X=\x}) \cap \U$.
+ Assim, basta provar que para todo $U \in Anc^*(V_{\X=\x}) \cap \U$ 
+ tem-se que $U \in Anc^*(V_{\X=\x,\Z=\z})$.
+ 
+ Tome $U \in Anc^*(V_{\X=\x}) \cap \U$.
+ Por construção, existem vértices, $C_1,\ldots,C_m \in \sV$ 
+ que constituem um caminho direcionado de 
+ $U$ a $V_{\X=\x}$,
+ $(U,(C_1)_{\X=\x},\ldots,(C_m)_{\X=\x},V_{\X=\x})$.
+ Como $\Z_{\X=\x} \cap Anc^*(V_{\X=\x}) = \emptyset$,
+ não existe $V_i$ tal que $V_i \in \Z$. Portanto,
+ $(U,(C_1)_{\X=\x,\Z=\z},\ldots,(C_m)_{\X=\x},V_{\X=\x,\Z=\z})$ é
+ um caminho direcionado de $U$ a $V_{\X=\x,\Z=\z}$, isto é,
+ $U \in Anc^*(V_{\X=\x,\Z=\z})$.
 \end{proof}
 
+\begin{lemma}
+ \label{lemma:pom_equiv_1}
+ No modelo de resultados potenciais (\cref{def:pom}),
+ se $Anc^*(Y_{\X=\x}) \cap \U = Anc^*(Y_{\X=\x,\Z=\z}) \cap \U$, então
+ $Y_{\X=\x} \equiv Y_{\X=\x,\Z=\z}$.
+\end{lemma}
+
+\begin{proof}
+ Faremos a demonstração por indução.
+ Para tal, utilizaremos a \cref{def:pom_partition}.
+ Se $Y \in \sV^{(1)}$, então $Pa(Y) = \emptyset$.
+ Assim, $Anc^*(Y_{\X=\x})$ é $\{U_Y\}$ ou $\emptyset$.
+ Se $Anc^*(Y_{\X=\x}) = \emptyset$, 
+ então $Y \in \X$. Portanto, tomando $Y$ como $X_i$,
+ $Y_{\X=\x} \equiv \x_i \equiv Y_{\X=\x,\Z=\z}$.
+ Se $Anc^*(Y_{\X=\x}) = Anc^*(Y_{\X=\x,\Z=\z}) = \{U_Y\}$, então
+ $Y_{\X=\x} \equiv g_Y(U_Y) \equiv Y_{\X=\x,\Z=\z}$.
+ 
+ Agora, suponha que se $V \in \sV^{(i-1)}$ e
+ $Anc^*(V_{\X=\x}) \cap \U = Anc^*(V_{\X=\x,\Z=\z}) \cap \U$, então
+ $V_{\X=\x} \equiv V_{\X=\x,\Z=\z}$. 
+ Tome $Y \in \sV^{(i)}$ tal que
+ $Anc^*(Y_{\X=\x}) \cap \U = Anc^*(Y_{\X=\x,\Z=\z}) \cap \U$.
+ Se $U_Y \notin Anc^*(Y_{\X=\x})$, então
+ existe $Y$ é algum $X_i$. Portanto,
+ $Y_{\X=\x} \equiv \x_i \equiv Y_{\X=\x,\Z=\z}$.
+ A seguir, suponha que $U_Y \in Anc^*(Y_{\X=\x,\Z=\z})$.
+ Para cada $V \in Pa(Y)$, como $Y \in \sV^{(i)}$, 
+ $V \in \sV^{(i-1)}$.
+ Além disso, decorre do \cref{lemma:pom_anc}, que 
+ $Anc^*(V_{\X=\x}) \cap U = Anc^*(V_{\X=\x,\Z=\z}) \cap U$.
+ Portanto, decorre da hipótese de indução que
+ $V_{\X=\x} \equiv V_{\X=\x,\Z=\z}$. Assim,
+ \begin{align*}
+  Y_{\X=\x} 
+  \equiv g_Y(U_Y, (Pa(Y))_{\X=\x})
+  \equiv g_Y(U_Y, (Pa(Y))_{\X=\x,\Z=\z})
+  \equiv Y_{\X=\x,\Z=\z}
+ \end{align*}
+\end{proof}
+
+\begin{proof}[Prova do \cref{lemma:exclusion_dag}]
+ A seguir, suponha que existe um caminho direcionado de 
+ $I$ a $Y$, $(I,C_1,\ldots,C_m,Y)$, que não passa por $X$.
+ Escolha $f$ tal que $I \sim \text{Bernoulli}(0.5)$ e
+ $I \equiv C_1 \equiv \ldots \equiv C_m \equiv Y$.
+ $Y_{X=x} \sim \text{Bernoulli}(0.5)$ e
+ $Y_{X=x,I=i} \equiv i$. Portanto,
+ $\P(Y_{X=x} \neq Y_{X=x,I=i}) > 0$.
+
+ A seguir, suponha que todo caminho direcionado de 
+ $I$ a $Y$, $C$, é tal que existe $j$ com $C_j = X$.
+ Iremos provar que 
+ $Anc^*(Y_{X=x}) \cap \U = Anc^*(Y_{X=x,I=i}) \cap \U$ e,
+ com base no \cref{lemma:pom_equiv_1}, concluir que
+ $Y_{I=i,X=x} \equiv Y_{X=x}$.
+ Como $Anc^*(Y_{X=x,I=i}) \cap \U 
+ \subseteq Anc^*(Y_{X=x}) \cap \U$,
+ basta provar que 
+ todo $U \in Anc^*(Y_{X=x}) \cap \U$ satisfaz
+ $U \in Anc^*(Y_{X=x,I=i})$.
+ 
+ Tome $U \in Anc^*(Y_{X=x}) \cap \U$.
+ Assim, existem vértices
+ $C_1,\ldots,C_m \in \sV$ e
+ um caminho direcionado de
+ $U$ a $Y_{\X=\x}$,
+ $(U,(C_1)_{X=x},\ldots,(C_m)_{X=x},Y_{X=x})$.
+ Note que se algum $C_j$ fosse $I$, então
+ pela hipótese do lema, existiria algum $C_k$
+ que seria $X$. Assim,
+ $(U,C_1,\ldots,C_m,Y_{X=x})$ 
+ não seria um caminho direcionado,
+ afinal, $X_{X=x}$ não tem pais.
+ Portanto, $I$ não está em $C_1,\ldots,C_m$.
+ Conclua que 
+ $(U,(C_1)_{X=x,I=i},\ldots,(C_m)_{X=x,I=i},Y_{X=x,I=i})$ é
+ um caminho direcionado de $U$ a $Y_{X=x,I=i}$.
+ Isto é, $U \in Anc^*(Y_{X=x,I=i})$.
+ Decorre do \cref{lemma:pom_equiv_1} que
+ $Y_{I=i,X=x} \equiv Y_{X=x}$.
+\end{proof}
+
+\begin{lemma}
+ \label{lemma:instrument_ignore}
+ Se $I$ é um instrumento para medir 
+ o efeito causal de $X$ em $Y$ e
+ $X \in Anc(Y)$, então
+ $I$ é ignorável para o efeito em $X$.
+\end{lemma}
+
+\begin{proof}
+ Provaremos a contra-positiva.
+ Se $I$ não é ignorável para medir o efeito em $X$,
+ então decorre do \cref{lemma:ignore_backdoor} que
+ $I$ e $X$ tem um ancestral comum, $Z$.
+ Como $X$ é um ancestral de $Y$,
+ decorre que $Z$ é ancestral comum a $I$ e $Y$.
+ Portanto, conclui-se do \cref{lemma:ignore_backdoor} que
+ $I$ não é ignorável para $Y$.
+ Isto é, pela \cref{def:instrument}.1,
+ $I$ não é um instrumento.
+\end{proof}
+
+\begin{lemma}
+ \label{lemma:cm_linear_ignore}
+ Se $X$ é ignorável para medir
+ o efeito causal em $Y$ em um
+ \CM linear Gaussiano, então
+ \begin{align*}
+  \ACE = Cov[X,Y] \cdot \V^{-1}[X].
+ \end{align*}
+\end{lemma}
+
+\begin{proof}
+ Decorre do \cref{lemma:cm_linear_normal} que
+ $\sV$ segue uma normal multivariada.
+ Portanto, existem $\alpha$ e $\beta$ tais que
+ \begin{align}
+  \label{eq:cm_linear_ignore_0}
+  \E[Y|X] = \alpha + \beta \cdot X.
+ \end{align}
+ Assim,
+ \begin{align}
+  \label{eq:cm_linear_ignore_1}
+  \ACE &= \frac{d\E[Y|do(X=x)]}{dx} \nonumber \\
+  &= \frac{d\E[Y|X=x]}{dx}
+  & \text{\cref{cor:ignore}} \nonumber \\
+  &= \frac{d(\alpha + \beta x)}{dx} = \beta
+  & \text{\cref{eq:cm_linear_ignore_0}}
+ \end{align}
+ Finalmente,
+ \begin{align*}
+  Cov[X,Y]
+  &= \E[XY] - \E[X]\E[Y] \\
+  &= \E[X\E[Y|X]] - \E[X]\E[\E[Y|X]] \\
+  &= \E[X(\alpha + \beta X)] - \E[X] \E[\alpha + \beta X] \\
+  &= \alpha \E[X] + \beta \E[X^2] - \alpha \E[X] - \beta \E[X]^2 \\
+  &= \beta \V[X] \\
+  &= \ACE \cdot \V[X]
+  & \text{\cref{eq:cm_linear_ignore_1}}
+ \end{align*}
+ Rearranjando os termos, obtenha 
+ $\ACE = Cov[X,Y] \cdot \V^{-1}[X]$.
+\end{proof}
+
+\begin{proof}[Prova do \cref{thm:linear_instrument}]
+ \begin{align*}
+  Cov[I,Y] \cdot \V^{-1}[I]
+  &= \ACE_{I,Y}
+  & \text{\cref{lemma:cm_linear_ignore}} \\
+  &= \sum_{C \in \mathbb{C}_{I,Y}} \prod_{i=1}^{|C|-1} \beta_{C_{i+1},C_i}
+  & \text{\cref{thm:ace_linear}} \\
+  &= \sum_{C \in \mathbb{C}_{I,X}} \sum_{K \in \mathbb{C}_{X,Y}}
+  \left(\prod_{i=1}^{|C|-1} \beta_{C_{i+1},C_i}\right)
+  \left(\prod_{j=1}^{|K|-1} \beta_{K_{i+1},K_i}\right) 
+  & \text{\cref{lemma:exclusion_dag}} \\
+  &= \left(\sum_{C \in \mathbb{C}_{I,X}} \prod_{i=1}^{|C|-1} \beta_{C_{i+1},C_i}\right)
+  \left(\sum_{K \in \mathbb{C}_{X,Y}} \left(\prod_{j=1}^{|K|-1} \beta_{K_{i+1},K_i}\right)\right) \\
+  &= \ACE_{I,X} \cdot \ACE_{X,Y}
+  & \text{\cref{thm:ace_linear}} \\
+  &= Cov[I,X] \cdot \V^{-1}[I] \cdot \ACE_{X,Y}
+  & \text{\cref{lemma:instrument_ignore,lemma:cm_linear_ignore}}
+ \end{align*}
+ Rearranjando os termos, obtemos $\ACE_{X,Y} = \frac{Cov[I,Y]}{Cov[I,X]}$.
+\end{proof}
+
+\begin{proof}[Prova do \cref{thm:instrument}]
+ \begin{align}
+  \label{eq:instrument_1}
+  & Y_{I=1} - Y_{I=0} 
+  \nonumber \\
+  =& Y_{I=1}\I(X_{I=1}=1) + Y_{I=1}\I(X_{I=1}=0)
+  -Y_{I=0}\I(X_{I=0} =1) -Y_{I=0}\I(X_{I=0}=0) 
+  \nonumber \\
+  =& Y_{I=1,X=1}\I(X_{I=1}=1) + Y_{I=1,X=0}\I(X_{I=1}=0)
+  -Y_{I=0,X=1}\I(X_{I=0} =1) -Y_{I=0,X=0}\I(X_{I=0}=0) 
+  & \text{\cref{lemma:obs_to_potential_prev}} 
+  \nonumber \\
+  =& Y_{X=1}\I(X_{I=1}=1) + Y_{X=0}\I(X_{I=1}=0)
+  -Y_{X=1}\I(X_{I=0} =1) -Y_{X=0}\I(X_{I=0}=0)
+  & \text{\cref{def:instrument}.2} 
+  \nonumber \\
+  =& (Y_{X=1}-Y_{X=0})(\I(X_{I=1}=1)-\I(X_{I=0} =1)) 
+  \nonumber \\
+  =& (Y_{X=1}-Y_{X=0})(X_{I=1}-X_{I=0})
+   & X \in \{0,1\}
+ \end{align}
+ Portanto,
+ \begin{align}
+  \label{eq:instrument_2}
+  \E[Y_{I=1} - Y_{I=0}]
+  &= \E[(Y_{X=1}-Y_{X=0})(X_{I=1}-X_{I=0})] 
+  & \text{\cref{eq:instrument_1}} 
+  \nonumber \\
+  &= \E[Y_{X=1}-Y_{X=0}|X_{I=1}-X_{I=0}=1]\P(X_{I=1}-X_{I=0}=1) 
+  & \text{\cref{def:monotone}} \\
+ \end{align}
+ Como $I$ é um instrumento,
+ decorre da \cref{def:instrument} que $Cov[I,X] \neq 0$.
+ Portanto, $\P(X_{I=1}-X_{I=0}=1) \neq 0$.
+ Reagrupando os termos na \cref{eq:instrument_2}, 
+ obtemos:
+ \begin{align}
+  \label{eq:instrument_3}
+  \E[Y_{X=1}-Y_{X=0}|X_{I=1}-X_{I=0}=1]
+  &= \frac{\E[Y_{I=1} - Y_{I=0}]}{\P(X_{I=1}-X_{I=0}=1)} 
+  \nonumber \\
+  \LACE
+  &= \frac{\E[Y_{I=1} - Y_{I=0}]}{\P(X_{I=1}-X_{I=0}=1)}
+  & \text{\cref{def:lace}} \\
+  &= \frac{\E[Y_{I=1} - Y_{I=0}]}{\E[X_{I=1}-X_{I=0}]}
+  & X \in \{0,1\}, \text{\cref{def:monotone}} \\
+ \end{align}
+ Há dois casos a considerar. 
+ Se $X \in Anc(Y)$.
+ Assim, decorre do \cref{lemma:instrument_ignore} que
+ $I$ é ignorável para medir $X$. Neste caso,
+ podemos continuar a desenvolver \cref{eq:instrument_3}:
+ \begin{align*}
+  \LACE 
+  &= \frac{\E[Y|I=1] - \E[Y|I=0]}{\E[X|I=1] - \E[X|I=0]}
+  & \text{\cref{def:instrument}.1, \cref{{cor:ignore}}}
+ \end{align*}
+ Se $X \notin Anc(Y)$, então
+ como $I$ é um instrumento,
+ decorre do \cref{lemma:exclusion_dag} que
+ $I \notin Anc(Y)$. Portanto,
+ conclua do \cref{ex:ace_sem_causa} que
+ $\E[Y|do(I=1)]-\E[Y|do(I=0)] = 0$, o que implica
+ pelo \cref{lemma:po_do} que
+ $\E[Y_{I=1}-Y_{I=0}] = 0$.
+ Como $I$ é ignorável para $Y$,
+ decorre do \cref{cor:ignore} que
+ $\E[Y|I=1]-\E[Y|I=0] = 0$.
+ Assim, decorre do \cref{eq:instrument_3} que
+ $\LACE = 0 = \frac{\E[Y|I=1] - \E[Y|I=0]}{\E[X|I=1] - \E[X|I=0]}$.
+\end{proof}
 
 \end{document}

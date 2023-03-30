@@ -1,0 +1,463 @@
+\section{Relativas à \cref{sec:trad_scm_pom}}
+
+\begin{proof}[Prova do \cref{lemma:obs_to_potential_prev}]
+ Se $\Z_{\V=\bv}(\omega) \neq \bz$, então
+ $\I(\Z_{\V=\bv}(\omega) = \bz) = 0$ e
+ \begin{align*}
+  W_{\V=\bv}(\omega) \I(\Z_{\V=\bv}(\omega) = \bz)
+  &= 0 = W_{\Z = \bz, \V=\bv}(\omega) 
+  \I(\Z_{\V=\bv}(\omega) = \bz)
+ \end{align*}
+ Se $\Z_{\V=\bv}(\omega) = \bz$, então
+ $\I(\Z_{\V=\bv}(\omega) = \bz) = 1$ e
+ basta provar que
+ $W_{\V=\bv}(\omega) = W_{\Z = \bz, \V=\bv}(\omega)$.
+
+ Para tal, considere primeiramente que $W \in \Z$.
+ Pela definição de $\omega$, 
+ $\Z_{\V=\bv}(\omega) = \bz = \Z_{\Z = \bz, \V=\bv}(\omega)$.
+ Portanto, $W_{\V=\bv}(\omega) = W_{\Z = \bz, \V=\bv}(\omega)$.
+ Similarmente, se $W \in \V$, decorre da \cref{def:pom} que
+ $\V_{\V=\bv}(\omega) = \bv =\V_{\Z = \bz, \V=\bv}(\omega)$.
+ Portanto, $W_{\V=\bv}(\omega) = W_{\Z = \bz, \V=\bv}(\omega)$.
+ Assim, resta considerar o caso em que
+ $W \notin (\Z \cup \V)$.
+ 
+ Para provar este fato,
+ construíremos uma ordem sobre $\sV-(\Z \cup \V)$.
+ Defina $\sV^{(0)} = \{W \in \sV-(\Z \cup \V): Pa(W) = \emptyset\}$,
+ isto é $\sV^{(0)}$ são vértices no DAG que 
+ não estão em $\Z \cup \V$ e que são raízes.
+ Além disso, para todo $1 \leq i \leq n$,
+ $\sV^{(i)} = \{W \in \sV-(\Z \cup \V): 
+ Pa(W) \subseteq \sV^{(i-1)} \cup (\Z \cup \V)\}$.
+ Isto é, todos os pais de $\sV^{(1)}$ são raízes
+ ou estão em $(\Z \cup \V)$,
+ todos os avós de $\sV^{(2)}$ 
+ são raízes ou estão em $(\Z \cup \V)$, e assim por diante.
+ Como $\sV$ é finito, existe $n$ tal que
+ $\sV^{(n)} \equiv \sV-(\U \cup \V)$.
+ 
+ Completaremos a prova por indução finita.
+ Primeiramente, se $W \in \sV^{(0)}$,
+ decorre da \cref{def:pom} que
+ $W_{\V=\bv} \equiv g_W(U_W) \equiv W_{\Z=\bz,\V=\bv}$.
+ Em particular,
+ $W_{\V=\bv}(\omega) = W_{\Z=\bz,\V=\bv}(\omega)$.
+ A seguir, suponha que 
+ para todo $W \in \sV^{(i-1)}$,
+ $W_{\V=\bv}(\omega) =  W_{\Z=\bz,\V=\bv}(\omega)$ e
+ tome $W \in \sV^{(i)}$.
+ Por definição de $\sV^{(i)}$, 
+ $Pa(W) \subseteq \sV^{(i-1)} \cup (\Z \cup \V)$.
+ Tome $W^* \in Pa(W)$.
+ Por hipótese de indução,
+ se $W^* \in \sV^{(i-1)}$, então
+ $W^*_{\V=\bv}(\omega) =  W^*_{\Z=\bz,\V=\bv}(\omega)$.
+ Também provamos que, se $W^* \in \Z \cup \V$, então
+ $W^*_{\V=\bv}(\omega) =  W^*_{\Z=\bz,\V=\bv}(\omega)$.
+ Conclua que 
+ $Pa^*(W_{\V=\bv})(\omega) = Pa^*(W_{\Z=\bz,\V=\bv})(\omega)$.
+ Como decorre da \cref{def:pom} que
+ $W_{\V=\bv} \equiv g_W(U_W, Pa^*(W_{\V=\bv}))$ e
+ $W_{\Z=\bz,\V=\bv} \equiv g_W(U_W, Pa^*(W_{\Z=\bz,\V=\bv}))$ e
+ $Pa^*(W_{\V=\bv})(\omega) = Pa(W^*_{\Z=\bz,\V=\bv})(\omega)$,
+ conclua que
+ $W_{\V=\bv}(\omega) = W_{\Z=\bz,\V=\bv}(\omega)$.
+ A prova está completa observando que
+ $W \in \sV^(n) = \sV - (\Z \cup \V)$.
+\end{proof}
+
+\begin{proof}[Prova do \cref{lemma:obs_to_potential}]
+ \begin{align*}
+  &\P(\sV_{\V=\bv} = \sV_{\Z=\bz, \V=\bv}|\Z_{\V=\bv}=\bz) \\
+  =& \P(W_{\V=\bv} = W_{\Z=\bz, \V=\bv}, 
+  \forall W \in \sV |\Z_{\V=\bv}=\bz) \\
+  =& \P(W_{\V=\bv}\I(\Z_{\V=\bv}=\bz) 
+  = W_{\Z=\bz, \V=\bv}\I(\Z_{\V=\bv}=\bz), 
+  \forall W \in \sV |\Z_{\V=\bv}=\bz) \\
+  =& 1 
+  & \text{\cref{lemma:obs_to_potential_prev}}
+ \end{align*}
+\end{proof}
+
+\begin{proof}[Prova do \cref{lemma:po_do}]
+ \begin{align*}
+  f(\sV_{\bv})
+  &= \I(\V = \bv) \cdot \prod_{V \in \sV-\V} f^*(V_{\bv}|Pa^*(V_{\bv}))
+  & \text{\cref{def:pom}} \\
+  &= \I(V = \bv) \cdot \prod_{V \in \sV-\V} f(V|Pa(V))
+  & \text{\cref{def:scm,def:pom}} \\
+  &= f(\sV|do(\V=\bv))
+  & \text{\cref{def:intervencao}}
+ \end{align*}
+\end{proof}
+
+\begin{proof}[Prova do \cref{lemma:ignore_backdoor}]
+ ($1 \rightarrow 2$)
+ Para realizar esta demonstração provaremos que
+ a negação de $2$ implica a negação de $1$.
+ Suponha que exista um ascendente comum de $X$ e $Y$.
+ Portanto, existe $V \in \sV$,
+ um caminho direcionado de $V$ em $X$, 
+ $C^X = (V, C^X_2, \ldots, C^X_{n-1},X)$, e
+ um caminho direcionado de $V$ em $Y$,
+ $C^Y = (V, C^Y_2, \ldots, C^Y_{m-1},Y)$.
+ Defina
+ $C = (X, C^X_{n-1}, \ldots, C^X_2, V, C^Y_2, \ldots C^Y_{m-1}, Y)$.
+ Como $C^X$ é um caminho direcionado, $(C^X_{n-1}, X) \in \sE$.
+ Além disso, como $C^X$ e $C^Y$ são caminhos direcionados,
+ não há colisor em $C$.
+ Conclua que $C$ está bloqueado dado $\emptyset$.
+ Isto é, $\emptyset$ não satisfaz o critério backdoor
+ para medir o efeito causal de $X$ em $Y$.
+ 
+ ($2 \rightarrow 3$)
+ Para realizar esta demonstração provaremos que
+ a negação de $3$ implica a negação de $2$.
+ Suponha que no grafo potencial, $\sG^*$,
+ existe um caminho não bloqueado de $X$ a $Y_x$, $C$.
+ Portanto, existe $V \in \sV$ tal que
+ $C = X, \ldots V \leftarrow U_V \rightarrow V_x, \ldots Y_x$.
+ Como $C$ não está bloqueado, não há colisor em $C$.
+ Portanto,
+ \begin{align*}
+  C &= X \leftarrow \ldots \leftarrow V \leftarrow U_V 
+  \rightarrow V_x \rightarrow \ldots \rightarrow Y_x.
+ \end{align*}
+ Decorre da \cref{def:grafo_potencial} que
+ $V$ é ancestral comum de $X$ e $Y$.
+ Para constatar essa última afirmação basta
+ remover $U_V$ e $V_x$ do caminho e
+ substituir cada vértice potencial 
+ a partir de $V_x$ por sua cópia em $\sV$.
+ 
+ ($3 \rightarrow 1$)
+ Esta demonstração decorre do \cref{lemma:cignore_backdoor},
+ provado a seguir, tomando $\Z = \emptyset$.
+\end{proof}
+
+\begin{proof}[Prova do \cref{lemma:cignore_backdoor}]
+ Suponha que $\Z$ não satisfaz 
+ o critério backdoor para medir o efeito causal de $X$ em $Y$.
+ Como $X \notin Anc(\Z)$, existe 
+ um caminho não bloqueado de $X$ em $Y$ dado $\Z$,
+ $C = (X, C_2, \ldots, C_{n-1}, Y)$ tal que
+ $X \leftarrow C_2$.
+ Há dois casos para considerar:
+ $C_{n-1} \leftarrow Y$ e $C_{n-1} \rightarrow Y$.
+ 
+ Se $C_{n-1} \leftarrow Y$, então
+ não há colisor em 
+ $C_{n-1} \leftarrow Y \leftarrow U_Y \rightarrow Y_x$.
+ Portanto, $C^* = (X, C_2, \ldots, C_{n-1}, Y, U_Y, Y_x)$ é
+ um caminho desbloqueado de $X$ a $Y_x$ no grafo potencial.
+ 
+ A seguir, considere que $C_{n-1} \rightarrow Y$.
+ Tome $m = \max(\{1\} \cup \{i: C_i \text{ é colisor} \})$. 
+ Assim, $C_m \leftarrow C_{m+1} \ldots C_{n-1} \rightarrow Y$.
+ Pelo diagrama acima, existe $p > m$ tal que 
+ $C_{p-1} \leftarrow C_p \rightarrow C_{p+1}$.
+ Defina $C^* = (X_x, (C_2)_x, \ldots, (C_{n-1})_x, Y_x)$.
+ Não há colisor em 
+ $C_{p-1} \leftarrow C_p \leftarrow U_{C_p} \rightarrow C^*_p$.
+ Também, como não há colisor em $(C_p, C_{p+1}, \ldots, Y)$,
+ decorre da \cref{def:grafo_potencial} que
+ não há colisor em $(C^*_p, C^*_{p+1}, \ldots Y)$.
+ Portanto, não há colisor em
+ $(C_p, U_{C_p}, C^*_p, C^*_{p+1}, \ldots Y)$.
+ Defina 
+ \begin{align*}
+  C^+ &= (X, C_2, \ldots, C_p, U_{C_p}, C^*_p, C^*_{p+1}, \ldots Y).
+ \end{align*}
+ Como $C$ está bloqueado dado $\Z$,
+ para todo $i \leq p$, $C_i \in \Z$ 
+ se e somente se $C_i$ é um colisor em $C$.
+ Além disso, para todo $i > p$,
+ $C^+_i$ não é colisor e 
+ $C^+_i$ não está em $\Z$, pois
+ é um resultado potencial ou uma variável em $U$.
+ Assim $C^+_i$ não está bloqueado dado $\Z$ e
+ é um caminho de $X$ a $Y_x$.
+\end{proof}
+
+\section{Relativas à \cref{sec:instrument}}
+
+\begin{definition}
+ \label{def:pom_partition}
+ $\U = \{U_V: V \in \sV\}$,
+ $\sV^{(1)} = \{V \in \sV: Pa(V) = \emptyset\}$, e
+ $\sV^{(i)} = \{V \in \sV: Pa(V) \subseteq \sV^{(i-1)}\}$.
+\end{definition}
+
+\begin{lemma}
+ \label{lemma:pom_anc}
+ No modelo de resultados potenciais (\cref{def:pom})
+ se $Anc^*(Y_{\X=\x}) \cap \U = Anc^*(\Y_{\X=\x,\Z=\z}) \cap \U$,
+ então para cada $V \in Pa(Y)$,
+ $Anc^*(V_{\X=\x}) \cap \U = Anc^*(V_{\X=\x,\Z=\z}) \cap \U$.
+\end{lemma}
+
+\begin{proof}
+ Primeiramente, note que
+ para todo $Z \in \Z$, 
+ tem-se que $U_Z \notin Anc^*(Y_{\X=\x,\Z=\z}) = Anc^*(Y_{\X=\x})$.
+ Assim, como $Anc^*(V_{\X=\x}) \subseteq Anc^*(Y_{\X=\x})$,
+ $U_Z \notin Anc^*(V_{\X=\x})$. Isto é,
+ $\Z_{\X=\x} \cap Anc^*(V_{\X=\x}) = \emptyset$.
+ 
+ A seguir, por construção da \cref{def:pom},
+ $Anc^*(V_{\X=\x,\Z=\z}) \cap \U \subseteq Anc^*(V_{\X=\x}) \cap \U$.
+ Assim, basta provar que para todo $U \in Anc^*(V_{\X=\x}) \cap \U$ 
+ tem-se que $U \in Anc^*(V_{\X=\x,\Z=\z})$.
+ 
+ Tome $U \in Anc^*(V_{\X=\x}) \cap \U$.
+ Por construção, existem vértices, $C_1,\ldots,C_m \in \sV$ 
+ que constituem um caminho direcionado de 
+ $U$ a $V_{\X=\x}$,
+ $(U,(C_1)_{\X=\x},\ldots,(C_m)_{\X=\x},V_{\X=\x})$.
+ Como $\Z_{\X=\x} \cap Anc^*(V_{\X=\x}) = \emptyset$,
+ não existe $V_i$ tal que $V_i \in \Z$. Portanto,
+ $(U,(C_1)_{\X=\x,\Z=\z},\ldots,(C_m)_{\X=\x},V_{\X=\x,\Z=\z})$ é
+ um caminho direcionado de $U$ a $V_{\X=\x,\Z=\z}$, isto é,
+ $U \in Anc^*(V_{\X=\x,\Z=\z})$.
+\end{proof}
+
+\begin{lemma}
+ \label{lemma:pom_equiv_1}
+ No modelo de resultados potenciais (\cref{def:pom}),
+ se $Anc^*(Y_{\X=\x}) \cap \U = Anc^*(Y_{\X=\x,\Z=\z}) \cap \U$, então
+ $Y_{\X=\x} \equiv Y_{\X=\x,\Z=\z}$.
+\end{lemma}
+
+\begin{proof}
+ Faremos a demonstração por indução.
+ Para tal, utilizaremos a \cref{def:pom_partition}.
+ Se $Y \in \sV^{(1)}$, então $Pa(Y) = \emptyset$.
+ Assim, $Anc^*(Y_{\X=\x})$ é $\{U_Y\}$ ou $\emptyset$.
+ Se $Anc^*(Y_{\X=\x}) = \emptyset$, 
+ então $Y \in \X$. Portanto, tomando $Y$ como $X_i$,
+ $Y_{\X=\x} \equiv \x_i \equiv Y_{\X=\x,\Z=\z}$.
+ Se $Anc^*(Y_{\X=\x}) = Anc^*(Y_{\X=\x,\Z=\z}) = \{U_Y\}$, então
+ $Y_{\X=\x} \equiv g_Y(U_Y) \equiv Y_{\X=\x,\Z=\z}$.
+ 
+ Agora, suponha que se $V \in \sV^{(i-1)}$ e
+ $Anc^*(V_{\X=\x}) \cap \U = Anc^*(V_{\X=\x,\Z=\z}) \cap \U$, então
+ $V_{\X=\x} \equiv V_{\X=\x,\Z=\z}$. 
+ Tome $Y \in \sV^{(i)}$ tal que
+ $Anc^*(Y_{\X=\x}) \cap \U = Anc^*(Y_{\X=\x,\Z=\z}) \cap \U$.
+ Se $U_Y \notin Anc^*(Y_{\X=\x})$, então
+ existe $Y$ é algum $X_i$. Portanto,
+ $Y_{\X=\x} \equiv \x_i \equiv Y_{\X=\x,\Z=\z}$.
+ A seguir, suponha que $U_Y \in Anc^*(Y_{\X=\x,\Z=\z})$.
+ Para cada $V \in Pa(Y)$, como $Y \in \sV^{(i)}$, 
+ $V \in \sV^{(i-1)}$.
+ Além disso, decorre do \cref{lemma:pom_anc}, que 
+ $Anc^*(V_{\X=\x}) \cap U = Anc^*(V_{\X=\x,\Z=\z}) \cap U$.
+ Portanto, decorre da hipótese de indução que
+ $V_{\X=\x} \equiv V_{\X=\x,\Z=\z}$. Assim,
+ \begin{align*}
+  Y_{\X=\x} 
+  \equiv g_Y(U_Y, (Pa(Y))_{\X=\x})
+  \equiv g_Y(U_Y, (Pa(Y))_{\X=\x,\Z=\z})
+  \equiv Y_{\X=\x,\Z=\z}
+ \end{align*}
+\end{proof}
+
+\begin{proof}[Prova do \cref{lemma:exclusion_dag}]
+ A seguir, suponha que existe um caminho direcionado de 
+ $I$ a $Y$, $(I,C_1,\ldots,C_m,Y)$, que não passa por $X$.
+ Escolha $f$ tal que $I \sim \text{Bernoulli}(0.5)$ e
+ $I \equiv C_1 \equiv \ldots \equiv C_m \equiv Y$.
+ $Y_{X=x} \sim \text{Bernoulli}(0.5)$ e
+ $Y_{X=x,I=i} \equiv i$. Portanto,
+ $\P(Y_{X=x} \neq Y_{X=x,I=i}) > 0$.
+
+ A seguir, suponha que todo caminho direcionado de 
+ $I$ a $Y$, $C$, é tal que existe $j$ com $C_j = X$.
+ Iremos provar que 
+ $Anc^*(Y_{X=x}) \cap \U = Anc^*(Y_{X=x,I=i}) \cap \U$ e,
+ com base no \cref{lemma:pom_equiv_1}, concluir que
+ $Y_{I=i,X=x} \equiv Y_{X=x}$.
+ Como $Anc^*(Y_{X=x,I=i}) \cap \U 
+ \subseteq Anc^*(Y_{X=x}) \cap \U$,
+ basta provar que 
+ todo $U \in Anc^*(Y_{X=x}) \cap \U$ satisfaz
+ $U \in Anc^*(Y_{X=x,I=i})$.
+ 
+ Tome $U \in Anc^*(Y_{X=x}) \cap \U$.
+ Assim, existem vértices
+ $C_1,\ldots,C_m \in \sV$ e
+ um caminho direcionado de
+ $U$ a $Y_{\X=\x}$,
+ $(U,(C_1)_{X=x},\ldots,(C_m)_{X=x},Y_{X=x})$.
+ Note que se algum $C_j$ fosse $I$, então
+ pela hipótese do lema, existiria algum $C_k$
+ que seria $X$. Assim,
+ $(U,C_1,\ldots,C_m,Y_{X=x})$ 
+ não seria um caminho direcionado,
+ afinal, $X_{X=x}$ não tem pais.
+ Portanto, $I$ não está em $C_1,\ldots,C_m$.
+ Conclua que 
+ $(U,(C_1)_{X=x,I=i},\ldots,(C_m)_{X=x,I=i},Y_{X=x,I=i})$ é
+ um caminho direcionado de $U$ a $Y_{X=x,I=i}$.
+ Isto é, $U \in Anc^*(Y_{X=x,I=i})$.
+ Decorre do \cref{lemma:pom_equiv_1} que
+ $Y_{I=i,X=x} \equiv Y_{X=x}$.
+\end{proof}
+
+\begin{lemma}
+ \label{lemma:instrument_ignore}
+ Se $I$ é um instrumento para medir 
+ o efeito causal de $X$ em $Y$ e
+ $X \in Anc(Y)$, então
+ $I$ é ignorável para o efeito em $X$.
+\end{lemma}
+
+\begin{proof}
+ Provaremos a contra-positiva.
+ Se $I$ não é ignorável para medir o efeito em $X$,
+ então decorre do \cref{lemma:ignore_backdoor} que
+ $I$ e $X$ tem um ancestral comum, $Z$.
+ Como $X$ é um ancestral de $Y$,
+ decorre que $Z$ é ancestral comum a $I$ e $Y$.
+ Portanto, conclui-se do \cref{lemma:ignore_backdoor} que
+ $I$ não é ignorável para $Y$.
+ Isto é, pela \cref{def:instrument}.1,
+ $I$ não é um instrumento.
+\end{proof}
+
+\begin{lemma}
+ \label{lemma:cm_linear_ignore}
+ Se $X$ é ignorável para medir
+ o efeito causal em $Y$ em um
+ \CM linear Gaussiano, então
+ \begin{align*}
+  \ACE = Cov[X,Y] \cdot \V^{-1}[X].
+ \end{align*}
+\end{lemma}
+
+\begin{proof}
+ Decorre do \cref{lemma:cm_linear_normal} que
+ $\sV$ segue uma normal multivariada.
+ Portanto, existem $\alpha$ e $\beta$ tais que
+ \begin{align}
+  \label{eq:cm_linear_ignore_0}
+  \E[Y|X] = \alpha + \beta \cdot X.
+ \end{align}
+ Assim,
+ \begin{align}
+  \label{eq:cm_linear_ignore_1}
+  \ACE &= \frac{d\E[Y|do(X=x)]}{dx} \nonumber \\
+  &= \frac{d\E[Y|X=x]}{dx}
+  & \text{\cref{cor:ignore}} \nonumber \\
+  &= \frac{d(\alpha + \beta x)}{dx} = \beta
+  & \text{\cref{eq:cm_linear_ignore_0}}
+ \end{align}
+ Finalmente,
+ \begin{align*}
+  Cov[X,Y]
+  &= \E[XY] - \E[X]\E[Y] \\
+  &= \E[X\E[Y|X]] - \E[X]\E[\E[Y|X]] \\
+  &= \E[X(\alpha + \beta X)] - \E[X] \E[\alpha + \beta X] \\
+  &= \alpha \E[X] + \beta \E[X^2] - \alpha \E[X] - \beta \E[X]^2 \\
+  &= \beta \V[X] \\
+  &= \ACE \cdot \V[X]
+  & \text{\cref{eq:cm_linear_ignore_1}}
+ \end{align*}
+ Rearranjando os termos, obtenha 
+ $\ACE = Cov[X,Y] \cdot \V^{-1}[X]$.
+\end{proof}
+
+\begin{proof}[Prova do \cref{thm:linear_instrument}]
+ \begin{align*}
+  Cov[I,Y] \cdot \V^{-1}[I]
+  &= \ACE_{I,Y}
+  & \text{\cref{lemma:cm_linear_ignore}} \\
+  &= \sum_{C \in \mathbb{C}_{I,Y}} \prod_{i=1}^{|C|-1} \beta_{C_{i+1},C_i}
+  & \text{\cref{thm:ace_linear}} \\
+  &= \sum_{C \in \mathbb{C}_{I,X}} \sum_{K \in \mathbb{C}_{X,Y}}
+  \left(\prod_{i=1}^{|C|-1} \beta_{C_{i+1},C_i}\right)
+  \left(\prod_{j=1}^{|K|-1} \beta_{K_{i+1},K_i}\right) 
+  & \text{\cref{lemma:exclusion_dag}} \\
+  &= \left(\sum_{C \in \mathbb{C}_{I,X}} \prod_{i=1}^{|C|-1} \beta_{C_{i+1},C_i}\right)
+  \left(\sum_{K \in \mathbb{C}_{X,Y}} \left(\prod_{j=1}^{|K|-1} \beta_{K_{i+1},K_i}\right)\right) \\
+  &= \ACE_{I,X} \cdot \ACE_{X,Y}
+  & \text{\cref{thm:ace_linear}} \\
+  &= Cov[I,X] \cdot \V^{-1}[I] \cdot \ACE_{X,Y}
+  & \text{\cref{lemma:instrument_ignore,lemma:cm_linear_ignore}}
+ \end{align*}
+ Rearranjando os termos, obtemos $\ACE_{X,Y} = \frac{Cov[I,Y]}{Cov[I,X]}$.
+\end{proof}
+
+\begin{proof}[Prova do \cref{thm:instrument}]
+ \begin{align}
+  \label{eq:instrument_1}
+  & Y_{I=1} - Y_{I=0} 
+  \nonumber \\
+  =& Y_{I=1}\I(X_{I=1}=1) + Y_{I=1}\I(X_{I=1}=0)
+  -Y_{I=0}\I(X_{I=0} =1) -Y_{I=0}\I(X_{I=0}=0) 
+  \nonumber \\
+  =& Y_{I=1,X=1}\I(X_{I=1}=1) + Y_{I=1,X=0}\I(X_{I=1}=0)
+  -Y_{I=0,X=1}\I(X_{I=0} =1) -Y_{I=0,X=0}\I(X_{I=0}=0) 
+  & \text{\cref{lemma:obs_to_potential_prev}} 
+  \nonumber \\
+  =& Y_{X=1}\I(X_{I=1}=1) + Y_{X=0}\I(X_{I=1}=0)
+  -Y_{X=1}\I(X_{I=0} =1) -Y_{X=0}\I(X_{I=0}=0)
+  & \text{\cref{def:instrument}.2} 
+  \nonumber \\
+  =& (Y_{X=1}-Y_{X=0})(\I(X_{I=1}=1)-\I(X_{I=0} =1)) 
+  \nonumber \\
+  =& (Y_{X=1}-Y_{X=0})(X_{I=1}-X_{I=0})
+   & X \in \{0,1\}
+ \end{align}
+ Portanto,
+ \begin{align}
+  \label{eq:instrument_2}
+  \E[Y_{I=1} - Y_{I=0}]
+  &= \E[(Y_{X=1}-Y_{X=0})(X_{I=1}-X_{I=0})] 
+  & \text{\cref{eq:instrument_1}} 
+  \nonumber \\
+  &= \E[Y_{X=1}-Y_{X=0}|X_{I=1}-X_{I=0}=1]\P(X_{I=1}-X_{I=0}=1) 
+  & \text{\cref{def:monotone}} \\
+ \end{align}
+ Como $I$ é um instrumento,
+ decorre da \cref{def:instrument} que $Cov[I,X] \neq 0$.
+ Portanto, $\P(X_{I=1}-X_{I=0}=1) \neq 0$.
+ Reagrupando os termos na \cref{eq:instrument_2}, 
+ obtemos:
+ \begin{align}
+  \label{eq:instrument_3}
+  \E[Y_{X=1}-Y_{X=0}|X_{I=1}-X_{I=0}=1]
+  &= \frac{\E[Y_{I=1} - Y_{I=0}]}{\P(X_{I=1}-X_{I=0}=1)} 
+  \nonumber \\
+  \LACE
+  &= \frac{\E[Y_{I=1} - Y_{I=0}]}{\P(X_{I=1}-X_{I=0}=1)}
+  & \text{\cref{def:lace}} \\
+  &= \frac{\E[Y_{I=1} - Y_{I=0}]}{\E[X_{I=1}-X_{I=0}]}
+  & X \in \{0,1\}, \text{\cref{def:monotone}} \\
+ \end{align}
+ Há dois casos a considerar. 
+ Se $X \in Anc(Y)$.
+ Assim, decorre do \cref{lemma:instrument_ignore} que
+ $I$ é ignorável para medir $X$. Neste caso,
+ podemos continuar a desenvolver \cref{eq:instrument_3}:
+ \begin{align*}
+  \LACE 
+  &= \frac{\E[Y|I=1] - \E[Y|I=0]}{\E[X|I=1] - \E[X|I=0]}
+  & \text{\cref{def:instrument}.1, \cref{{cor:ignore}}}
+ \end{align*}
+ Se $X \notin Anc(Y)$, então
+ como $I$ é um instrumento,
+ decorre do \cref{lemma:exclusion_dag} que
+ $I \notin Anc(Y)$. Portanto,
+ conclua do \cref{ex:ace_sem_causa} que
+ $\E[Y|do(I=1)]-\E[Y|do(I=0)] = 0$, o que implica
+ pelo \cref{lemma:po_do} que
+ $\E[Y_{I=1}-Y_{I=0}] = 0$.
+ Como $I$ é ignorável para $Y$,
+ decorre do \cref{cor:ignore} que
+ $\E[Y|I=1]-\E[Y|I=0] = 0$.
+ Assim, decorre do \cref{eq:instrument_3} que
+ $\LACE = 0 = \frac{\E[Y|I=1] - \E[Y|I=0]}{\E[X|I=1] - \E[X|I=0]}$.
+\end{proof}

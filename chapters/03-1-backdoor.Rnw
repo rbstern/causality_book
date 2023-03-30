@@ -829,6 +829,11 @@ ace_rob_lm %>% round(2)
 \end{exercise}
 
 \begin{exercise}
+ \label{ex:ace_sem_causa}
+ Prove que se $X \notin Anc(Y)$, então $\ACE = 0$.
+\end{exercise}
+
+\begin{exercise}
  Prove que a variância amostral satisfaz
  o \cref{def:perm}.
 \end{exercise}

@@ -1,0 +1,210 @@
+\subsection{Relativas aos \cref{thm:backdoor_ajuste,thm:backdoor_ipw}}
+
+\begin{proof}[Prova do \cref{thm:backdoor_ajuste}]
+ \begin{align}
+  \label{eq:backdoor_ajuste_1}
+  \E[g(Y)|do(X=x),\Z]
+  &= \int g(y) f(y|do(x),\Z) dy 
+  & \text{\cref{def:exp_inter}} \nonumber \\
+  &= \int g(y) f(y|x, \Z)dy 
+  & \text{\cref{thm:backdoor}} \nonumber \\
+  &= \E[g(Y)|X=x,\Z] \\
+  \E[g(Y)|do(X=x)]
+  &= \E[\E[g(Y)|do(X=x),\Z]] \nonumber \\
+  &= \E[\E[g(Y)|X=x,\Z]]
+  & \text{\cref{eq:backdoor_ajuste_1}} \nonumber
+ \end{align}
+\end{proof}
+
+\begin{proof}[Prova do \cref{thm:backdoor_ipw}]
+ \begin{align*}
+  \E[g(Y)|do(x),\Z]
+  &= \int g(y) f(y|do(x),\Z) dy
+  & \text{\cref{def:exp_inter}} \\
+  &= \int g(y) f(y|x,\Z) dy
+  & \text{\cref{thm:backdoor}} \\
+  &= \int \frac{g(y) f(y,x|\Z)}{f(x|\Z)} dy \\
+  &= \int \frac{g(y) \I(x_* = x) f(y,x_*|\Z)}{f(x|\Z)} d(x_*, y) \\
+  &= \E\left[\frac{g(Y)\I(X=x)}{f(x|\Z)}|\Z\right] \\
+  &= \frac{\E[g(Y)\I(X=x)|\Z]}{f(x|\Z)}
+ \end{align*}
+ \begin{align*}
+  \E[Y|do(x)]
+  &= \E[\E[Y|do(X),\Z]] \\
+  &= \E\left[\frac{\E[g(Y)\I(X=x)|\Z]}{f(x|\Z)}\right] 
+  & \text{\cref{thm:backdoor_ipw}} \\
+  &= \E\left[\E\left[\frac{g(Y)\I(X=x)}{f(x|\Z)}|\Z\right]\right] \\
+  &= \E\left[\frac{g(Y)\I(X=x)}{f(x|\Z)}\right]
+ \end{align*}
+\end{proof}
+
+\subsection{Relativas ao \cref{thm:conv_ajuste}}
+
+\begin{lemma}
+ \label{lemma:conv_l1_to_p}
+ Se $(W_n)_{n \in \mathbb{N}}$ é uma sequência de
+ variáveis aleatórias tais que $\E[|W_n|] = o(1)$,
+ então $W_n \convp 0$.
+\end{lemma}
+
+\begin{proof}
+ \begin{align*}
+  \P(|W_n| > \epsilon)
+  &\leq \frac{\E[|W_n|]}{\epsilon} & \text{Markov} \\
+  &= o(1)
+ \end{align*}
+\end{proof}
+
+\begin{proof}[Prova do \cref{thm:conv_ajuste}]
+ Como $\E[|\mu(x,\Z)|] < \infty$,
+ pela Lei dos Grandes Números,
+ \begin{align*}
+  \frac{\sum_{i=1}^n \mu(x,\Z_i)}{n}
+  &\convp \E[\mu(x,\Z)]
+ \end{align*}
+ Portanto, pelo \cref{thm:backdoor_ajuste},
+ é suficiente provar que
+ $\hdoy - \frac{\sum_{i=1}^n \mu(x,\Z_i)}{n} \convp 0$.
+ Usando o \cref{lemma:conv_l1_to_p}, é suficiente provar que 
+ $\E\left[\bigg|\hdoy - \frac{\sum_{i=1}^n \mu(x,\Z_i)}{n}\bigg|\right] 
+ = o(1)$.
+ \begin{align*}
+  \E\left[\bigg|\hdoy - \frac{\sum_{i=1}^n \mu(x,\Z_i)}{n}\bigg|\right]
+  &= \E\left[\bigg|\frac{\sum_{i=1}^n 
+  (\hat{\mu}(x,\Z_i)-\mu(x,\Z_i))}{n}\bigg|\right] \\
+  &\leq n^{-1}\sum_{i=1}^n \E\left[| 
+  \hat{\mu}(x,\Z_i)-\mu(x,\Z_i)|\right] \\
+  &= \E\left[|\hat{\mu}(x,\Z)-\mu(x,\Z)|\right] 
+  & \text{\cref{def:perm}} \\
+  &= o(1)]
+ \end{align*}
+\end{proof}
+
+\subsection{Relativas ao \cref{thm:conv_ipw}}
+
+\begin{proof}[Prova do \cref{thm:conv_ipw}]
+ Pela Lei dos Grandes números,
+ $n^{-1} \sum_{i=1}^n \frac{Y_i \I(X_i = x)}{f(x|\Z_i)} 
+ \convp \E\left[\frac{Y \I(X = x)}{f(x|\Z)}\right]$. Como
+ pelo \cref{thm:backdoor_ipw} temos que
+ $\E\left[\frac{Y \I(X = x)}{f(x|\Z)}\right] = \E[Y|do(X=x)]$,
+ usando o \cref{lemma:conv_l1_to_p} é suficiente provar que 
+ \begin{align*}
+ \E\left[\bigg|n^{-1} \sum_{i=1}^n \frac{Y_i \I(X_i = x)}{\hf(x|\Z_i)} 
+  - n^{-1} \sum_{i=1}^n \frac{Y_i \I(X_i = x)}{f(x|\Z_i)}\bigg|\right]
+  &= o(1).
+ \end{align*}
+ \begin{align*}
+  &\E\left[\bigg|n^{-1} \sum_{i=1}^n \frac{Y_i \I(X_i = x)}{\hf(x|\Z_i)} 
+  - n^{-1} \sum_{i=1}^n \frac{Y_i \I(X_i = x)}{f(x|\Z_i)}\bigg|\right] \\
+  \leq& n^{-1}\sum_{i=1}^n
+  \E\left[\bigg|\frac{Y_i \I(X_i = x)}{\hf(x|\Z_i)} 
+  -\frac{Y_i \I(X_i = x)}{f(x|\Z_i)}\bigg|\right] \\
+  =& \E\left[\bigg|\frac{Y_1 \I(X_1 = x)}{\hf(x|\Z_1)} 
+  -\frac{Y_1 \I(X_1 = x)}{f(x|\Z_1)}\bigg|\right]
+  & \text{\cref{def:perm}} \\
+  =& \E\left[\bigg|\frac{Y_i \I(X_i = x)(\hf(x|\Z_i)-f(x|\Z_i))}
+  {\hf(x|\Z_i)f(x|\Z_i)}\bigg|\right] \\
+  \leq& \delta^{-2}\E\left[|Y_i \I(X_i = x)(\hf(x|\Z_i)-f(x|\Z_i))|\right] 
+  & \inf_z \min\{f(x|\Z_1), \hf(x|\Z_1)\} > \delta \\
+  =& \delta^{-2}\E\left[|
+  \hf(x|\Z_i)-f(x|\Z_i)|\cdot \E[|Y_i \I(X_i = x)|\big|\Z]\right] 
+  & \text{Lei da esperança total} \\
+  \leq& M\delta^{-2} \E\left[|\hf(x|\Z_i)-f(x|\Z_i)|\right]
+  & \sup_z \E[|Y_i \I(X_i = x)|\Z=\z] < M \\
+  =& o(1)
+ \end{align*}
+\end{proof}
+
+\subsection{Relativas ao \cref{thm:conv_duplo_robusto}}
+
+\begin{proof}[Prova do \cref{thm:conv_duplo_robusto}]
+ Se as condições do \cref{thm:conv_ajuste} estão satisfeitas,
+ então decorre deste resultado que 
+ $\hdoy \convp \E[Y|do(X=x)]$. Portanto, 
+ usando \cref{lemma:conv_l1_to_p}, 
+ resta demonstrar que
+ \begin{align*}
+  \E\left[\bigg|\hdoyb 
+  -\sum_{i=1}^n \frac{\I(X_i=x)\hat{\mu}(x,\Z_i)}
+  {n\hat{f}(x|\Z_i)}\bigg|\right]
+  &= o(1)
+ \end{align*}
+ \begin{align*}
+  &\E\left[\bigg|\hdoyb 
+  -\sum_{i=1}^n \frac{\I(X_i=x)\hat{\mu}(x,\Z_i)}
+  {n\hat{f}(x|\Z_i)}\bigg|\right] \\
+  =& \E\left[\bigg|\sum_{i=1}^n \frac{\I(X_i=x)(Y_i-\hat{\mu}(x,\Z_i))}
+  {n\hat{f}(x|\Z_i)}\bigg|\right]
+  & \text{\cref{def:ipw}} \\
+  \leq& n{-1}\sum_{i=1}^n
+  \E\left[\bigg|\frac{\I(X_i=x)(Y_i-\hat{\mu}(x,\Z_i))}
+  {\hat{f}(x|\Z_i)}\bigg|\right] \\
+  =& \E\left[\bigg|\frac{\I(X_1=x)(Y_1-\hat{\mu}(x,\Z_1))}
+  {\hat{f}(x|\Z_1)}\bigg|\right]
+  & \text{\cref{def:perm}} \\
+  \leq& \delta^{-1}
+  \E\left[\big|\I(X_1=x)(Y_1-\hat{\mu}(x,\Z_1))
+  \big|\right]
+  & \inf_\z \hf(x|\z) > \delta \\
+  \leq& \delta^{-1}
+  \E\left[\big|\I(X_1=x)(\E[Y_1|X_1,\Z_1]-\hat{\mu}(x,\Z_1))
+  \big|\right]
+  & \text{Lei da esperança total} \\
+  =& \delta^{-1}
+  \E\left[\big|\I(X_1=x)(\E[Y_1|X_1=x,\Z_1]-\hat{\mu}(x,\Z_1))
+  \big|\right]
+  & \I(X_1=x)\E[Y_1|X_1,\Z_1] 
+  \equiv \I(X_1=x)\E[Y_1|X_1=x,\Z_1] \\
+  \leq&\delta^{-1}
+  \E\left[\big|\E[Y_1|X_1=x,\Z_1]-\hat{\mu}(x,\Z_1)
+  \big|\right] \\
+  =& \E\left[\big|\mu(x,\Z_1)-\hat{\mu}(x,\Z_1)
+  \big|\right] = o(1)
+ \end{align*}
+ A seguir, se as condições do 
+ \cref{thm:conv_ipw} estão satisfeitas,
+ então decorre deste resultado que 
+ $\hdoyb \convp \E[Y|do(X=x)]$.
+ Portanto, 
+ usando \cref{lemma:conv_l1_to_p}, 
+ resta demonstrar que
+ \begin{align*}
+  \E\left[\bigg|\hdoy 
+  -\sum_{i=1}^n \frac{\I(X_i=x)\hat{\mu}(x,\Z_i)}
+  {n\hat{f}(x|\Z_i)}\bigg|\right]
+  &= o(1)
+ \end{align*}
+ \begin{align*}
+  &\E\left[\bigg|\hdoy 
+  -\sum_{i=1}^n \frac{\I(X_i=x)\hat{\mu}(x,\Z_i)}
+  {n\hat{f}(x|\Z_i)}\bigg|\right] \\
+  =& \E\left[\bigg|\sum_{i=1}^n 
+  \frac{(\hf(x|\Z_i)-\I(X_i=x))
+  \hat{\mu}(x,\Z_i)}
+  {n\hf(x|\Z_i)}\bigg|\right]
+  & \text{\cref{def:ajuste}} \\
+  \leq& n^{-1}\sum_{i=1}^n\E\left[\bigg| 
+  \frac{(\hf(x|\Z_i)-\I(X_i=x))
+  \hat{\mu}(x,\Z_i)}
+  {\hf(x|\Z_i)}\bigg|\right] \\
+  =& \E\left[\bigg| 
+  \frac{(\hf(x|\Z_1)-\I(X_1=x))
+  \hat{\mu}(x,\Z_1)}
+  {\hf(x|\Z_1)}\bigg|\right] 
+  & \text{\cref{def:perm}} \\
+  \leq& \delta^{-1} \E\left[\big| 
+  (\hf(x|\Z_1)-\I(X_1=x))
+  \hat{\mu}(x,\Z_1)\big|\right] 
+  & \inf_\z \hf(x|\Z_1) > \delta \\
+  \leq& \delta^{-1}M \E\left[\big| 
+  \hf(x|\Z_1)-\I(X_1=x)\big|\right] 
+  & \sup_\z \hat{\mu}(x,\z) < M \\
+  =& \delta^{-1}M \E\left[\big| 
+  \hf(x|\Z_1)-\E[\I(X_1=x)|\Z_1]\big|\right] 
+  & \text{Lei da esperança total} \\
+  =& \delta^{-1}M \E\left[\big| 
+  \hf(x|\Z_1)-f(x|\Z_1)\big|\right]
+  = o(1)
+ \end{align*}
+\end{proof}

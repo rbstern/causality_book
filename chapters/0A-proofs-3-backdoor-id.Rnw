@@ -1,0 +1,224 @@
+\section{Relativas à \cref{sec:backdoor}}
+
+\subsection{Relativas ao \cref{thm:backdoor}}
+
+Para realizar a demonstração do \cref{thm:backdoor},
+consideraremos um SCM aumentado, 
+em que existe uma variável que representa
+a ocorrência de uma intervenção em X.
+Uma consequência interessante desta construção será
+a de que o modelo intervencional é equivalente
+ao condicionamento usual no SCM aumentado.
+
+\begin{definition}
+ \label{def:cm_star}
+ Seja $(\sG_*, f_*)$ um SCM expandido tal que
+ $\sG_* = (\sV \cup \{I_X: X \in \X\}, \sE_*)$, e
+ $\sE_* = \sE \cup \{(I_X \rightarrow X: X \in \X)\}$.
+ Isto é, $\sG_*$ é uma cópia de $\sG$ em que
+ adicionamos para cada $X \in \X$
+ os vértice $I_X \in \{0,1\}$ e 
+ arestas de $I_X$ para $X$.
+ 
+ $\sG^*$ admite uma interpretação intuitiva.
+ $I_X$ é a indicadora de que fazemos uma intervenção em $X$,
+ fazendo que esta assuma o valor $x$.
+ Se $I_X = 0$, não há uma intervenção e, assim,
+ $X$ segue a sua distribuição observacional.
+ Se $I_X = 1$, $X$ assume o valor $x$ com probabilidade $1$.
+ 
+ Finalmente, considerando $Pa(X)$ como os
+ pais de $X$ segundo $\sG$, definimos que:
+ \begin{align*}
+  f_*(X|Pa(X), I_X) 
+  &= \begin{cases}
+   f(X|Pa(X)) & \text{, se $I_X = 0$, e} \\
+   \I(X = x) & \text{, caso contrário.}
+  \end{cases}
+ \end{align*}
+\end{definition}
+
+\begin{lemma}
+ \label{lemma:backdoor_1}
+ Se $(\sG_*, f_*)$ é tal qual em \cref{def:cm_star}, então:
+ \begin{align*}
+  f(\sV|do(X=x)) &= f_*(\sV|I_{\X}=1)
+ \end{align*}
+\end{lemma}
+
+\begin{proof}
+ \begin{align*}
+  f_*(\sV|I_{\X} = 1) 
+  &= \frac{f_*(\sV, I_{\X}=1)}{f(I_{\X}=1)} \\
+  &= \frac{f(I_{\X}=1)\prod_{X \in \X}\I(X = x)\prod_{V \notin \X}f(V|Pa(V))}{f(I=1)}
+  & \text{\cref{def:cm_star}} \\
+  &= \prod_{X \in \X}\I(X = x) \cdot \prod_{V \notin \V_1}f(V|Pa(V)) \\
+  &= f(\sV|do(\X=\x)) 
+  & \text{\cref{def:intervencao}}
+ \end{align*}
+\end{proof}
+
+\begin{lemma}
+ \label{lemma:backdoor_2}
+ Se $(\sG_*, f_*)$ é tal qual em \cref{def:cm_star}, então:
+ \begin{align*}
+  f_*(\sV|I_{\X}=0) &= f(\sV).
+ \end{align*}
+\end{lemma}
+
+\begin{proof}
+ \begin{align*}
+  f_*(\sV|I_{\X}=0) 
+  &= \frac{f_*(\sV, I_{\X}=0)}{f_*(I_{\X}=0)} \\
+  &= \frac{f_*(I_{\X}=0)\prod_{X \in \X}f_*(X|Pa(X),I_{X}=0)
+  \prod_{V \notin \X} f(V|Pa(V))}{f_*(I=0)}
+  & \text{\cref{def:cm_star}} \\
+  &= \prod_{X \in \X}f(X|Pa(X))\prod_{V \notin \X} f(V|Pa(V))
+  & \text{\cref{def:cm_star}} \\
+  &= \prod_{V \in \sV} f(V|Pa(V)) \\
+  &= f(\sV) 
+  & \text{\cref{def:compativel}}
+ \end{align*}
+\end{proof}
+
+\begin{lemma}
+ \label{lemma:backdoor_3}
+ Se $(\sG_*, f_*)$ é tal qual em \cref{def:cm_star} e
+ $\Z$ satisfaz o segundo item do critério backdoor para
+ medir o efeito causal de $X$ em $Y$, então $I \dsep Y | X, \Z$.
+\end{lemma}
+
+\begin{proof}
+ Tome um caminho arbitrário de
+ $I$ em $Y$, $C = (I, C_2, \ldots, C_{n-1}, Y)$.
+ Por definição de $I$, $C_2 = X$ e 
+ $I \rightarrow X$. 
+ Se $X \rightarrow C_3$, então
+ $X$ não é um colisor em $C$ e 
+ $C$ está bloqueado dado $X$ e $\Z$.
+ Se $X \leftarrow C_3$, então
+ $(X, C_3, \ldots, C_{n-1}, Y)$ está bloqueado
+ dado $\Z$, uma vez que $\Z$ satisfaz
+ o segundo item do critério backdoor.
+ Conclua que $C$ está bloqueado dado $X$ e $\Z$.
+\end{proof}
+
+\begin{lemma}
+ \label{thm:backdoor_pt_1}
+ Se $\Z$ satisfaz 
+ o segundo item do critério backdoor para
+ medir o efeito causal de $X$ em $Y$, então
+ \begin{align*}
+  f(y|do(x),\z) &= f(y|x,\z).
+ \end{align*}
+\end{lemma}
+
+\begin{proof}
+ \begin{align*}
+  f(y|do(x),\z)
+  &= f_*(y|I=1, \z)
+  & \text{\cref{lemma:backdoor_1}} \\
+  &= \int f_*(y,X|I=1, \z)dX \\
+  &= \int f_*(X|I=1,\z)f_*(y|X, I=1, \z)dX \\
+  &= \int \I(X=x)f_*(y|X, I=1, \z)dX \\
+  &= f_*(y|x,I=1,\z) \\
+  &= f_*(y|x,I=0,\z)
+  & \text{\cref{lemma:backdoor_3}} \\
+  &= f(y|x,\z)
+  & \text{\cref{lemma:backdoor_2}}
+ \end{align*}
+\end{proof}
+
+\begin{lemma}
+ \label{lemma:backdoor_4}
+ Se $(\sG_*, f_*)$ é tal qual em \cref{def:cm_star} e
+ $\X \notin Anc(\Z)$, então:
+ \begin{align*}
+  f_*(\z) &= f(\z)
+ \end{align*}
+\end{lemma}
+
+\begin{proof}
+ Seja $\Z_* = Anc(\Z)$ e
+ $\V = \sV - (\{X\} \cup \Z_*)$.
+ Como $X \notin \Z_*$, decorre 
+ da \cref{def:cm_star} que $I \notin \Z_*$.
+ Portanto,
+ \begin{align*}
+  f_*(\z_*) 
+  &= \int f_*(\z_*, I,X,\bv) d(I,X,\bv) \\
+  &= \int \left(\prod_{z \in \z_*} f(z|Pa(z))\right)
+  \left(f_*(I)f_*(X|I,Pa(X))
+  \prod_{v \in \bv} f(v|Pa(v))\right)d(I,X,\bv)
+  & \text{\cref{def:cm_star}} \\
+  &= \left(\prod_{z \in \z_*} f(z|Pa(z))\right) 
+  \int \left(f_*(I)f_*(X|I,Pa(X)) 
+  \prod_{v \in \bv} f(v|Pa(v))\right)d(I,X,\bv) 
+  & \Z_* \cap (\V \cup \{I,X\}) = \emptyset \\
+  &\propto \prod_{z \in \z_*} f(z|Pa(z)) 
+  & \Z_* \cap (\V \cup \{I,X\}) = \emptyset \\
+  &= f(\z_*) 
+  & \text{\cref{lemma:anc_fact}}
+ \end{align*}
+ Assim, decorre da Lei da Probabilidade Total que
+ $f_*(\z) = f(\z)$.
+\end{proof}
+
+\begin{lemma}
+ \label{lemma:backdoor_5}
+ Se $(\sG_*, f_*)$ é tal qual em \cref{def:cm_star} e
+ $\Z$ satisfaz o critério backdoor para
+ medir o efeito causal de $X$ em $Y$, então $I \dsep \Z$.
+\end{lemma}
+
+\begin{proof}
+ Tome arbitrariamente um $Z \in \Z$ e
+ um caminho de $I$ em $Z$, 
+ $C = (I, C_2, \ldots, C_{n-1}, Z)$.
+ Por definição de $I$, $C_2 = X$ e
+ $I \rightarrow X$. 
+ Suponha por absurdo que $C$ não tem colisor.
+ Como, $I \rightarrow X$, decorre que
+ $C = I \rightarrow X \rightarrow \ldots 
+ \rightarrow C_{n-1} \rightarrow Z$.
+ Assim, $Z$ é um descendente de $X$,
+ uma contradição com 
+ o critério backdoor (\cref{def:backdoor}).
+ Conclua que $C$ tem um colisor.
+ Assim, $C$ está marginalmente bloqueado
+ (\cref{def:caminho-bloq}).
+\end{proof}
+
+\begin{lemma}
+ \label{thm:backdoor_pt_2}
+ Se $\Z$ satisfaz o critério backdoor para
+ medir o efeito causal de $X$ em $Y$, então
+ $f(\z|do(x)) = f(\z)$.
+\end{lemma}
+
+\begin{proof}
+ \begin{align*}
+  f(\z|do(x))
+  &= f_*(\z|I=1)
+  & \text{\cref{lemma:backdoor_1}} \\
+  &= f_*(\z)
+  & \text{\cref{lemma:backdoor_5}} \\
+  &= f(\z)
+  & \text{\cref{lemma:backdoor_4}}
+ \end{align*}
+\end{proof}
+
+\begin{proof}[Prova do \cref{thm:backdoor}]
+ Decorre diretamente dos
+ \cref{thm:backdoor_pt_1,thm:backdoor_pt_2}.
+\end{proof}
+
+\begin{proof}[Prova do \cref{cor:backdoor}]
+ \begin{align*}
+  f(y|do(X=x))
+  &= \int f(y,\z|do(X=x))d\z \\
+  &= \int f(\z|do(X=x))f(y|do(X=x),\z) \\
+  &= \int f(\z)f(y|x,\z)
+  & \text{\cref{thm:backdoor}}
+ \end{align*}
+\end{proof}

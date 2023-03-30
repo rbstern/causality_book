@@ -1,0 +1,176 @@
+\section{Relativas às \text{\cref{sec:frontdoor,sec:do_calculus}}}
+
+\subsection{Relativas ao \text{\cref{thm:do_calculus}}}
+
+\begin{lemma}
+ \label{lemma:do_calculus_1}
+ Se $\Y \dsep \Z | \X \cup \W$ em $\sG(\bar{\X})$, então
+ \begin{align*}
+  f(\Y|do(\X), \Z, \W) &= f(\Y|do(\X), \W)
+ \end{align*}
+\end{lemma}
+
+\begin{proof}
+ Seja $f^*(\sV) \equiv f(\sV|do(\X=\x))$. 
+ Decorre do \cref{lemma:do_calculus_0} que
+ $f^*$ é compatível com $\sG(\bar{\X})$ e que
+ $\X$ é degenerado em $\x$ segundo $f^*$.
+ Assim,
+ \begin{align*}
+  f(\Y|do(\X), \Z, \W)
+  &= f^*(\Y|\Z, \W) \\
+  &= f^*(\Y|\X=\x, \Z, \W)
+  & \X \text{ é degenerado segundo }  f^* \\
+  &= f^*(\Y|\X=\x, \W)
+  & f^* \text{ compatível com } \sG(do(\X)) \text{,} \\
+  && \Y \dsep \Z | \X \cup \W \text{ em } \sG(do(\X)) \text{, e \cref{thm:d-sep}} \\
+  &= f(\Y|do(\X=\x), \W).
+ \end{align*}
+\end{proof}
+
+\begin{lemma}
+ \label{lemma:do_calculus_2}
+ Se $Y \dsep \W | \Z \cup \X$ em
+ $\sG(\bar{\X}, \underline{\W})$, então
+ \begin{align*}
+  f(Y|do(\X),do(\W),\Z) &= f(Y|do(\X),\W,\Z)
+ \end{align*}
+\end{lemma}
+
+\begin{proof}
+ Seja $f^*(\sV) \equiv f(\sV|do(\X=\x))$. 
+ Como $Y \dsep \W | \Z \cup \X$ 
+ em $\sG(\bar{\X}, \underline{\W})$, 
+ não há nenhum caminho ativo em $\sG(\bar{\X})$
+ de $\X$ em $Y$ que inicia com $\W \leftarrow$.
+ Isto é, $\X \cup \Z$ satisfaz 
+ o segundo item do critério backdoor para
+ medir o efeito causal de $\W$ em $Y$.
+ Portanto,
+ \begin{align*}
+  f(Y|do(\X=\x),do(\W),\Z)
+  &= f^*(Y|do(\W),\Z) \\
+  &= f^*(Y|do(\W),\X=\x,\Z)
+  & \text{\cref{lemma:do_calculus_0}} \\
+  &= f^*(Y|\W,\X=\x,\Z)
+  & \text{\cref{thm:backdoor_pt_1}} \\
+  &= f^*(Y|\W,\Z) \\
+  &= f(Y|do(\X=\x),\W,\Z)
+ \end{align*}
+\end{proof}
+
+\begin{lemma}
+ \label{lemma:do_calculus_3}
+ Se $\Y \dsep I_{\X} | \Z \cup \W$ em $\sG(\bar{\W}, \X^{+})$, então:
+ \begin{align*}
+  f(Y|do(\W), do(\X), \Z) &= f(Y|do(\W), \Z)
+ \end{align*}
+\end{lemma}
+
+\begin{proof}
+ Seja $f^*(\sV) \equiv f(\sV|do(\W=\w))$.
+ \begin{align*}
+  f(Y|do(\W=\w), do(\X), \Z)
+  &= f^*(Y|do(\X),\Z) 
+  & \text{\cref{lemma:do_calculus_0}} \\
+  &= f^*(Y|do(\X),\W=\w,\Z)
+  & \text{\cref{lemma:do_calculus_0}} \\ 
+  &= f^*_*(Y|I_{\X} = 1, \W=\w, \Z)
+  & \text{\cref{lemma:backdoor_1}} \\
+  &= f^*_*(Y|\W=\w, \Z, I_{\X}=0)
+  & Y \dsep I_{\X} | \W \cup \Z
+  \text{ em } \sG(\bar{\W}, \X^{+}) \\
+  &= f^*(Y|\W=\w, \Z) 
+  & \text{\cref{lemma:backdoor_2}} \\
+  &= f(Y|do(\W=\w), \Z)
+  & \text{\cref{lemma:do_calculus_0}}
+ \end{align*}
+\end{proof}
+
+\begin{proof}[Prova do \cref{thm:do_calculus}]
+ Decorre dos 
+ \cref{lemma:do_calculus_1,lemma:do_calculus_2,lemma:do_calculus_3}.
+\end{proof}
+
+\subsection{Relativas ao \text{\cref{thm:frontdoor}}}
+
+\begin{lemma}
+ \label{lemma:frontdoor_1}
+ Se $\W$ satisfaz o critério frontdoor para
+ medir o efeito causal de $X$ em $Y$, então
+ $f(Y|do(X),\W) = f(Y|do(X),do(\W))$.
+\end{lemma}
+
+\begin{proof}
+ Decorre do critério frontdoor \cref{def:frontdoor}.3 que
+ $X$ satisfaz o item 2 do critério backdoor para
+ medir o efeito causal de $\W$ em $Y$.
+ Portanto, pelo \cref{lemma:do_calculus_backdoor},
+ $\Y \dsep \W | \X$ em $\sG(\underline{\W})$.
+ Pelo \cref{lemma:dsep_monotone},
+ $\Y \dsep \W | \X$ em $\sG(\bar{\X}, \underline{\W})$.
+ A prova se conclui aplicando o item 2
+ do \cref{thm:do_calculus}.
+\end{proof}
+
+\begin{lemma}
+ \label{lemma:frontdoor_2}
+ Se $\W$ satisfaz o critério frontdoor para
+ medir o efeito causal de $X$ em $Y$, então
+ $f(Y|do(X),do(\W)) = f(Y|do(\W))$.
+\end{lemma}
+
+\begin{proof}
+ A prova consiste em aplicar o item 3 do \cref{thm:do_calculus}.
+ Para tal, desejamos provar que
+ $\Y \dsep I_{X} | \W$ em $\sG(\bar{\W}, X^{+})$.
+ Tome $C$ como um caminho arbitrário 
+ em $\sG(\bar{\W}, X^{+})$ de $I_{\X}$ em $Y$.
+ 
+ Primeiramente, provaremos que $C$ não é um caminho direcionado.
+ $C$ não é um caminho direcionado de $Y$ a $I_{X}$ pois
+ a única aresta em $\sG(\bar{\W}, X^{+})$ ligada a $I_{X}$ é
+ $I_{X} \rightarrow X$. A seguir, 
+ suponha que $C$ é um caminho direcionado de $I_{X}$ a $Y$.
+ Pelo \cref{def:frontdoor}.2, existe $C_i$ tal que
+ $C_i \in \W$. Como $C$ é direcionado de $I_X$ em $Y$,
+ $C_{i-1} \rightarrow C_i$. Este é um absurdo, pois
+ não há aresta apontando para $\W$ em $\sG(\bar{\W}, X^{+})$.
+ Portanto, $C$ não é um caminho direcionado.
+ 
+ Conclua que existe $C_i$ que é um colisor.
+ Como não há arestas apontando para $\W$ em $\sG(\bar{\W}, X^{+})$,
+ $C_i \notin \W$. Como $C_i$ é um colisor e $C_i \notin \W$,
+ conclua que $C$ está bloqueado.
+ Como $C$ era arbitrário,
+ $\Y \dsep I_{X} | \W$ em $\sG(\bar{\W}, X^{+})$.
+\end{proof}
+
+\begin{proof}[Prova do \cref{thm:frontdoor}]
+ \begin{align*}
+  f(Y|do(X=x))
+  &= \int f(Y|do(X=x),\W)f(\W|do(X=x))d\W \\
+  &= \int f(Y|do(X=x),\W)f(\W|X=x)d\W 
+  & \text{\cref{lemma:frontdoor_backdoor}} \\
+  &= \int f(Y|do(X=x),do(\W))f(\W|X=x)d\W 
+  & \text{\cref{lemma:frontdoor_1}} \\
+  &= \int f(Y|do(\W))f(\W|X=x)d\W 
+  & \text{\cref{lemma:frontdoor_2}} \\
+  &= \int \int f(Y|\W,X)f(X)dX f(\W|X=x)d\W
+  & \text{\cref{lemma:frontdoor_backdoor}}
+ \end{align*}
+\end{proof}
+
+\subsection{Relativas ao \text{\cref{thm:frontdoor_ipw}}}
+
+\begin{proof}[Prova do \cref{thm:frontdoor_ipw}]
+ \begin{align*}
+  \E[Y|do(X=x)]
+  &= \int Y f(Y|do(X=x)) dY \\
+  &= \int Y \int f(\W|x) \int f(Y|X,\W)f(X)dXdWdY 
+  & \text{\cref{thm:frontdoor}} \\
+  &= \int Y f(Y|X,\W)f(X) f(\W|x) d(Y \times \W \times Y) \\
+  &= \int \frac{Y f(\W|x)}{f(\W|X)} f(Y,\W,X) d(Y \times \W \times Y) \\
+  &= \E\left[\frac{Y f(\W|x)}{f(\W|X)} \right]
+ \end{align*}
+\end{proof}

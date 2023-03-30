@@ -1,4 +1,4 @@
-\chapter{Modelo Causal (\CM)}
+\chapter{Modelo Causal (CM)}
 \label{cap:dag}
 
 No \cref{cap:intro} vimos que 
@@ -662,6 +662,7 @@ infectar um indivíduo com uma das doenças
 reduz a probabilidade que ele tenha a outra.
 
 \subsection{Modelo Causal (Causal Model)}
+\label{sec:cm}
 
 Com base nos conceitos abordados anteriormente,
 finalmente podemos definir
@@ -685,20 +686,45 @@ como o interpretamos.
 Existe uma aresta de $V_1$ em $V_2$ em um \CM
 se e somente se $V_1$ é uma causa direta de $V_2$.
 
+Dentre os modelos causais, 
+é de particular interesse
+o modelo linear Gaussiano.
+
 \begin{definition}
- Dizemos que $(\sG,f)$ é um \CM linear Gaussiano se,
- existe matriz diagonal positiva, $\Sigma$, e
- $\beta \in \Re^{n \times n}$ tal que,
- para todo vértice $V_i$,
- $\beta_{i,j} = 0$ quando $V_j \notin Pa(V_i)$ e
+ \label{def:cm_linear}
+ Dizemos que $(\sG,f)$ é um \CM linear Gaussiano 
+ de parâmetros $\mu$ e $\beta$ se,
+ existe matriz diagonal positiva, $\Sigma$, 
+ $\mu \in \Re^{|\sV|}$, e
+ $\beta \in \Re^{|\sV| \times |\sV|}$ tal que,
+ para todo vértice $V$,
+ $\beta_{V,W} = 0$ quando $W \notin Pa(V)$ e
  \begin{align*}
-  V_i|Pa(V) &\sim N(\beta_i, \Sigma_{i,i})
+  V|Pa(V) &\sim N\left(\mu_V + \sum_{W \in Pa(V)} \beta_{V,W} \cdot W, \Sigma_{i,i}\right)
  \end{align*}
 \end{definition}
 
+O modelo causal linear Gaussiano tem
+algumas propriedades especiais, que
+tornam mais simples suas compreensão.
+Algumas destas são apresentadas abaixo:
+
 \begin{lemma}
+ \label{lemma:cm_linear_normal}
  Se $(\sG,f)$ é um \CM linear Gaussiano, então
- $\sV \sim N(0, (I-\beta)^{-1}\Sigma((I-\beta)^{-1})^t)$.
+ $\sV$ segue distribuição normal multivariada.
+\end{lemma}
+
+\begin{lemma}
+ \label{lemma:cm_linear_esp}
+ Seja $(\sG,f)$ um \CM linear Gaussiano com coeficientes $\beta$.
+ Para cada $V, Y \in \sV$, defina $\mathbb{C}_{V,Y}$ como 
+ o conjunto de todos os caminhos direcionados de $V$ a $Y$.
+ \begin{align*}
+  \E[Y] &= \sum_{V \in \mathbb{\sV}} 
+  \sum_{C \in \mathbb{C}_{V,Y}}
+  \mu_V \cdot \prod_{i=1}^{|C|-1} \beta_{C_{i+1},C_i}
+ \end{align*}
 \end{lemma}
 
 No próximo capítulo estudaremos consequências desta interpretação causal.
@@ -810,4 +836,8 @@ será fundamental nos capítulos posteriores.
  entre $V_1$ e $V_2$, 
  $V_4$ tem como único pai $V_2$ e
  $V_1$ e $V_3$ são dependentes dado $V_4$.
+\end{exercise}
+
+\begin{exercise}
+ Prove o \cref{lemma:cm_linear_normal}.
 \end{exercise}

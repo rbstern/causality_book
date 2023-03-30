@@ -1,0 +1,49 @@
+\subsection{Relativas ao \cref{thm:id_rdd}}
+
+\begin{proof}[Prova do \cref{thm:id_rdd}]
+ Se $X \equiv \I(\Z \geq \z_1)$, então:
+ \begin{align*}
+  \CACE(\Z=\z_1)
+  &= \E[Y|do(X=1),\Z=\z_1] - \E[Y|do(X=0),\Z=\z_1] 
+  & \text{\cref{def:cace}} \\
+  &= \lim_{\z \downarrow \z_1} \E[Y|do(X=1),\Z=\z] 
+  - \lim_{\z \uparrow \z_1}\E[Y|do(X=0),\Z=\z]
+  & \text{continuidade} \\
+  &= \lim_{\z \downarrow \z_1} \E[Y|X=1,\Z=\z] 
+  - \lim_{\z \uparrow \z_1}\E[Y|X=0,\Z=\z]
+  & \text{\cref{thm:backdoor_ajuste}} \\
+  &= \lim_{\z \downarrow \z_1} \E[Y|X=1,\Z=\z] 
+  - \lim_{\z \uparrow \z_1}\E[Y|X=0,\Z=\z]
+  & X \equiv \I(\Z \geq \z_1)
+ \end{align*}
+ 
+ A seguir, considere que
+ $f(x|\Z) \in (0,1)$ é contínua exceto em $\z_1$.
+ Primeiramente, note que
+ \begin{align}
+  \label{eq:rdd_1}
+  \E[Y|\Z] 
+  &= \E[\E[Y|X,\Z]|\Z] \nonumber \\
+  &= \E[Y|X=1,\Z]f(X=1|\Z) + \E[Y|X=0,\Z](1-f(X=1|\Z)) \nonumber \\
+  &= (\E[Y|X=1,\Z]-\E[Y|X=0,\Z])f(X=1|\Z) + \E[Y|X=0,\Z] \nonumber \\
+  &= \CACE(\Z)f(X=1|\Z) + \E[Y|do(X=0),\Z]
+  & \text{\cref{thm:backdoor_ajuste}}
+ \end{align}
+ Como $\E[Y|do(X=0),\Z]$ e $\E[Y|do(X=1),\Z]$ são contínuas em $\z_1$,
+ $\CACE(\Z)$ também é contínua em $\z_1$. Assim, 
+ decorre da \cref{eq:rdd_1} que
+ \begin{align*}
+  \lim_{\z \downarrow \z_1}\E[Y|\Z=\z]
+  &= \CACE(\z_1)\lim_{\z \downarrow \z_1} f(X=1|\z) + \E[Y|do(X=0),\Z=\z_1] \\
+  \lim_{\z \uparrow \z_1}\E[Y|\Z=\z]
+  &= \CACE(\z_1)\lim_{\z \uparrow \z_1} f(X=1|\z) + \E[Y|do(X=0),\Z=\z_1] \\
+ \end{align*}
+ Finalmente subtraindo as equações acima, obtemos
+ \begin{align*}
+  \lim_{\z \downarrow \z_1}\E[Y|\Z=\z] - \lim_{\z \uparrow \z_1}\E[Y|\Z=\z]
+  &= \CACE(\z_1)(\lim_{\z \downarrow \z_1} f(X=1|\z) - \lim_{\z \uparrow \z_1} f(X=1|\z)) \\
+  \CACE(\z_1) 
+  &= \frac{\lim_{\z \downarrow \z_1}\E[Y|\Z=\z] - \lim_{\z \uparrow \z_1}\E[Y|\Z=\z]}
+  {\lim_{\z \downarrow \z_1} f(X=1|\z) - \lim_{\z \uparrow \z_1} f(X=1|\z)}
+ \end{align*}
+\end{proof}

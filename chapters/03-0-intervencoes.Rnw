@@ -5,6 +5,7 @@
 % Add: Demonstração IPW
 
 \section{O modelo de probabilidade para intervenções}
+\label{sec:intervencao}
 
 Com base no modelo estrutural causal discutido 
 no \cref{cap:dag}, agora estabeleceremos
@@ -178,6 +179,19 @@ a densidade de $\V_2$ dada uma intervenção em $\V_1$ é
 dada o produto somente nos vértices de $\V_2$
 das densidades do vértice dadas suas causas.
 
+Esta análise é formalizada no \cref{lemma:do_calculus_0}:
+
+\begin{lemma}
+ \label{lemma:do_calculus_0}
+ Seja $\sG(\bar{\X})$ o grafo obtido
+ retirando-se de $\sG$ 
+ todas as arestas que apontam para 
+ algum vértice em $\X$.
+ A densidade $f^* \equiv f(\sV|do(\X=\x))$ é 
+ compatível com $\sG(\bar{\X})$. 
+ Além disso, $\X$ é degenerada em $\x$ segundo $f^*$.
+\end{lemma}
+
 Com base na discussão acima, podemos definir
 o \textbf{efeito causal} que um conjunto de variáveis, $\X$,
 tem em outro conjunto, $\Y$:
@@ -189,7 +203,7 @@ tem em outro conjunto, $\Y$:
 
 \begin{definition}
  \label{def:ace}
- O efeito causal médio, \ACE,\footnote{
+ O efeito causal médio, \ACE$_{X,Y}$,\footnote{
  A sigla ACE tem como origem a expressão em inglês,
  \textit{Average Causal Effect}. Optamos por manter a sigla 
  sem tradução para facilitar a comparação com artigos da área.
@@ -197,7 +211,7 @@ tem em outro conjunto, $\Y$:
  \textit{Average Treatment Effect} e recebe o acrônimo ATE.}
  de $X \in \Re$ em $Y \in \Re$ é dado por:
  \begin{align*}
-  \ACE &=
+  \ACE_{X,Y} &=
   \begin{cases}
    \E[Y|do(X=1)] - \E[Y|do(X=0)]
    & \text{, se $X$ é binário}, \\
@@ -205,6 +219,8 @@ tem em outro conjunto, $\Y$:
    & \text{, se $X$ é contínuo}.
   \end{cases}
  \end{align*}
+ Quando não há ambiguidade, escrevemos simplesmente
+ $\ACE$ ao invés de $\ACE_{X,Y}$.
 \end{definition}
 
 Com a \cref{def:ace} podemos finalmente desvendar
@@ -334,6 +350,36 @@ ggdag(grafo, layout = "circle") +
  a discussão qualitativa desenvolvida na \cref{sec:simpson}.
  Não há paradoxo!
 \end{example}
+
+Se $(\sG,f)$ é um \CM linear Gaussiano, então é
+possível obter uma equação direta para o $\ACE$.
+Este resultado é apresentado no \cref{thm:ace_linear} abaixo.
+
+\begin{theorem}
+ \label{thm:ace_linear}
+ Se $(\sG,f)$ é um \CM linear Gaussiano
+ de parâmetros $\mu$ e $\beta$ e
+ $\mathbb{C}_{X,Y}$ é o conjunto de
+ todos os caminhos direcionados de $X$ a $Y$, então
+ \begin{align*}
+  \ACE_{X,Y} &=
+  \sum_{C \in \mathbb{C}_{X,Y}} \prod_{i=1}^{|C|-1} \beta_{C_{i+1},C_i}.
+ \end{align*}
+\end{theorem}
+
+O \cref{thm:ace_linear} indica um algoritmo 
+para calcular o $\ACE_{X,Y}$ em um \CM linear Gaussiano.
+Primeiramente, para cada caminho direcionado 
+de $X$ em $Y$ calcula-se 
+o produto dos coeficientes de regressão ligados a este caminho.
+Se imaginarmos os vértices no meio do caminho como mediadores, então 
+estamos combinando o efeito de $X$ em $C_{2}$, de $C_{2}$ em $C_{3}$ \ldots
+e de $C_{m-1}$ em $Y$ para obter
+o efeito total de $X$ em $Y$ por este caminho.
+Ao final, somamos os efeitos totais obtidos por todos os caminhos.
+Cada caminho direcionado indica uma forma em que $X$ pode ter efeito sobre $Y$.
+Ao levarmos todoas as formas em consideração, 
+obtemos o efeito causal médio.
 
 Além do efeito causal médio, 
 às vezes desejamos determinar 

@@ -1,0 +1,165 @@
+\subsection{Relativas ao \cref{thm:d-sep}}
+
+\begin{lemma}
+ \label{lem:dsep_indep_anc}
+ Seja $\sG = (\sV, \sE)$ um DAG.
+ Se $\sA = \V_1 \cup \V_2 \cup \V_3$ é ancestral e
+ $\V_1 \perp \V_2 | \V_3$, então, 
+ para todo $f$ compatível com $\sG$,
+ $\V_1 \ind^f \V_2 | \V_3$.
+\end{lemma}
+
+\begin{proof}
+ Defina $\V^*_1 = \{V \in \sA: 
+ V \in \V_1 \text{ ou } V_1 \rightarrow V,
+ \text{ para algum } V_1 \in \V_1\}$ e
+ $\V^*_2 = \sA - \V^*_1$.
+ Como $\V_1 \perp \V_2 | \V_3$, decorre de
+ \cref{def:d-sep} que não existe
+ $V_1 \in \V_1$ e $V_2 \in \V_2$ tal que
+ $V_1 \rightarrow V_2$. Portanto,
+ \begin{align}
+  \label{eq:d_sep_tot_1}
+  \V^*_1 \subseteq \V_1 \cup \V_3 \text{ e }
+  \V^*_2 \subseteq \V_2 \cup \V_3
+ \end{align}
+ A seguir, demonstraremos que
+ \begin{align}
+  \label{eq:d_sep_tot_2}
+  \forall i \in \{1,2\} \text{ e }
+  V^*_i \in \V^*_i:
+  Pa(V^*_i) \subseteq \V_i \cup \V_3
+ \end{align}
+ Tome $V^*_1 \in \V^*_1$.
+ Como $V^*_1 \in \sA$ e $\sA$ é ancestral,
+ decorre da \cref{def:ancestral} que
+ $Pa(V^*_1) \subseteq \sA$.
+ Assim, basta demonstrar que 
+ $Pa(V^*_1) \cap \V_2 = \emptyset$. 
+ Se $V^*_1 \in \V_1$, então decorre de
+ \cref{def:d-sep} que não existe
+ $V_2 \in \V_2$ tal que $V_2 \rightarrow V^*_1$.
+ Caso contrário, se $V^*_1 \in \V_3$,
+ então existe $V_1 \in \V_1$ tal que
+ $V_1 \rightarrow V^*_1$.
+ Decorre de \cref{def:d-sep} que não existe 
+ $V_1 \in \V_1$, $V_2 \in \V_2$ e
+ $V_3 \in \V_3$ tais que $V_3$ é
+ um colisor entre $V_1$ e $V_2$, isto é,
+ $V_1 \rightarrow V_3 \leftarrow V_2$.
+ Portanto, não existe $V_2 \in \V_2$ tal que
+ $V_2 \rightarrow V^*_1$.
+ Conclua que $Pa(V^*_1) \subseteq \V_1 \cup \V_3$.
+ 
+ A seguir, note que 
+ pela definição de $\V^*_1$, 
+ se $V \in \sA$ é tal que
+ existe $V_1 \in \V_1$ com
+ $V_1 \rightarrow V$, então
+ $V \in \V^*_1$. Portanto,
+ como $\V^*_2 = \sV - \V^*_1$, 
+ para todo $V^*_2 \in \V^*_2$,
+ não existe $V_1 \in \V_1$ tal que
+ $V_1 \rightarrow V^*_2$.
+ Isto é, $Pa(V^*_2) \subseteq \sV - \V_1$.
+ Como $V^*_2 \in \sA$ e $\sA$ é ancestral,
+ conclua da \cref{def:ancestral} que
+ $Pa(V^*_2) \subseteq \sA$.
+ Combinando as duas últimas frases,
+ $Pa(V^*_2) \subseteq \V_2 \cup \V_3$.
+ 
+ Decorre da conclusão dos dois últimos parágrafos que
+ \cref{eq:d_sep_tot_2} está demonstrado.
+ \begin{align*}
+  f(\V_1,\V_2|\V_3)
+  &= \frac{f(\V_1,\V_2,\V_3)}{f(\V_3)} \\
+  &= \frac{\prod_{V \in \sA}f(V|Pa(V))}
+  {f(\V_3)} 
+  & \text{\cref{lem:anc_fat}} \\
+  &= \frac{\left(\prod_{V^*_1 \in \V^*_1}
+  f(V^*_1|Pa(V^*_1))\right)
+  \left(\prod_{V^*_2 \in \V^*_2}
+  f(V^*_2|Pa(V^*_2))\right)}
+  {f(\V_3)} 
+  & \V^*_1 \text{ e } \V^*_2 \text{ particionam } \sA \\
+  &= h_1(\V_1, \V_3) h_2(\V_2, \V_3)
+  & \text{\cref{eq:d_sep_tot_1,eq:d_sep_tot_2}}
+ \end{align*}
+ Assim, decorre do \cref{lemma:equivIndep} que
+ $\V_1 \ind^f \V_2 | \V_3$.
+\end{proof}
+
+\begin{lemma}
+ \label{lem:dsep_indep}
+ Se $f$ é compatível com $\sG$ e
+ $\V_1 \perp \V_2 | \V_3$, então
+ $\V_1 \ind^f \V_2 | \V_3$.
+\end{lemma}
+
+\begin{proof}
+ Defina $\sA = Anc(\V_1 \cup \V_2 \cup \V_3)$,
+ $\V^*_1 = \{V \in \sA: V \text{ não é d-separado de } \V_1 | \V_3\}$, e $\V^*_2 = \sA - \V^*_1$.
+ Por definição,
+ \begin{align}
+  \label{eq:dsep_indep_0}
+  \V_1 \subseteq \V^*_1 \text{ e }
+  \V_2 \subseteq \V^*_2
+ \end{align}
+
+ O primeiro é provar que
+ $\V^*_1 \perp \V^*_2 | \V_3$.
+ Pela definição de $\V^*_2$, 
+ para todo $V_1 \in \V_1$ e $V^*_2 \in \V^*_2$, 
+ $V_1 \perp V^*_2 | \V_3$, isto é,
+\begin{align}
+ \label{eq:dsep_indep_1}
+ \V_1 \perp \V^*_2 | \V_3
+\end{align}
+ Suponha por absurdo que existam
+ $V^*_1 \in \V^*_1$ e $V^*_2 \in \V^*_2$
+ tais que $V^*_1$ e $V^*_2$ 
+ não são d-separados dado $\V_3$.
+ Portanto, existe um caminho ativo dado $\V_3$,
+ $(V^*_1,C_2,\ldots,C_{n-1},V^*_2)$.
+ Pela definição de $\V^*_1$, existe
+ $V_1 \in \V_1$ e um caminho ativo dado $\V_3$,
+ $(V_1,C^*_2,\ldots,C^*_{m-1},V^*_1)$. Assim,
+ $(V_1,C^*_2,\ldots,C^*_{m-1},
+ V^*_1,C_2,\ldots,C_{n-1},V^*_2)$ é
+ é um caminho ativo dado $\V_3$ de
+ $V_1$ a $V^*_2$, uma contradição com
+ \cref{eq:dsep_indep_1}. Conclua que
+ $\V^*_1 \perp \V^*_2 | \V_3$.
+
+ A seguir, provaremos que
+ $\V^*_1 \ind^f \V^*_2 | \V_3$.
+ Como $\sA = Anc(\V_1 \cup \V_2 \cup \V_3)$,
+ decorre do \cref{lem:anc} que
+ $\sA$ é ancestral. Portanto, como
+ $\sA = \V^*_1 \cup \V^*_2 \cup \V_3$ e
+ $\V^*_1 \perp \V^*_2 | \V_3$, decorre do
+ \cref{lem:dsep_indep_anc} que
+ $\V^*_1 \ind^f \V^*_2 | \V_3$.
+
+Como $\V^*_1 \ind^f \V^*_2 | \V_3$,
+ a conclusão do lema decorre do fato de que
+ $\V_1 \subseteq \V^*_1$ e 
+ $\V_2 \subseteq \V^*_2$. 
+\end{proof}
+
+\begin{lemma}
+ \label{lemma:d-sep-volta}
+ Se $\V_1$ não é d-separado de $\V_2$
+ dado $\V_3$ segundo o DAG $\sG = (\sV, \sE)$, então
+ existe $f$ compatível com $\sG$ tal que
+ $\V_1$ e $\V_2$ são condicionalmente dependentes
+ dado $\V_3$ segundo $f$
+\end{lemma}
+
+\begin{proof}
+\end{proof}
+
+\begin{proof}[Prova do \cref{thm:d-sep}]
+ Decorre dos 
+ \cref{lem:dsep_indep,lemma:d-sep-volta}.
+\end{proof}

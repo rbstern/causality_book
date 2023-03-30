@@ -1,0 +1,217 @@
+\section{Relativas à \text{\cref{sec:dag-ex}}}
+
+\begin{proof}[Prova do \cref{lem:conf-ind}]
+ \begin{align*}
+  f(v_1,v_3|v_2) 
+  &= \frac{f(v_1,v_2,v_3)}{f(v_2)} \\
+  &= \frac{f(v_2)f(v_1|v_2)f(v_3|v_2)}{f(v_2)} 
+  & \text{\cref{def:compativel}} \\
+  &= f(v_1|v_2)f(v_3|v_2)
+ \end{align*}
+\end{proof}
+
+\begin{proof}[Prova do \cref{lem:conf-dep}]
+ Considere que $V_2 \sim \text{Bernoulli}(0.02)$.
+ Além disso, $V_1, V_3 \in \{0,1\}$ são independentes dado $V_2$. 
+ Também,
+ $\P(V_1 = 1|V_2 = 1) = \P(V_3 = 1|V_2 = 1) = 0.9$ e
+ $\P(V_1 = 1|V_2 = 0) = \P(V_3 = 1|V_2 = 0) = 0.05$.
+ Note que, por construção, $\P$ é 
+ compatível com \cref{fig:confundidor}.
+ Isto é, $P(v_1,v_2,v_3) = \P(v_2)\P(v_1|v_2)\P(v_3|v_2)$.
+ Além disso,
+ \begin{align*}
+  \P(V_1 = 1) &= \P(V_1 = 1, V_2 = 1) + \P(V_1 = 1, V_2 = 0) \\
+              &= \P(V_2=1)\P(V_1=1|V_2=1)
+               +\P(V_2=0)\P(V_1=1|V_2=0) \\
+              &= 0.02 \cdot 0.9 + 0.98 \cdot 0.05= 0.067
+ \end{align*}
+ Por simetria, $\P(V_3=1) = 0.067$. Além disso,
+ \begin{align*}
+  \P(V_1 = 1, V_3 = 1)
+  &= \P(V_1 = 1, V_3 = 1, V_2 = 1) 
+  +  \P(V_1 = 1, V_3 = 1, V_2 = 0) \\
+  &= \P(V_2 = 1)\P(V_1 = 1|V_2 = 1)\P(V_3 = 1|V_2 = 1)
+  +  \P(V_2 = 0)\P(V_1 = 1|V_2 = 0)\P(V_3 = 1|V_2 = 0) \\
+  &= 0.02 \cdot 0.9 \cdot 0.9 + 0.98 \cdot 0.05 \cdot 0.05 = 0.01865
+ \end{align*}
+ Como $\P(V_1=1)\P(V_3=1) = 0.067 \cdot 0.067 \approx 0.0045 \neq 0.01865 = \P(V_1=1,V_3=1)$,
+ temos que $V_1$ e $V_3$ não são independentes.
+\end{proof}
+
+\begin{proof}[Prova do \cref{lem:med-ind}]
+ \begin{align*}
+  f(v_3|v_1,v_2) 
+  &= \frac{f(v_1,v_2,v_3)}{f(v_1,v_2)} \\
+  &= \frac{f(v_1)f(v_2|v_1)f(v_3|v_2)}{f(v_1)f(v_2|v_1)} 
+  & \text{\cref{def:compativel}} \\
+  &= f(v_3|v_2)
+ \end{align*}
+\end{proof}
+
+\begin{proof}[Prova do \cref{lem:med-dep}]
+ Considere que $V_1 \sim \text{Bernoulli}(0.5)$,
+ $\P(V_2=1|V_1=1)=0.9$, $\P(V_2=1|V_1=0)=0.05$,
+ $\P(V_3=1|V_2=1,V_1)=0.9$, e $\P(V_3=1|V_2=0,V_1)=0.05$.
+ Note que $(V_1,V_2,V_3)$ formam uma Cadeia de Markov.
+ Note que, por construção, $\P$ é 
+ compatível com \cref{fig:cadeia}.
+ Isto é, $P(v_1,v_2,v_3) = \P(v_1)\P(v_2|v_1)\P(v_3|v_2)$.
+ Além disso,
+ \begin{align*}
+  \P(V_3 = 1) &= \P(V_1=0, V_2=0, V_3=1) + \P(V_1=0, V_2=1, V_3=1) \\
+              &+ \P(V_1=1, V_2=0, V_3=1) + \P(V_1=1, V_2=1, V_3=1) \\
+              &= 0.5 \cdot 0.9 \cdot 0.05 + 0.5 \cdot 0.05 \cdot 0.9 \\
+              &+ 0.5 \cdot 0.05 \cdot 0.05 + 0.5 \cdot 0.9 \cdot 0.9 
+              = 0.45125
+ \end{align*}
+ Além disso,
+ \begin{align*}
+  \P(V_1 = 1, V_3 = 1)
+  &= \P(V_1 = 1, V_2 = 0, V_3 = 1) 
+  +  \P(V_1 = 1, V_2 = 1, V_3 = 1) \\
+  &= 0.5 \cdot 0.05 \cdot 0.9 + 0.5 \cdot 0.9 \cdot 0.9
+  = 0.40625
+ \end{align*}
+ Como $\P(V_1=1)\P(V_3=1) = 0.5 \cdot 0.45125 \approx 0.226 \neq 
+ 0.40625 = \P(V_1=1,V_3=1)$,
+ temos que $V_1$ e $V_3$ não são independentes.
+\end{proof}
+
+\begin{proof}[Prova do \cref{lem:col-ind}]
+ \begin{align*}
+  f(v_1,v_3) 
+  &= \int f(v_1, v_2, v_3) dv_2 \\
+  &= \int f(v_1)f(v_3)f(v_2|v_1,v_3) dv_2 
+  & \text{\cref{def:compativel}} \\
+  &= f(v_1)f(v_3) \int f(v_2|v_1,v_3) dv_2 \\
+  &= f(v_1)f(v_3)
+ \end{align*}
+\end{proof}
+
+\begin{proof}[Prova do \cref{lem:col-dep}]
+ Considere que $V_1$ e $V_3$ são
+ independentes e tem distribuição $\text{Bernoulli}(0.5)$.
+ Além disso, $V_2 \equiv V_1+V_3$.
+ Como $\P(V_3 = 1) = 0.5$ e
+ $\P(V_3=1|V_1=1,V_2=2) = 1$, conclua que
+ $V_1 \not\ind V_3 | V_2$.
+\end{proof}
+
+\section{Relativas à \text{\cref{sec:cm}}}
+
+\begin{proof}[Prova do \cref{lemma:cm_linear_esp}]
+ Realizaremos a demonstração por indução.
+ Para tal, defina 
+ $\sV^{(1)} = \{V \in \sV: Pa(V) = \emptyset\}$, e
+ para cada $i > 2$,
+ $\sV^{(i)} = \{V \in \sV: Pa(V) \subseteq \sV^{(i-1)}\}$.
+ 
+ Se $Y \in \sV^{(1)}$, então por construção
+ $\E[Y] = \mu_Y$. Também, como $Pa(Y) = \emptyset$,
+ $\mathbb{C}_{V,Y} = \emptyset$, para todo $V \neq Y$, e
+ $\mathbb{C}_{Y,Y}$ tem apenas o caminho unitário, $C^* = (Y)$.
+ Assim,
+ \begin{align*}
+  \sum_{V \in \mathbb{\sV}} 
+  \sum_{C \in \mathbb{C}_{V,Y}}
+  \mu_V \cdot \prod_{i=1}^{|C|-1} \beta_{C_{i+1},C_i} 
+  &= \mu_Y \cdot \prod_{i=1}^{|C^*|-1} \beta_{C^*_{i+1},C^*_i} \\
+  &= \mu_Y
+ \end{align*}
+ A seguir, suponha que para todo
+ $W \in \sV^{(i-1)}$,
+ $\E[W] = \sum_{V \in \mathbb{\sV}}\sum_{C \in \mathbb{C}_{V,W}} \mu_V \cdot 
+ \prod_{i=1}^{|C|-1} \beta_{C_{i+1},C_i}$ e
+ tome $Y \in \sV^{(i)}$. Como todo caminho direcionado que 
+ chega em $Y$ a partir de $V \neq Y$
+ tem como penúltimo elemento um pai de $Y$,
+ podemos escrever
+ \begin{align}
+  \label{eq:path_equiv}
+  \mathbb{C}_{V,Y} 
+  &= \cup_{W \in Pa(Y)} \{(C,Y): C \in \mathbb{C}_{V,W}\}
+ \end{align}
+ Portanto, obtemos:
+ \begin{align*}
+  &\sum_{V \in \mathbb{\sV}}\sum_{C \in \mathbb{C}_{V,Y}} \mu_V \cdot 
+  \prod_{i=1}^{|C|-1} \beta_{C_{i+1},C_i} \\
+  =& \mu_Y 
+  + \sum_{V \neq Y} \sum_{\cup_{W \in Pa(Y)} \{C^* = (C,Y): C \in \mathbb{C}_{V,W}\}} 
+  \mu_V \cdot \left(\prod_{i=1}^{|C^*|-1} \beta_{C^*_{i+1},C^*_i}\right) 
+  & \text{\cref{eq:path_equiv}} \\
+  =& \mu_Y + \sum_{V \neq Y} \sum_{W \in Pa(Y)} \sum_{C \in \mathbb{C}_{V,W}}
+  \mu_V \cdot \left(\prod_{i=1}^{|C|-1} \beta_{C_{i+1},C_i}\right) \cdot \beta_{Y, W} \\
+  =& \mu_Y + \sum_{W \in Pa(Y)} \beta_{Y, W} 
+  \sum_{V \in \sV} \sum_{C \in \mathbb{C}_{V,W}}
+  \mu_V \cdot \left(\prod_{i=1}^{|C|-1} \beta_{C_{i+1},C_i}\right) \\
+  =& \mu_Y + \sum_{W \in Pa(Y)} \beta_{Y,W} \E[W]
+  & W \in \sV^{(i-1)} \\
+  =& \E\left[\mu_Y + \sum_{W \in Pa(Y)} \beta_{Y,W} W\right] \\
+  =& \E[\E[Y|Pa(Y)]] = \E[Y]
+  & \text{\cref{def:cm_linear}}
+ \end{align*}
+\end{proof}
+
+\section{Relativas à \text{\cref{sec:d-sep}}}
+
+\subsection{Relativas ao \cref{lemma:equivIndep}}
+
+\begin{proof}[Prova do \cref{lemma:equivIndep}]
+ A prova consistirá em demonstrar que,
+ para cada $i$, a afirmação $i$ decorre da afirmação $i-1$.
+ Finalmente, a afirmação $1$ decorre da afirmação $4$.
+ Os símbolos $\X$ e $\x$ referem-se a 
+ $(\X_1,\ldots,\X_d)$ e $(\x_1,\ldots,\x_d)$. 
+ \begin{itemize}
+  \item $(1 \Longrightarrow 2)$
+	\begin{align*}
+	 f(\x|\y)	&= \prod_{j=1}^{d}{f(\x_j|\y)}  & (1) \\
+	          &= \prod_{j=1}^{d}{h(\x_j,\y)}
+	          & h(\x_j,\y) = f(\x_j|\y)
+	\end{align*}
+	\vspace{-5mm}
+  \item $(2 \Longrightarrow 3)$ Note que,
+	\begin{align*}
+	 f(\x_i|\x_{-i},\y)	
+	 &= \frac{f(\x|\y)}{f(\x_1,\ldots,\x_{i-1},\x_{i+1},\ldots\x_d|\y)}	\\
+	 &= \frac{f(\x|\y)}{\int_{\mathbb{R}}{f(\x|\y)d\x_i}} \\
+	 &= \frac{\prod_{j=1}^{d}{h_j(\x_j,\y)}}
+	 {\int_{\mathbb{R}}{\prod_{j=1}^{d}{h_j(\x_j,\y)}d\x_i}} (2) \\
+	 &= \frac{\prod_{j=1}^{d}{h_j(\x_j,\y)}}
+	 {\prod_{j \neq i}{h_j(\x_j,\y)} \int_{\mathbb{R}}{h_i(\x_i,\y)d\x_i}}	\\
+	 &= \frac{\tilde{h}_i(\x_i,\y)}{\int_{\mathbb{R}}{h_i(\x_i,\y)d\x_i}}	\\
+	 &= \frac{\prod_{j \neq i}{\int_{\mathbb{R}}{h_j(\x_j,\y)d\x_j}}}
+	 {\prod_{j \neq i}{\int_{\mathbb{R}}{h_j(\x_j,\y)d\x_j}}} \cdot 
+	 \frac{h_i(\x_i,\y)}{\int_{\mathbb{R}}{h_i(\x_i,\y)d\x_i}}	\\
+	 &= \frac{\int_{\mathbb{R}^{d-1}}{\prod_{j=1}^{d}{h_j(\x_j,\y)}d\x_{-i}}}
+	 {\int_{\mathbb{R}^{d}}{\prod_{j=1}^{d}{h_j(\x_j,\y)}d\x}}	\\
+	 &= \frac{\int_{\mathbb{R}^{d-1}}{f(\x|\y)d\x_{-i}}}
+	 {\int_{\mathbb{R}^{d}}{f(\x|\y)d\x}} & (2) \\
+	 &= f(\x_i|\y)
+	\end{align*}
+
+ \vspace{-5mm}
+ \item $(3 \Longrightarrow 4)$
+ \begin{align*}
+  f(\x_i|\x_1^{i-1},\y)	
+  &= \frac{f(\x_1^{i}|\y)}{f(\x_1^{i-1}|\y)} \\
+	&= \frac{\int_{\mathbb{R}^{d-i}}{f(\x|\y)}d\x_{i+1}^{d}}
+	{f(\x_1^{i-1}|\y)} \\
+	&= \frac{\int_{\mathbb{R}^{d-i}}{f(\x_{-i}|\y)f(\x_i|\x_{-i},\y)d\x_{i+1}^{d}}}
+	{f(\x_1^{i-1}|\y)} \\
+	&= \frac{f(\x_i|\y)\int_{\mathbb{R}^{d-i}}{f(\x_{-i}|\y)d\x_{i+1}^{d}}}
+	{f(\x_1^{i-1}|\y)} & (3) \\
+	&= \frac{f(\x_i|\y)f(\x_1^{i-1}|\y)}
+	{f(\x_1^{i-1}|\y)} \\
+	&= f(\x_i|\y)
+ \end{align*}
+
+ \item $(4 \Longrightarrow 1)$
+ \begin{align*}
+  f(\x|\y)	
+  &= \prod_{i=1}^{d}{f(\x_i|\x_1^{i-1},\y)} \\
+	&= \prod_{i=1}^{d}{f(\x_i|\y)} & (4)
+ \end{align*}
+ \end{itemize}
+\end{proof}

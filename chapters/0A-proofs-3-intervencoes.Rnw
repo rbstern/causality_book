@@ -1,0 +1,102 @@
+\section{Relativas à \cref{sec:intervencao}}
+
+\begin{proof}[Prova do \cref{lemma:do_calculus_0}]
+ Decorre da \cref{def:intervencao} que
+ $f^*(\sV) = \I(\X=\x) \prod_{V \notin \X}f(V|Pa(V))$.
+ Definindo $g_{X_i}(X_i) = \I(X_i=x_i)$, para todo $X_i \in \X$ e
+ $g_V(V,Pa(V)) = f(v|Pa(V))$, note que
+ \begin{align*}
+  f^*(\sV)
+  &= \prod_{X_i \in \X}g_{X_i}(X_i)
+  \prod_{V \notin \X}g_V(V,Pa(V)) 
+ \end{align*}
+ Portanto, decorre do \cref{lem:compativel-equiv} que
+ $f^*$ é compatível com um grafo em que
+ todo $X_i \in \X$ não tem pais e
+ todo $V \notin \X$ tem os mesmos pais que em $\sG$.
+ Isto é, $\sG$ é compatível com $\sG(\bar{\X})$.
+ 
+ Além disso, tomando $\V = \sV - \X$,
+ \begin{align*}
+  f^*(\X)
+  &= \int f^*(sV) d\V \\
+  &= \int \I(\X=\x) \prod_{V \in \V}f(V|Pa(V)) d\V \\
+  &= \I(\X=\x) \int \prod_{V \in \V}f(V|Pa(V)) d\V \\
+  &= \I(\X=\x).
+ \end{align*}
+ Portanto, $\X$ é degenerado em $\x$ segundo $f^*$.
+\end{proof}
+
+\subsection{Relativas ao \cref{thm:ace_linear}}
+
+\begin{lemma}
+ \label{lemma:linear_do}
+ Considere que $(\sG,f)$ é 
+ um \CM linear Gaussiano e que
+ $f^* = f(\sV|do(\X=\x))$.
+ Se $\sG(\bar{\X})$ é 
+ como no \cref{lemma:do_calculus_0}, então
+ $(\sG(\bar{\X}),f^*)$ é
+ um \CM linear Gaussiano tal que,
+ para todo $V \notin \X$,
+ $\E_f[V|Pa(V)] = \E_{f^{*}}[V|Pa(V)]$ e
+ $\E[\X] = \x$.
+\end{lemma}
+
+\begin{proof}
+ Decorre do \cref{lemma:do_calculus_0} que
+ $f^*$ é compatível com $\sG(\bar{\X})$.
+ Além disso, também 
+ decorre do \cref{lemma:do_calculus_0} que
+ para todo $V \notin \X$,
+ $f(V|Pa(V)) = f^*(V|Pa(V))$. Portanto,
+ $\E_f[V|Pa(V)] = \E_{f^{*}}[V|Pa(V)]$.
+ Finalmente, segundo o \cref{lemma:do_calculus_0},
+ $\X$ é degenerado em $\x$. 
+ Assim, $\E[\X] = \x$.
+\end{proof}
+
+\begin{proof}[Prova do \cref{thm:ace_linear}]
+ Defina $f^*_x = f(\sV|do(X=x))$. Assim,
+ \begin{align}
+  \label{eq:thm_ace_linear_1}
+  \ACE_{X,Y}
+  &= \frac{d\E[Y|do(X=x)]}{dx} 
+  \nonumber \\
+  &= \frac{d\E_{f^*_x}[Y]}{dx}
+ \end{align}
+ Além disso, decorre do \cref{lemma:linear_do} que
+ $f^*$ é um \CM linear Gaussiano
+ no grafo $\sG(\bar{X})$.
+ 
+ Como $X$ não tem pais no grafo $\sG(\bar{X})$,
+ os únicos caminhos direcionados de $X$ a $Y$ que 
+ passam por $X$ são aqueles que se iniciam em $X$.
+ Formalmente, defina $\mathbb{C}$ como o conjunto de 
+ todos os caminhos direcionados em $\sG$.
+ Além disso, $\mathbb{C}_{X} = 
+ \{C \in \mathbb{C}: C_i = X \text{, para algum } i\}$. 
+ Obtemos
+ \begin{align}
+  \label{eq:thm_ace_linear_2}
+  \cup_{V \in \sV} \mathbb{C}_{V,Y} \cap \mathbb{C}_X 
+  &= \mathbb{C}_{X,Y}.
+ \end{align}
+ Portanto,
+ \begin{align*}
+  \ACE_{X,Y}
+  &= \frac{d\E_{f^*_x}[Y]}{dx}
+  & \text{\cref{eq:thm_ace_linear_1}} \\
+  &= \frac{d \sum_{V \in \mathbb{\sV}} 
+  \sum_{C \in \mathbb{C}_{V,Y}}
+  \mu_V \cdot \prod_{i=1}^{|C|-1} \beta_{C_{i+1},C_i}}{dx}
+  & \text{\cref{lemma:cm_linear_esp,lemma:linear_do}} \\
+  &= \frac{d \sum_{C \in \mathbb{C}_{X,Y}}
+  \mu_X \cdot \prod_{i=1}^{|C|-1} \beta_{C_{i+1},C_i}}{dx}
+  & \text{\cref{eq:thm_ace_linear_2}} \\
+  &= \frac{d \sum_{C \in \mathbb{C}_{X,Y}}
+  x \cdot \prod_{i=1}^{|C|-1} \beta_{C_{i+1},C_i}}{dx}
+  & \text{\cref{lemma:linear_do}} \\
+  &= \sum_{C \in \mathbb{C}_{X,Y}} \prod_{i=1}^{|C|-1} \beta_{C_{i+1},C_i}
+ \end{align*}
+\end{proof}
