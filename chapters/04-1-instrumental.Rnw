@@ -1,0 +1,164 @@
+\section{Variáveis Instrumentais}
+\label{sec:instrument}
+
+Há situações em que 
+não nos sentimentos confortáveis com
+a suposição de que observamos
+todos os confundidores ou
+todos os mediadores de $X$ a $Y$.
+Nestes casos, não é possível
+justificar os métodos baseados
+nos critérios backdoor e frontdoor
+vistos na \cref{cap:intervencao}.
+Variáveis instrumentais são 
+um modo de evitar esse tipo de suposição.
+
+Intuitivamente, uma variável instrumental, $I$, tem
+todo o seu efeito causal sobre $Y$ mediado por $X$.
+Em outra palavras, a única forma em que $I$ tem
+efeito sobre $Y$ é na medida em que 
+$I$ tem efeito sobre $X$ e, por sua vez,
+$X$ tem efeito sobre $Y$.
+Por exemplo, \citet{Angrist1990} estuda
+como participar da guerra do Vietnam, $X$, 
+tem efeito sobre a renda de um indivíduo, $Y$.
+Para tal, o estudo considera 
+os sorteios que foram realizados para
+determinar quem era recrutado para a guerra.
+O único efeito que o sorteio tem
+sobre a renda de um indivíduo é indireto,
+apenas na medida em que afeta
+a probabilidade de este indivíduo ir para a guerra.
+
+Com base neste tipo de variável,
+sob certas circunstâncias 
+é possível estimar o efeito causal de $X$ em $Y$.
+A ideia básica é a de que,
+fazendo intervenções em $I$,
+vemos mudanças tanto em $X$ quanto em $Y$.
+Como as mudanças em $Y$ devem-se apenas 
+às mudanças que ocorreram em $X$,
+pode ser possível estimar o efeito causal de $X$ em $Y$.
+
+Dada esta intuição, podemos
+definir formalmente uma variável instrumental.
+Para tal, iremos seguir de perto 
+a abordagem em \citet{Angrist1996}.
+
+\begin{definition}
+ \label{def:instrument}
+ Dizemos que $I$ é um instrumento para
+ medir o efeito causal de $X$ em $Y$ se
+ \begin{enumerate}
+  \item $I$ é ignorável para medir o efeito em $Y$.
+  \item $Y_{I=i,X=x} \equiv Y_{X=x}$,
+  para todo $f$ compatível com $\sG$.
+  \item $Cov[I,X] \neq 0$.
+ \end{enumerate}
+\end{definition}
+
+Apesar de as condições na \cref{def:instrument} terem sido
+utilizadas originalmente por \citet{Angrist1996},
+é possível reinterpretá-las utilizando o grafo causal.
+Já vimos no \cref{lemma:ignore_backdoor} que
+a primeira condição é equivalente a dizer que
+$\emptyset$ satisfaz o critério backdoor para 
+medir o efeito causal de $I$ em $Y$.
+Isto é, $I$ e $Y$ não tem 
+ascendentes em comum no grafo causal.
+Além disso, a segunda condição é
+equivalente a afirmar que no grafo causal
+todo caminho direcionado de $I$ a $Y$
+passa por $X$. Isto é,
+$X$ é o mediador do efeito causal de $I$ em $Y$.
+Este resultado é apresentado no \cref{lemma:exclusion_dag}.
+
+\begin{lemma}
+ \label{lemma:exclusion_dag}
+ $Y_{I=i, X=x} \equiv Y_{X=x}$,
+ para todo $f$ compatível com $\sG$ se e somente se
+ todo caminho direcionado de $I$ a $Y$, $C$,
+ é tal que existe $j$ com $C_j = X$.
+\end{lemma}
+
+Sob algumas circunstâncias,
+a existência de um instrumento é
+suficiente para que
+seja possível identificar o efeito causal.
+Uma suposição usual é de que
+estamos analisando um
+\CM linear Gaussiano (\cref{def:cm_linear}).
+
+\begin{theorem}
+ \label{thm:linear_instrument}
+ Se $(\sG,f)$ é um \CM linear Gaussiano e
+ $I$ é um instrumento para
+ medir o efeito causal de $X$ em $Y$, então
+ \begin{align*}
+  \ACE &= \frac{Cov[I,Y]}{Cov[I,X]}
+ \end{align*}
+\end{theorem}
+
+Caso o modelo causal não seja linear Gaussiano,
+então mais suposições são necessárias
+para identificar o efeito causal 
+com base em um instrumento,
+Uma suposição usual é
+a de monotonicidade do instrumento.
+Segundo esta, ao aumentar 
+o valor do instrumento por uma intervenção,
+o valor de $X$ necessariamente irá aumentar
+
+\begin{definition}
+ \label{def:monotone}
+ $I$ é um instrumento monotônico para
+ medir o efeito causal de $X$ em $Y$ se,
+ para todo $i_1 > i_0$,
+ \begin{align*}
+  \P(X_{I = i_1} > X_{I = i_0}) = 1.
+ \end{align*}
+\end{definition}
+
+O Instrumento monotônico foi originalmente contextualizado
+em uma aplicação a alistados na Guerra do Vietnam \cite{Angrist1990}.
+Pode-se imaginar que a população é dividida em $4$ grupos.
+Pessoas que sempre iriam à guerra (always-taker),
+que nunca iriam à guerra (never-taker),
+que iriam à guerra somente se alistados (compliers),
+e que iriam à guerra somente se não alistados (defiers).
+Neste caso, o alistamento ser um instrumento monotônico corresponde
+a afirmar que não existem pessoas no último grupo.
+
+Quando o instrumento é monotônico e
+$X$ e $I$ são binários, é
+possível identificar o efeito causal de
+$X$ em $Y$ em uma sub-população.
+Especificamente, é possível identificar
+o efeito de $X$ em $Y$ na sub-população em que
+o resultado potencial de $X$ é
+diferente para cada intervenção em $I$.
+No exemplo da Guerra do Vietnam,
+esta é a sub-população dos \textit{compliers}, isto é,
+indivíduos que iriam à guerra somente se alistados.
+A definição de Local Average Treatment Effect (\LACE)
+é formalizada abaixo:
+
+\begin{definition}
+ \label{def:lace}
+ Se $X, I \in \{0,1\}$, então
+ \begin{align*}
+  \LACE &= \E[Y_{X=1}-Y_{X=0}|X_{I=1}-X_{I=0} = 1].
+ \end{align*}
+\end{definition}
+
+O \cref{thm:instrument} mostra como
+identificar o \LACE \ por meio de um instrumento monotônico.
+
+\begin{theorem}
+ \label{thm:instrument}
+ Se $I \in\ \{0,1\}$ é um instrumento monotônico para
+ o efeito causal de $X \in \{0,1\}$ em $Y$, então
+ \begin{align*}
+  \LACE &= \frac{\E[Y|I=1]-\E[Y|I=0]}{\E[X|I=1]-\E[X|I=0]}
+ \end{align*}
+\end{theorem}
