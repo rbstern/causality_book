@@ -461,3 +461,23 @@
  Assim, decorre do \cref{eq:instrument_3} que
  $\LACE = 0 = \frac{\E[Y|I=1] - \E[Y|I=0]}{\E[X|I=1] - \E[X|I=0]}$.
 \end{proof}
+
+\begin{proof}[Prova do \cref{thm:contrafactual}]
+ Tome um caminho arbitrário de $Y_{\X=\x}$ a $\Z$.
+ Decorre da \cref{def:pom} que 
+ o caminho necessariamente passará por $U \in \U$.
+ Como $U$ é uma raiz, ele não é
+ um colisor no caminho. Portanto,
+ o caminho está bloqueado dado $\U$.
+ Como o caminho era arbitrário,
+ $Y_{\X=\x} \dsep \Z | \U$.
+ Decorre do \cref{thm:d-sep} que
+ $Y_{\X=\x}$ é independente de $\Z$ dado $\U$.
+ Assim,
+ \begin{align*}
+  \P(\Y_{\X=\x} \leq \y|\Z=\z)
+  &= \int \P(\Y_{\X=\x} \leq \y|\Z=\z,\U)f(\U|\Z=\z)d\U \\
+  &= \int \P(\Y_{\X=\x} \leq \y|\U)f(\U|\Z=\z)d\U
+  & \Y_{\X=\x} \perp^f \Z | \U
+ \end{align*}
+\end{proof}

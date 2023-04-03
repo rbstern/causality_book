@@ -3993,13 +3993,165 @@ identificar o \LACE \ por meio de um instrumento monotônico.
  Se $I \in\ \{0,1\}$ é um instrumento monotônico para
  o efeito causal de $X \in \{0,1\}$ em $Y$, então
  \begin{align*}
-  \LACE &= \frac{\E[Y|I=1]-\E[Y|I=0]}{\E[X|I=1]-\E[X|I=0]}
+  \LACE &= \frac{\E[Y|I=1]-\E[Y|I=0]}{\E[X|I=1]-\E[X|I=0]}.
  \end{align*}
 \end{theorem}
 
 \section{Contrafactuais}
 \label{sec:contrafactuais}
 
+Existem situações em que gostaríamos de saber
+o que teria ocorrido, caso certas condições fossem diferentes
+daquelas que foram efetivamente observadas.
+Por exemplo, considere que a perna de um indivíduo é amputada
+em virtude de um erro de diagnóstico médico.
+Neste caso, o indivíduo tem o direito 
+a ser indenizado por seus danos.
+Contudo, qual o valor da indenização?
+Para responder a esta pergunta,
+somos levados a questionar 
+como seria a vida deste indivíduo 
+caso não houvesse o erro de diagnóstico.
+Este tipo de pergunta é chamada de \textit{contrafactual}.
+
+Uma característica fundamental de contrafactuais é que
+estamos interessados em uma ``realidade'' distinta
+daquela que foi observada.
+Contudo, se só observamos uma realidade,
+como é possível aprender algo sobre ``realidades distintas''?
+Por exemplo, se supomos que 
+não houve um erro de diagnóstico médico,
+o que mais seria diferente?
+Nesta realidade alternativa, consideramos que
+não houve erro médico porque
+há um médico muito mais concentrado, competente, 
+ético e com exames mais precisos?
+Ou estamos supondo apenas que
+características pontuais que o levaram ao erro não estão presentes e,
+assim, essencialmente é o mesmo médico tratando o paciente?
+Ainda que não há uma resposta única para esta pergunta,
+há um cenário que é comumente analisado.
+Neste supomos que a realidade alternativa é 
+a mais próxima possível da observada dada
+a restrição que um determinado fato ocorreu diferentemente.
+
+Neste sentido, resultados potenciais são um formalismo útil.
+Dentro deste formalismo, consideramos que 
+$\sV$ são as variáveis observada.
+Por outro lado, $\sV_{\X=\x}$ são
+as variáveis que seriam observado quando
+$\X$ é fixado no valor $\x$.
+Neste formalismo (\cref{def:pom}), consideramos que
+$Y = g_Y(Pa^*(Y), U_Y)$ e
+$Y_{\X=\x} = g_Y(Pa^*(Y_{\X=\x}), U_Y)$
+Isto é, na realidade contrafactual,
+$Y_{\X=\x}$ e $Y$ são gerados pelo mesmo mecanismo, $g_Y$.
+Além disso, os ruídos locais representados por $U_Y$ são
+os mesmos em $Y$ e $Y_{\X=\x}$.
+Pode-se argumentar que a equivalência de mecanismos
+e de ruídos legais satisfaz a condição de que
+realidades contrafactuais devem ser
+tão próximas quanto possível da realidade observada.
+
+\begin{example}
+ \label{ex:contrafactual_1}
+ Considere que $X$ é a indicadora de que houve um erro médico e
+ $Y$ é a indicadora de que a perna do paciente não é amputada.
+ Por simplicidade, vamos supor que estas são
+ as únicas duas variáveis relevantes e que 
+ o grafo causal é $\sG$ tal que $X \rightarrow Y$.
+ Também considere que $f(X = 1) = \epsilon$,
+ $f(Y=1|X=1) = p_1$, e $f(Y=1|X=0) = p_0$, $p_0 > p_1$.
+ Assim, o \CM é $(\sG, f)$. 
+ 
+ Para definir, um modelo de resultados potenciais,
+ é necessário determinar um \SCM \ (\cref{def:scm}).
+ Uma possibilidade é escolher $U_X, U_Y \sim U(0,1)$,
+ $g_X(U_X) \equiv \I(U_X \leq \epsilon)$, e
+ $g_Y(U_Y, X) \equiv \I(U_Y \leq p_X)$.
+ Podemos mostrar que este \SCM \ representa
+ o \CM definido no parágrafo anterior:
+ \begin{align*}
+  f(X=1)
+  &= \P(\I(U_X \leq \epsilon)) = \epsilon
+  & \text{\cref{def:scm}}, U_X \sim U(0,1), \\
+  f(Y=1|X=x)
+  &= \P(\I(U_Y \leq p_x)) = p_x.
+ \end{align*}
+ Com base no modelo de resultados potenciais,
+ podemos perguntar qual teria sido a probabilidade
+ de que a perna do paciente não fosse amputada sem
+ um erro médico, sabendo que observou-se
+ o erro e a amputação: $\P(Y_{X=0}|X=1,Y=1)$.
+ \begin{align*}
+  \P(Y_{X=0}=1|X=1,Y=0)
+  &= \P(\I(U_Y \leq p_0) = 1|\I(U_X \leq \epsilon) == 1, \I(U_Y > p_1) = 1) \\
+  &= \P(U_Y \leq p_0|U_X \leq \epsilon, U_Y > p_1) \\
+  &= \P(U_Y \leq p_0|U_Y > p_1) \\
+  &= \frac{\P(p_1 < U_Y \leq p_0)}{\P(U_Y > p_1)} = \frac{p_0-p_1}{1-p_1}
+ \end{align*}
+\end{example}
+
+Uma característica importante do \cref{ex:contrafactual_1} é que 
+a probabilidade contrafactual depende 
+tanto da distribuição de $U_Y$ quanto da funções $g_Y$.
+Estas quantidades não podem ser determinadas pelos dados.
+Em outras palavras, as probabilidades contrafactuais dependem
+fundamentalmente de suposições que não podem ser testadas.
+No \cref{ex:contrafactual_1} definimos que 
+$g_Y(U_Y, X) = \I(U_Y \leq p_X)$.
+Este acoplamento determina que todo paciente que
+não teve sua perna amputada com um erro médico, 
+também não a teria sem o erro médico.
+Como nunca observamos ambas as situações para
+um mesmo paciente, esta afirmação não é testável.
+O \cref{ex:contrafactual_2} mostra que
+a probabilidade contrafactual varia conforme
+o acoplamento utilizado.
+
+\begin{example}
+ \label{ex:contrafactual_2}
+ No \cref{ex:contrafactual_1}, considere que
+ $g_Y(U_Y, 1) = \I(U_Y \leq p_1)$ e
+ $g_Y(U_Y, 0) = \I(U_Y \geq 1-p_0)$.
+ \begin{align*}
+  \P(Y_{X=0}=1|X=1,Y=0)
+  &= \P(\I(U_Y \geq 1-p_0) = 1|\I(U_X \leq \epsilon) == 1, \I(U_Y > p_1) = 1) \\
+  &= \P(U_Y \geq 1-p_0|U_X \leq \epsilon, U_Y > p_1) \\
+  &= \P(U_Y > 1-p_0|U_Y > p_1) \\
+  &= \frac{\P(U_Y > \max(1-p_0,p_1)}{\P(U_Y > p_1)} = \frac{\min(1-p_0,p_1)}{1-p_1}
+ \end{align*}
+ Neste caso, $g_Y$ induz a mema distribuição 
+ sobre $(X,Y)$ que o acoplamento no \cref{ex:contrafactual_1}.
+ Ainda assim, a probabilidade contrafactual obtida é diferente.
+ Isto ocorre pois, ao contrário do \cref{ex:contrafactual_1},
+ a nova $g_Y$ indica que é possível que um paciente
+ tenha a perna amputada sem o erro médico e
+ não a tenha com o erro.
+\end{example}
+
+De um ponto de vista operacional,
+o \cref{thm:contrafactual} abaixo provê
+um algoritmo para calcular probabilidades contrafactuais:
+
+\begin{theorem}[Cálculo contrafactual]
+ \label{thm:contrafactual}
+ \begin{align*}
+  \P(\Y_{\X=\x} \leq \y|\Z=\z)
+  &= \int \P(\Y_{\X=\x} \leq \y|\U)f(\U|\Z=\z)d\U
+ \end{align*}
+\end{theorem}
+
+O \cref{thm:contrafactual} indica que
+o cálculo de probabilidades contrafactuais
+pode ser dividido em duas etapas.
+Primeiramente, calcula-se a nova distribuição
+dos ruídos locais, $\U$, após aprender que
+$\X=\x$, obtendo assim $f(\U|\Z=\z)$.
+A seguir, calcula-se 
+$\P(\Y_{\X=\x} \leq \y)$ utilizando-se que
+a distribuição de $\U$ é $f(\U|\Z=\z)$
+ao invés de $f(\U)$.
 
 \bibliographystyle{apalike}
 \bibliography{book}
@@ -5619,6 +5771,26 @@ ao condicionamento usual no SCM aumentado.
  $\E[Y|I=1]-\E[Y|I=0] = 0$.
  Assim, decorre do \cref{eq:instrument_3} que
  $\LACE = 0 = \frac{\E[Y|I=1] - \E[Y|I=0]}{\E[X|I=1] - \E[X|I=0]}$.
+\end{proof}
+
+\begin{proof}[Prova do \cref{thm:contrafactual}]
+ Tome um caminho arbitrário de $Y_{\X=\x}$ a $\Z$.
+ Decorre da \cref{def:pom} que 
+ o caminho necessariamente passará por $U \in \U$.
+ Como $U$ é uma raiz, ele não é
+ um colisor no caminho. Portanto,
+ o caminho está bloqueado dado $\U$.
+ Como o caminho era arbitrário,
+ $Y_{\X=\x} \dsep \Z | \U$.
+ Decorre do \cref{thm:d-sep} que
+ $Y_{\X=\x}$ é independente de $\Z$ dado $\U$.
+ Assim,
+ \begin{align*}
+  \P(\Y_{\X=\x} \leq \y|\Z=\z)
+  &= \int \P(\Y_{\X=\x} \leq \y|\Z=\z,\U)f(\U|\Z=\z)d\U \\
+  &= \int \P(\Y_{\X=\x} \leq \y|\U)f(\U|\Z=\z)d\U
+  & \Y_{\X=\x} \perp^f \Z | \U
+ \end{align*}
 \end{proof}
 
 \end{document}

@@ -159,6 +159,6 @@ identificar o \LACE \ por meio de um instrumento monotônico.
  Se $I \in\ \{0,1\}$ é um instrumento monotônico para
  o efeito causal de $X \in \{0,1\}$ em $Y$, então
  \begin{align*}
-  \LACE &= \frac{\E[Y|I=1]-\E[Y|I=0]}{\E[X|I=1]-\E[X|I=0]}
+  \LACE &= \frac{\E[Y|I=1]-\E[Y|I=0]}{\E[X|I=1]-\E[X|I=0]}.
  \end{align*}
 \end{theorem}
