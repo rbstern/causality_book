@@ -1,4 +1,4 @@
-\section{Relativas à \cref{sec:intervencao}}
+\section{Relativas à \cref{sec:intervencao} (\nameref{sec:intervencao})}
 
 \begin{proof}[Prova do \cref{lemma:do_calculus_0}]
  Decorre da \cref{def:intervencao} que

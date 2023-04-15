@@ -1,4 +1,4 @@
-\section{Relativas às \text{\cref{sec:frontdoor,sec:do_calculus}}}
+\section{Relativas às \text{\cref{sec:frontdoor,sec:do_calculus} (\nameref{sec:frontdoor})}}
 
 \subsection{Relativas ao \text{\cref{thm:do_calculus}}}
 

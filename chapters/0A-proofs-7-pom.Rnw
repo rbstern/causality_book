@@ -1,4 +1,4 @@
-\section{Relativas à \cref{sec:trad_scm_pom}}
+\section{Relativas à \cref{sec:trad_scm_pom} (\nameref{sec:trad_scm_pom})}
 
 \begin{proof}[Prova do \cref{lemma:obs_to_potential_prev}]
  Se $\Z_{\V=\bv}(\omega) \neq \bz$, então
@@ -181,7 +181,7 @@
  é um caminho de $X$ a $Y_x$.
 \end{proof}
 
-\section{Relativas à \cref{sec:instrument}}
+\section{Relativas à \cref{sec:instrument} (\nameref{sec:instrument})}
 
 \begin{definition}
  \label{def:pom_partition}
@@ -461,6 +461,8 @@
  Assim, decorre do \cref{eq:instrument_3} que
  $\LACE = 0 = \frac{\E[Y|I=1] - \E[Y|I=0]}{\E[X|I=1] - \E[X|I=0]}$.
 \end{proof}
+
+\section{Relativas à \cref{sec:contrafactuais} (\nameref{sec:contrafactuais})}
 
 \begin{proof}[Prova do \cref{thm:contrafactual}]
  Tome um caminho arbitrário de $Y_{\X=\x}$ a $\Z$.

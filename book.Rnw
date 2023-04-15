@@ -6,7 +6,7 @@
 
 \vspace{20mm}
 
-\textbf{Agradecimentos}: 
+\textbf{Agradecimentos}: Vitor Mello
 
 \newpage
 
@@ -37,6 +37,7 @@ opts_chunk$set(cache=TRUE,fig.path="./figures/")
 \Sexpr{knit_child("chapters/04-0-potential.Rnw")}
 \Sexpr{knit_child("chapters/04-1-instrumental.Rnw")}
 \Sexpr{knit_child("chapters/04-2-contrafactual.Rnw")}
+\Sexpr{knit_child("chapters/05-discovery.Rnw")}
 
 \bibliographystyle{apalike}
 \bibliography{book}

@@ -1,4 +1,4 @@
-\section{Relativas à \cref{sec:backdoor}}
+\section{Relativas à \cref{sec:backdoor} (\nameref{sec:backdoor})}
 
 \subsection{Relativas ao \cref{thm:backdoor}}
 

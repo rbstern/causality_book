@@ -145,9 +145,7 @@ Caminho é formalizado a seguir:
  $C = \{C_1, \ldots, C_n\}$ tal que, 
  para cada $1 \leq i < n$,
  $(C_i, C_{i+1}) \in \sE$ ou 
- $(C_{i+1}, C_{i}) \in \sE$. 
- $(V_i, V_{i+1}) \in \sE$ ou 
- $(V_{i+1}, V_{i}) \in \sE$. 
+ $(C_{i+1}, C_{i}) \in \sE$.
 \end{definition}
 
 \subsection{Grafo Direcionado Acíclico (DAG)}

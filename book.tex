@@ -6,7 +6,7 @@
 
 \vspace{20mm}
 
-\textbf{Agradecimentos}: 
+\textbf{Agradecimentos}: Vitor Mello
 
 \newpage
 
@@ -366,9 +366,7 @@ Caminho é formalizado a seguir:
  $C = \{C_1, \ldots, C_n\}$ tal que, 
  para cada $1 \leq i < n$,
  $(C_i, C_{i+1}) \in \sE$ ou 
- $(C_{i+1}, C_{i}) \in \sE$. 
- $(V_i, V_{i+1}) \in \sE$ ou 
- $(V_{i+1}, V_{i}) \in \sE$. 
+ $(C_{i+1}, C_{i}) \in \sE$.
 \end{definition}
 
 \subsection{Grafo Direcionado Acíclico (DAG)}
@@ -4037,9 +4035,9 @@ a restrição que um determinado fato ocorreu diferentemente.
 
 Neste sentido, resultados potenciais são um formalismo útil.
 Dentro deste formalismo, consideramos que 
-$\sV$ são as variáveis observada.
+$\sV$ são as variáveis da ``realidade observada''.
 Por outro lado, $\sV_{\X=\x}$ são
-as variáveis que seriam observado quando
+as variáveis que seriam observadas quando
 $\X$ é fixado no valor $\x$.
 Neste formalismo (\cref{def:pom}), consideramos que
 $Y = g_Y(Pa^*(Y), U_Y)$ e
@@ -4049,7 +4047,7 @@ $Y_{\X=\x}$ e $Y$ são gerados pelo mesmo mecanismo, $g_Y$.
 Além disso, os ruídos locais representados por $U_Y$ são
 os mesmos em $Y$ e $Y_{\X=\x}$.
 Pode-se argumentar que a equivalência de mecanismos
-e de ruídos legais satisfaz a condição de que
+e de ruídos locais satisfaz a condição de que
 realidades contrafactuais devem ser
 tão próximas quanto possível da realidade observada.
 
@@ -4119,7 +4117,7 @@ o acoplamento utilizado.
   &= \P(\I(U_Y \geq 1-p_0) = 1|\I(U_X \leq \epsilon) == 1, \I(U_Y > p_1) = 1) \\
   &= \P(U_Y \geq 1-p_0|U_X \leq \epsilon, U_Y > p_1) \\
   &= \P(U_Y > 1-p_0|U_Y > p_1) \\
-  &= \frac{\P(U_Y > \max(1-p_0,p_1)}{\P(U_Y > p_1)} = \frac{\min(1-p_0,p_1)}{1-p_1}
+  &= \frac{\P(U_Y > \max(1-p_0,p_1)}{\P(U_Y > p_1)} = \frac{\min(p_0,1-p_1)}{1-p_1}
  \end{align*}
  Neste caso, $g_Y$ induz a mema distribuição 
  sobre $(X,Y)$ que o acoplamento no \cref{ex:contrafactual_1}.
@@ -4147,11 +4145,179 @@ o cálculo de probabilidades contrafactuais
 pode ser dividido em duas etapas.
 Primeiramente, calcula-se a nova distribuição
 dos ruídos locais, $\U$, após aprender que
-$\X=\x$, obtendo assim $f(\U|\Z=\z)$.
+$\Z=\z$, obtendo assim $f(\U|\Z=\z)$.
 A seguir, calcula-se 
 $\P(\Y_{\X=\x} \leq \y)$ utilizando-se que
 a distribuição de $\U$ é $f(\U|\Z=\z)$
 ao invés de $f(\U)$.
+
+Na próxima seção, veremos
+uma aplicação mais detalhada de
+contrafactuais no Direito.
+Esta discussão é baseada em
+\citet{Stern2019}.
+
+\subsection{Contrafactuais e Responsabilidade Civil}
+\label{sec:counterfactual_law}
+
+O art. 927 do Código Civil de 2002 determina que:
+
+\begin{quote}
+ Aquele que, por ato ilícito, 
+ causar dano a outrem, 
+ fica obrigado a repará-lo.
+\end{quote}
+
+Este artigo institui a Responsabilidade Aquiliana,
+isto é o dever daquele que causa um dano 
+de forma ilícita a \textbf{reparar} as vítimas.
+Sem entrar em detalhes sobre a lei,
+um elemento fundamental deste conceito é a reparação.
+
+O que é a reparação?
+Esta pergunta é ainda mais complicada dado que
+o Direito somente pode exigir que
+esta reparação ocorra por meio de 
+um pagamento em dinheiro.
+Neste sentido, uma posição comum é
+definir que reparação é 
+o valor de pagamento que 
+torna a vítima inteira, isto é,
+na condição em que ela estaria caso
+não tivesse sofrido o dano.
+
+Para nossos fins,
+a parte central desta definição de reparação é que
+ela exige uma consideração contrafactual. Isto é,
+ela questiona qual teria sido a condição da vítima
+caso esta não tivesse sofrido o dano.
+Podemos avaliar esta questão com
+as ferramentas desenvolvidas 
+na \cref{sec:contrafactuais}.
+
+Para tal, construíremos 
+um modelo de resultados potenciais.
+Considere que $\sV$ é
+o conjunto de todas as variáveis juridicamente relevantes.
+Dentre elas, $I$ é a indicadora de que
+o causador do dano agiu de forma ilícita.
+Além disso, $E \subseteq \sV$ é 
+um conjunto de variáveis que foi observada e
+trazida como evidência à Justiça.
+Finalmente, $U(\sV, m)$ é 
+uma função de utilidade que
+indica o quão desejável é para a vítima
+obter o resultado $\sV$ e, além disso,
+uma indenização monetária de $m$.
+Dentro deste contexto, 
+uma quantificação do dano é
+uma função, $Q(E) \in \Re^{+}$, que 
+define uma compensação para 
+cada possível evidência apresentada.
+
+Dentro deste contexto,
+uma primeira pergunta é
+o quanto da evidência pode ser usada
+para quantificar o dano.
+Neste aspecto, há uma tensão importante entre
+previsibilidade e reparação \citep{Fisher1990}.
+Considere que um diário com a assinatura de Janis Joplin é
+destruído em um sebo antes da fama da cantora.
+Poderia a posterior fama de Joplin 
+ser levada em consideração na reparação?
+De forma mais geral, quanto da evidência conhecida
+no momento do julgamento pode ser usada
+na quantificação do dano?
+
+De uma perspectiva social, 
+cada possível resposta apresenta
+vantagens e desvantagens.
+Por um lado, o uso de muita informação permite que
+seja possível colocar a vítima no presente
+o mais próximo da condição em que ela estaria
+caso o ato ilícito não tivesse ocorrido.
+Por outro lado, quanto mais informação é usada,
+mais imprevisível se torna o valor da reparação
+no momento em que o ilícito é cometido.
+
+Formalmente, podemos imagimar 
+ao menos três respostas para a pergunta levantada.
+A primeira resposta é de que toda evidência pode ser usada.
+Isto é, não há restrições sobre $Q$.
+A segunda resposta é de que nenhuma evidência pode ser usada,
+isto é, $Q$ deve ser uma função constante.
+Finalmente, uma resposta intermediária é obtida supondo que
+$Q$ somente leva em consideração se a situação 
+da vítima foi superior ou inferior àquela que
+ela poderia esperar sem o ilícito.
+Formalmente, tomando
+$g(E) = \I(\E[U(\sV,0)|E] > \E[U(\sV_{X=0},0)])$,
+temos que se $g(E_1) = g(E_2)$, então
+$Q(E_1) = Q(E_2)$.
+Em última análise, a escolha da resposta correta
+não é uma questão científica, mas de Direito.
+Contudo, utilizando contrafactuais podemos
+analisá-la e indicar os aspectos fundamentais
+envolvidos na escolha.
+
+Um outro aspecto fundamental 
+na quantificação de danos é a especificação de $Q$.
+Para tal, há duas possíveis interpretações de reparação.
+Por um lado, pode-se entender que
+a reparação deve levar a vítima o mais próximo possível
+ao estado em que ela estaria sem o ato ilícito,
+levando em consideração toda a evidência disponível.
+Uma possível formalização deste raciocínio é:
+\begin{align*}
+ Q = \arg\min_{Q^*}\E[(U(\sV,Q^*(E)) - U(\sV_{X=0},0))^2]
+\end{align*}
+Por outro lado, pode-se entender que,
+no momento em que o ato ilícito foi cometido,
+a vítima deveria estar indiferente entre
+não sofrer o ilícito ou sofrê-lo e receber a indenização.
+Esta outra interpretação pode ser formalizada da seguinte forma:
+\begin{align*}
+ Q = \arg\min_{Q^*: \E[U(\sV,Q^*)] = \E[U(\sV_{X=0},0)]}\E[(U(\sV,Q^*(E)) - U(\sV_{X=0},0))^2]
+\end{align*}
+
+Finalmente, como estabelecer 
+um modelo de resultados potenciais 
+a partir de um modelo causal?
+Como vimos anteriormente, 
+um mesmo \CM \ pode ser compatível com
+diversos \SCM. Além disso,
+cada \SCM \ pode levar a avaliações
+distintas de contrafactuais.
+Uma possível resposta é que
+o \SCM \ deve ser estabelecido pelo perito.
+Contudo, o custo de um perito pode ser
+incompatível com o valor do pedido.
+Neste caso, algumas alternativas são supor que
+$\sV$ e $\sV_{X=0}$ são independentes ou
+tomar a sua dependência de forma a minimizar
+$\E[(U(\sV,0)-U(\sV_{X=0},0))^2]$.
+
+\subsection{Exercícios}
+
+\begin{exercise}
+ Com base na discussão levantada na \cref{sec:counterfactual_law},
+ discuta formas de reparação para
+ o caso levantado no \cref{ex:contrafactual_1}.
+\end{exercise}
+
+\begin{exercise}
+ Suponha que sem o ato ilícito,
+ um paciente tem o tempo de sobrevivência dado
+ pela acumulada $F_0$.
+ Por outro lado, com o ato ilícito,
+ seu tempo de sobrevivência é dado por $F_1$.
+ Ocorrido o ilícito, o paciente falece após 1 ano.
+ Discuta possíveis reparações para
+ o paciente com base na \cref{sec:counterfactual_law}.
+\end{exercise}
+
+\chapter{Descoberta Causal}
+
 
 \bibliographystyle{apalike}
 \bibliography{book}
@@ -4159,7 +4325,7 @@ ao invés de $f(\U)$.
 \appendix
 \chapter{Demonstrações}
 
-\section{Relativas à \text{\cref{sec:dag-ex}}}
+\section{Relativas à \text{\cref{sec:dag-ex} (\nameref{sec:dag-ex})}}
 
 \begin{proof}[Prova do \cref{lem:conf-ind}]
  \begin{align*}
@@ -4259,7 +4425,7 @@ ao invés de $f(\U)$.
  $V_1 \not\ind V_3 | V_2$.
 \end{proof}
 
-\section{Relativas à \text{\cref{sec:cm}}}
+\section{Relativas à \text{\cref{sec:cm} (\nameref{sec:cm})}}
 
 \begin{proof}[Prova do \cref{lemma:cm_linear_esp}]
  Realizaremos a demonstração por indução.
@@ -4314,7 +4480,7 @@ ao invés de $f(\U)$.
  \end{align*}
 \end{proof}
 
-\section{Relativas à \text{\cref{sec:d-sep}}}
+\section{Relativas à \text{\cref{sec:d-sep} (\nameref{sec:d-sep})}}
 
 \subsection{Relativas ao \cref{lemma:equivIndep}}
 
@@ -4543,7 +4709,7 @@ Como $\V^*_1 \ind^f \V^*_2 | \V_3$,
  \cref{lem:dsep_indep,lemma:d-sep-volta}.
 \end{proof}
 
-\section{Relativas à \cref{sec:intervencao}}
+\section{Relativas à \cref{sec:intervencao} (\nameref{sec:intervencao})}
 
 \begin{proof}[Prova do \cref{lemma:do_calculus_0}]
  Decorre da \cref{def:intervencao} que
@@ -4646,7 +4812,7 @@ Como $\V^*_1 \ind^f \V^*_2 | \V_3$,
  \end{align*}
 \end{proof}
 
-\section{Relativas à \cref{sec:backdoor}}
+\section{Relativas à \cref{sec:backdoor} (\nameref{sec:backdoor})}
 
 \subsection{Relativas ao \cref{thm:backdoor}}
 
@@ -5132,7 +5298,7 @@ ao condicionamento usual no SCM aumentado.
  \end{align*}
 \end{proof}
 
-\section{Relativas às \text{\cref{sec:frontdoor,sec:do_calculus}}}
+\section{Relativas às \text{\cref{sec:frontdoor,sec:do_calculus} (\nameref{sec:frontdoor})}}
 
 \subsection{Relativas ao \text{\cref{thm:do_calculus}}}
 
@@ -5309,7 +5475,7 @@ ao condicionamento usual no SCM aumentado.
  \end{align*}
 \end{proof}
 
-\section{Relativas à \cref{sec:trad_scm_pom}}
+\section{Relativas à \cref{sec:trad_scm_pom} (\nameref{sec:trad_scm_pom})}
 
 \begin{proof}[Prova do \cref{lemma:obs_to_potential_prev}]
  Se $\Z_{\V=\bv}(\omega) \neq \bz$, então
@@ -5492,7 +5658,7 @@ ao condicionamento usual no SCM aumentado.
  é um caminho de $X$ a $Y_x$.
 \end{proof}
 
-\section{Relativas à \cref{sec:instrument}}
+\section{Relativas à \cref{sec:instrument} (\nameref{sec:instrument})}
 
 \begin{definition}
  \label{def:pom_partition}
@@ -5772,6 +5938,8 @@ ao condicionamento usual no SCM aumentado.
  Assim, decorre do \cref{eq:instrument_3} que
  $\LACE = 0 = \frac{\E[Y|I=1] - \E[Y|I=0]}{\E[X|I=1] - \E[X|I=0]}$.
 \end{proof}
+
+\section{Relativas à \cref{sec:contrafactuais} (\nameref{sec:contrafactuais})}
 
 \begin{proof}[Prova do \cref{thm:contrafactual}]
  Tome um caminho arbitrário de $Y_{\X=\x}$ a $\Z$.
