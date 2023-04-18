@@ -47,7 +47,7 @@ dt %>%
  \label{tabs:simpson}
 \end{table}
 
-Considere que observamos em $500$ pacientes $3$ variáveis: 
+Considere que observamos em $700$ pacientes $3$ variáveis: 
 $T$ e $C$ são as indicadoras de que, respectivamente,
 o paciente recebeu um tratamento e o paciente curou de uma doença, e
 $Z$ é uma variável binária cujo significado será discutido mais tarde.

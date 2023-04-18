@@ -237,7 +237,8 @@ assim trazendo clareza ao Paradoxo.
  Além disso, suponha que a distribuição conjunta de $(X,Y,Z)$ é
  dada pelas frequências na \cref{tabs:simpson}. Isto é:
  \begin{align*}
-  &\P(Z = 1) = \frac{25+55+71+192}{750} \approx 0.46 \\
+  &\P(Z = 1) = \frac{25+55+71+192}{700} \approx 0.49 \\
+  &\P(Z = 0) = 1 - \P(Z=1) \approx 0.51 \\
   &\P(Z = 1|X = 0) = \frac{25+55}{25+55+36+234} \approx 0.23 \\
   &\P(Z = 1|X = 1) = \frac{71+192}{71+192+6+81} \approx 0.75 \\
   &\P(Y = 1|X = 0, Z = 0) = \frac{234}{234+36} \approx 0.87 \\
@@ -251,9 +252,9 @@ assim trazendo clareza ao Paradoxo.
  
  Suponha que $Z$ é a indicadora de que 
  o sexo do paciente é masculino.
- Neste caso, utilizarem como 
+ Neste caso, utilizaremos como 
  grafo causal aquele em \cref{fig:simpson_sexo}.
- Utilizando este grafo, obtemos:
+ este grafo, obtemos:
  \begin{align}
   \label{eq:simpson_sexo}
   \P_1(Y=i,Z=j|do(X=k))
@@ -266,12 +267,12 @@ assim trazendo clareza ao Paradoxo.
   &= \P_1(Y=1,Z=0|do(X=1)) + \P_1(Y=1,Z=1|do(X=1)) \\
   &= \P(Z=0)\P(Y=1|X=1,Z=0) + \P(Z=1)\P(Y=1|X=1,Z=1)
   & \text{\cref{eq:simpson_sexo}} \\
-  &\approx 0.54 \cdot 0.93 + 0.46 \cdot 0.73 \approx 0.84 \\
+  &\approx 0.51 \cdot 0.93 + 0.49 \cdot 0.73 \approx 0.83 \\
   \P_1(Y=1|do(X=0))
   &= \P_1(Y=1,Z=0|do(X=0)) + \P_1(Y=1,Z=1|do(X=0)) \\
   &= \P(Z=0)\P(Y=1|X=0,Z=0) + \P(Z=1)\P(Y=1|X=0,Z=1)
   & \text{\cref{eq:simpson_sexo}} \\
-  &\approx 0.54 \cdot 0.87 + 0.46 \cdot 0.69 \approx 0.79 \\
+  &\approx 0.51 \cdot 0.87 + 0.49 \cdot 0.69 \approx 0.78 \\
  \end{align*}
  Portanto, o efeito causal do tratamento na cura quando
  $Z$ é o sexo do paciente é obtido abaixo:

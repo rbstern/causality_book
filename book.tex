@@ -59,7 +59,7 @@ Para tal, a seguir estudaremos um exemplo de \citet{Glymour2016}.
  \label{tabs:simpson}
 \end{table}
 
-Considere que observamos em $500$ pacientes $3$ variáveis: 
+Considere que observamos em $700$ pacientes $3$ variáveis: 
 $T$ e $C$ são as indicadoras de que, respectivamente,
 o paciente recebeu um tratamento e o paciente curou de uma doença, e
 $Z$ é uma variável binária cujo significado será discutido mais tarde.
@@ -484,7 +484,9 @@ Esta intuição é formalizada em \cref{def:compativel}:
  Para $\sV$ um conjunto de variáveis aleatórias,
  dizemos que uma função de densidade sobre $\sV$, 
  $f$, é compatível com um DAG, $\sG$, se:
- $$f(v_1,\ldots,v_n) = \prod_{i=1}^n f(v_i|Pa(v_i))$$
+ $$f(v_1,\ldots,v_n) = \prod_{i=1}^n f(v_i|Pa(v_i)).$$
+ Quando não há ambiguidade, também dizemos que
+ $\sG$ é compatível com $f$ neste caso.
 \end{definition}
 
 \begin{example}
@@ -983,6 +985,7 @@ será fundamental nos capítulos posteriores.
 \end{exercise}
 
 \begin{exercise}
+ \label{ex:infiel}
  Considere que $(X_1,X_2)$ são independentes e
  tais que $\P(X_i=1)=\P(X_i=-1)=0.5$.
  Além disso, $Y \equiv X_1 \cdot X_2$.
@@ -1641,7 +1644,8 @@ assim trazendo clareza ao Paradoxo.
  Além disso, suponha que a distribuição conjunta de $(X,Y,Z)$ é
  dada pelas frequências na \cref{tabs:simpson}. Isto é:
  \begin{align*}
-  &\P(Z = 1) = \frac{25+55+71+192}{750} \approx 0.46 \\
+  &\P(Z = 1) = \frac{25+55+71+192}{700} \approx 0.49 \\
+  &\P(Z = 0) = 1 - \P(Z=1) \approx 0.51 \\
   &\P(Z = 1|X = 0) = \frac{25+55}{25+55+36+234} \approx 0.23 \\
   &\P(Z = 1|X = 1) = \frac{71+192}{71+192+6+81} \approx 0.75 \\
   &\P(Y = 1|X = 0, Z = 0) = \frac{234}{234+36} \approx 0.87 \\
@@ -1655,9 +1659,9 @@ assim trazendo clareza ao Paradoxo.
  
  Suponha que $Z$ é a indicadora de que 
  o sexo do paciente é masculino.
- Neste caso, utilizarem como 
+ Neste caso, utilizaremos como 
  grafo causal aquele em \cref{fig:simpson_sexo}.
- Utilizando este grafo, obtemos:
+ este grafo, obtemos:
  \begin{align}
   \label{eq:simpson_sexo}
   \P_1(Y=i,Z=j|do(X=k))
@@ -1670,12 +1674,12 @@ assim trazendo clareza ao Paradoxo.
   &= \P_1(Y=1,Z=0|do(X=1)) + \P_1(Y=1,Z=1|do(X=1)) \\
   &= \P(Z=0)\P(Y=1|X=1,Z=0) + \P(Z=1)\P(Y=1|X=1,Z=1)
   & \text{\cref{eq:simpson_sexo}} \\
-  &\approx 0.54 \cdot 0.93 + 0.46 \cdot 0.73 \approx 0.84 \\
+  &\approx 0.51 \cdot 0.93 + 0.49 \cdot 0.73 \approx 0.83 \\
   \P_1(Y=1|do(X=0))
   &= \P_1(Y=1,Z=0|do(X=0)) + \P_1(Y=1,Z=1|do(X=0)) \\
   &= \P(Z=0)\P(Y=1|X=0,Z=0) + \P(Z=1)\P(Y=1|X=0,Z=1)
   & \text{\cref{eq:simpson_sexo}} \\
-  &\approx 0.54 \cdot 0.87 + 0.46 \cdot 0.69 \approx 0.79 \\
+  &\approx 0.51 \cdot 0.87 + 0.49 \cdot 0.69 \approx 0.78 \\
  \end{align*}
  Portanto, o efeito causal do tratamento na cura quando
  $Z$ é o sexo do paciente é obtido abaixo:
@@ -4317,7 +4321,121 @@ $\E[(U(\sV,0)-U(\sV_{X=0},0))^2]$.
 \end{exercise}
 
 \chapter{Descoberta Causal}
+\label{sec:discovery}
 
+Há situações em que observamos dados de
+um \CM desconhecido, $(\sG, f)$.
+Nestes casos, podemos ter interesse em
+estimar o grafo causal, $\sG$.
+Neste capítulo, estudaremos estratégias 
+para esta estimação.
+
+Antes de apresentar métodos de estimação,
+avaliaremos condições para que 
+o problema de estimação esteja bem posto.
+Especificamente, a próxima seção mostra que,
+de forma irrestrita, o grafo causal é 
+estatisticamente não-identificável.
+Assim, comumente precisamos nos contentar com
+um objetivo menos ambicioso de estimação.
+
+\section{Identificabilidade na Descoberta Causal}
+\label{sec:discovery_id}
+
+Para contextualizar o problema da
+identificabilidade na Descoberta Causal,
+podemos começar com um exemplo simplista.
+Considere que observamos as variáveis: $\sV = \{X, Y\}$.
+Neste caso, há pelo menos duas dificuldades.
+
+Primeiramente, considere que 
+$f$ é tal que $X \ind^f Y$.
+Neste caso, apesar de intuitivamente 
+considerarmos o grafo causal,
+$X \hspace{3 mm} Y$, 
+a densidade $f$ também é compatível com
+$X \rightarrow Y$.
+De fato, $X \rightarrow Y$ determina que
+$f(x, y) = f(x)f(y|x)$, 
+o que é verdadeiro mesmo quando 
+$X$ e $Y$ são independentes.
+
+Contudo, ainda que 
+ambos os grafos sejam compatíveis com $f$,
+o grafo $X \hspace{3 mm} Y$ é mais informativo.
+Somente com base neste grafo podemos
+deduzir que $X$ é independente de $Y$.
+Essa constatação elucida que não buscamos apenas
+um grafo causal, $\sG$, compatível com 
+a distribuição geradora dos dados, $f$.
+Desejamos que $\sG$ permita
+deduzir o maior número possível 
+de relações de independência condicional presentes em $f$.
+Uma maneira de lidar com este problema é 
+trocar o objetivo de encontrar 
+$\sG$ compatível com $f$ por
+encontrar $\sG$ \textbf{fiel} a $f$:
+
+\begin{definition}
+ \label{def:fiel}
+ Dizemos que $f$ é fiel a $\sG$ ou, equivalentemente,
+ que $\sG$ é fiel a $f$, se
+ para quaisquer $\X, \Y, \Z \subseteq \sV$,
+ $\X \ind^f \Y | \Z$ se e somente se
+ $\X \perp^\sG \Y | \Z$.
+\end{definition}
+
+Podemos interpretar a \cref{def:fiel} 
+à luz do \cref{thm:d-sep}.
+Se $\sG$ é compatível com $f$ e
+$\X \perp^\sG \Y | \Z$, então
+o \cref{thm:d-sep} indica que
+$\X \ind^f \Y | \Z$.
+Contudo, em geral não é possível inferir
+uma d-separação em um grafo compatível
+a partir de uma relação de independência condicional.
+Quando $\sG$ é fiel a $f$,
+toda relação de independência condicional implica
+uma d-separação em $\sG$. Isto é,
+$\sG$ traz a maior informação possível sobre
+as relações de independência condicional em $f$.
+
+O segundo problema de identificabilidade é que
+pode haver mais de um grafo causal fiel
+à distribuição geradora dos dados.
+Como ilustração, considere novamente que
+$\sV = \{X, Y\}$ e que $f$ é tal que
+$X$ e $Y$ não são independentes.
+Neste caso, tanto
+$X \rightarrow Y$
+quanto $X \leftarrow Y$ são fiéis a $f$.
+Em outras palavras, 
+se não fizermos mais suposições,
+ambos os grafos explicam igualmente bem $f$.
+
+Com base nesta observação,
+podemos definir um tipo de
+não-identificabilidade em
+descoberta causal.
+Se dois grafos causais são fiéis às
+mesmas distribuições, então
+não importa qual seja a densidade geradora dos dados,
+não é possível diferenciá-los por meio dos dados.
+Neste caso, dizemos que os grafos são
+\textbf{fielmente indistinguíveis}:
+
+\begin{definition}
+ \label{def:fiel_equiv}
+ Dois grafos, $\sG$ e $\sG^*$, são
+ fielmente indistinguíveis
+ ($\sG \sim \sG^*$) se,
+ para todo $f$,
+ \begin{align*}
+  \text{$f$ é fiel a $\sG$
+  se e somente se
+  $f$ é fiel a $\sG^*$}.
+ \end{align*}
+\end{definition}
 
 \bibliographystyle{apalike}
 \bibliography{book}

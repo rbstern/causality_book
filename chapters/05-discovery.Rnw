@@ -1,2 +1,116 @@
 \chapter{Descoberta Causal}
+\label{sec:discovery}
 
+Há situações em que observamos dados de
+um \CM desconhecido, $(\sG, f)$.
+Nestes casos, podemos ter interesse em
+estimar o grafo causal, $\sG$.
+Neste capítulo, estudaremos estratégias 
+para esta estimação.
+
+Antes de apresentar métodos de estimação,
+avaliaremos condições para que 
+o problema de estimação esteja bem posto.
+Especificamente, a próxima seção mostra que,
+de forma irrestrita, o grafo causal é 
+estatisticamente não-identificável.
+Assim, comumente precisamos nos contentar com
+um objetivo menos ambicioso de estimação.
+
+\section{Identificabilidade na Descoberta Causal}
+\label{sec:discovery_id}
+
+Para contextualizar o problema da
+identificabilidade na Descoberta Causal,
+podemos começar com um exemplo simplista.
+Considere que observamos as variáveis: $\sV = \{X, Y\}$.
+Neste caso, há pelo menos duas dificuldades.
+
+Primeiramente, considere que 
+$f$ é tal que $X \ind^f Y$.
+Neste caso, apesar de intuitivamente 
+considerarmos o grafo causal,
+$X \hspace{3 mm} Y$, 
+a densidade $f$ também é compatível com
+$X \rightarrow Y$.
+De fato, $X \rightarrow Y$ determina que
+$f(x, y) = f(x)f(y|x)$, 
+o que é verdadeiro mesmo quando 
+$X$ e $Y$ são independentes.
+
+Contudo, ainda que 
+ambos os grafos sejam compatíveis com $f$,
+o grafo $X \hspace{3 mm} Y$ é mais informativo.
+Somente com base neste grafo podemos
+deduzir que $X$ é independente de $Y$.
+Essa constatação elucida que não buscamos apenas
+um grafo causal, $\sG$, compatível com 
+a distribuição geradora dos dados, $f$.
+Desejamos que $\sG$ permita
+deduzir o maior número possível 
+de relações de independência condicional presentes em $f$.
+Uma maneira de lidar com este problema é 
+trocar o objetivo de encontrar 
+$\sG$ compatível com $f$ por
+encontrar $\sG$ \textbf{fiel} a $f$:
+
+\begin{definition}
+ \label{def:fiel}
+ Dizemos que $f$ é fiel a $\sG$ ou, equivalentemente,
+ que $\sG$ é fiel a $f$, se
+ para quaisquer $\X, \Y, \Z \subseteq \sV$,
+ $\X \ind^f \Y | \Z$ se e somente se
+ $\X \perp^\sG \Y | \Z$.
+\end{definition}
+
+Podemos interpretar a \cref{def:fiel} 
+à luz do \cref{thm:d-sep}.
+Se $\sG$ é compatível com $f$ e
+$\X \perp^\sG \Y | \Z$, então
+o \cref{thm:d-sep} indica que
+$\X \ind^f \Y | \Z$.
+Contudo, em geral não é possível inferir
+uma d-separação em um grafo compatível
+a partir de uma relação de independência condicional.
+Quando $\sG$ é fiel a $f$,
+toda relação de independência condicional implica
+uma d-separação em $\sG$. Isto é,
+$\sG$ traz a maior informação possível sobre
+as relações de independência condicional em $f$.
+
+O segundo problema de identificabilidade é que
+pode haver mais de um grafo causal fiel
+à distribuição geradora dos dados.
+Como ilustração, considere novamente que
+$\sV = \{X, Y\}$ e que $f$ é tal que
+$X$ e $Y$ não são independentes.
+Neste caso, tanto
+$X \rightarrow Y$
+quanto $X \leftarrow Y$ são fiéis a $f$.
+Em outras palavras, 
+se não fizermos mais suposições,
+ambos os grafos explicam igualmente bem $f$.
+
+Com base nesta observação,
+podemos definir um tipo de
+não-identificabilidade em
+descoberta causal.
+Se dois grafos causais são fiéis às
+mesmas distribuições, então
+não importa qual seja a densidade geradora dos dados,
+não é possível diferenciá-los por meio dos dados.
+Neste caso, dizemos que os grafos são
+\textbf{fielmente indistinguíveis}:
+
+\begin{definition}
+ \label{def:fiel_equiv}
+ Dois grafos, $\sG$ e $\sG^*$, são
+ fielmente indistinguíveis
+ ($\sG \sim \sG^*$) se,
+ para todo $f$,
+ \begin{align*}
+  \text{$f$ é fiel a $\sG$
+  se e somente se
+  $f$ é fiel a $\sG^*$}.
+ \end{align*}
+\end{definition}
