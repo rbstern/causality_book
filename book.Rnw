@@ -52,5 +52,6 @@ opts_chunk$set(cache=TRUE,fig.path="./figures/")
 \Sexpr{knit_child("chapters/0A-proofs-5-backdoor-rdd.Rnw")}
 \Sexpr{knit_child("chapters/0A-proofs-6-do-frontdoor.Rnw")}
 \Sexpr{knit_child("chapters/0A-proofs-7-pom.Rnw")}
+\Sexpr{knit_child("chapters/0A-proofs-8-discovery.Rnw")}
 
 \end{document}

@@ -147,6 +147,16 @@ Como $\V^*_1 \ind^f \V^*_2 | \V_3$,
  $\V_2 \subseteq \V^*_2$. 
 \end{proof}
 
+\begin{theorem}[\citet{Spirtes2000}[p.66]]
+ \label{thm:vanishing_cor}
+ Considere que $(\sG, f_{\beta})$ é um \CM linear Gaussiano (\cref{def:cm_linear})
+ de parâmetros $\sigma^2 = 1$, $\beta$ e $\mu = 0$.
+ Para qualquer distribuição contínua sobre $\beta$,
+ tem probabilidade $0$ a ocorrência de valores de $\beta$ tais que
+ existam $\X, \Y, \Z$ com $\X \ind^{f_\beta} \Y | \Z$ mas
+ $\X$ e $\Y$ não serem d-separados dado $\Z$ em $\sG$.
+\end{theorem}
+
 \begin{lemma}
  \label{lemma:d-sep-volta}
  Se $\V_1$ não é d-separado de $\V_2$
@@ -157,6 +167,7 @@ Como $\V^*_1 \ind^f \V^*_2 | \V_3$,
 \end{lemma}
 
 \begin{proof}
+ Decorre do \cref{thm:vanishing_cor}.
 \end{proof}
 
 \begin{proof}[Prova do \cref{thm:d-sep}]

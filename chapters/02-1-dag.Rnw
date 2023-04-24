@@ -140,12 +140,19 @@ $V_1 \rightarrow V_3 \leftarrow V_2$.
 Caminho é formalizado a seguir:
 
 \begin{definition}
+ \label{def:adj}
+ Dizemos que vértices $V_1$ e $V_2$ 
+ são \textbf{adjacentes} se
+ $(V_1, V_2) \in \sE$ ou
+ $(V_2, V_1) \in \sE$.
+\end{definition}
+
+\begin{definition}
  \label{def:caminho}
  Um \textbf{caminho} é uma sequência de vértices,
  $C = \{C_1, \ldots, C_n\}$ tal que, 
  para cada $1 \leq i < n$,
- $(C_i, C_{i+1}) \in \sE$ ou 
- $(C_{i+1}, C_{i}) \in \sE$.
+ $C_i$ e $C_{i+1})$ são adjacentes.
 \end{definition}
 
 \subsection{Grafo Direcionado Acíclico (DAG)}
@@ -189,13 +196,15 @@ um DAG, $\sG$, se
 existe uma aresta de $V_1$ a $V_2$,
 isto é, $(V_1, V_2) \in \sE$.
 Denotamos por $Pa(V)$ o
-conjunto de todos os pais de $V$:
+conjunto de todos os pais de $V$.
+Similarmente $Pa(\V)$ é o conjunto de vértices que
+são pais de algum vértice em $\V$:
 
 \begin{definition}
  \label{def:pais}
- O conjunto de \textbf{pais} de $V \in \sV$ 
+ O conjunto de \textbf{pais} de $\V \subseteq \sV$ 
  em um DAG, $\sG = (\sV, \sE)$, é:
- $$Pa(V) := \{V^* \in \sV: (V^*, V) \in \sE\}.$$
+ $$Pa(\V) := \{V^* \in \sV: \exists V \in \V \text{ tal que } (V^*, V) \in \sE\}.$$
 \end{definition}
 
 Similarmente, dizemos que $V_1$ é um ancestral de $V_2$ em

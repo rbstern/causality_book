@@ -1,0 +1,98 @@
+\section{Relativas à \cref{sec:discovery_id} (\nameref{sec:discovery_id})}
+
+\begin{lemma}[\citet{Verma2022}]
+ Para quaisquer vértices $V_1, V_2 \in \sV$
+ em um grafo causal, $\sG$,
+ as seguintes afirmações são equivalentes:
+ \begin{enumerate}
+  \item $V_1$ e $V_2$ são adjacentes,
+  \item Não existe $\V \subseteq \sV - \{V_1,V_2\}$ tal que
+  $V_1 \perp V_2 | \V$,
+  \item $V_1$ e $V_2$ não são d-separados dado 
+  $A := Anc(\{V_1,V_2\}) - \{V_1,V2\}$,
+  \item $V_1$ e $V_2$ não são d-separados dado 
+  $Pa := Pa(\{V_1,V_2\}) - \{V_1,V2\}$.
+ \end{enumerate}
+\end{lemma}
+
+\begin{proof}
+ $(1 \rightarrow 2)$ Sem perda de generalidade, suponha que $V_1 \rightarrow V_2$.
+ Inicialmente, construíremos uma $f$ compatível com $\sG$. 
+ Para todo $V \notin \{V_1,V_2\}$, tomamos $f(V|Pa(V)) = \I(V = 0)$.
+ Isto é, $V$ é degenerado em $0$. Além disso, tomamos
+ $V_1|Pa(V_1) \sim \text{Bernoulli}(0.5)$ e
+ $V_2|Pa(V_2) \equiv V_1$.
+ Para todo $\V \subseteq \sV - \{V_1,V_2\}$, $\P(\V = 0) = 1$.
+ Portanto, $Cov(V_1, V_2|\V) = Cov(V_1, V_2) = 0.25 \neq 0$.
+ Portanto, $V_1$ e $V_2$ não são independentes dado $\V$ segundo $f$.
+ Como $f$ é compatível com $\sG$, 
+ decorre do \cref{thm:d-sep} que
+ $V_1$ e $V_2$ não são d-separados dado $\V$.
+ 
+ $(2 \rightarrow 3)$ Decorre do fato de que
+ $Anc(\{V_1,V_2\}) - \{V_1,V_2\}$ é 
+ um caso particular de $\V$ em (2).
+  
+ $(3 \rightarrow 4)$
+ Provaremos que se existe um caminho de $V_1$ em $V_2$, $C$, que 
+ não está bloqueado dado $A$, 
+ ele também não está bloqueado dado $Pa$.
+ Faremos esta prova em duas etapas: 
+ primeiramente considerando vértices em $C$ que 
+ não sejam colisores e, a seguir, que sejam colisores.
+ Tome um vértice em $C$, $C_i$, que não é um colisor.
+ Como $C$ não está bloqueado dado $A$, $C_i \notin A$.
+ Como $Pa \subseteq A$, $C_i \notin Pa$.
+ A seguir, tome um vértice em $C$, $C_i$, que é um colisor.
+ Como $C$ não está bloqueado dado $A$,
+ existe $V_1 \in A$ tal que $V_1$ é descendente de $C$.
+ Como $V_1 \in A$, existe $V_2 \in Pa$ tal que 
+ $V_2 = V_1$ ou $V_2$ é descendente de $V_1$. 
+ Portanto, $V_2 \in Pa$ é descendente de $C_i$.
+ Decorre das conclusões anteriores que 
+ $C$ não está bloqueado dado $Pa$.
+ 
+ $(4 \rightarrow 1)$
+ Considere que $V_1$ e $V_2$ não são adjacentes e
+ suponha por abusrdo que 
+ há um caminho de $V_1$ a $V_2$, $C$,
+ não bloqueado dado $Pa$.
+ Como $V_1$ e $V_2$ não são adjacentes, $|C| > 2$.
+ Caso, $V_1 \leftarrow C_2$, então 
+ $C_2 \in Pa$ e $C_2$ não é um colisor, isto é,
+ $C$ está bloqueado dado $Pa$.
+ Conclua que $V_1 \rightarrow C_2$.
+ Por simetria, conclua que 
+ $C_{n-1} \rightarrow V_2$.
+ Como $V_1 \rightarrow C_2$ e
+ $C_{n-1} \rightarrow V_2$, 
+ há pelo menos um colisor em $C$.
+ Defina $C_i$ como o colisor de menor índice
+ (o mais próximo de $V_1$) e
+ $C_j$ o de maior índice (o mais próximo de $V_2$).
+ Por definição construção,
+ $C_i$ é descendente de $V_1$ e
+ $C_j$ é descendente de $V_2$.
+ Note que, se $C_i$ é ascendente de $V_2$ e
+ $C_j$ é ascendente de $V_1$, então
+ \begin{align*}
+  V_1 \rightarrow \ldots \rightarrow C_i
+  \rightarrow \ldots \rightarrow V_2
+  \rightarrow \ldots \rightarrow C_j
+  \rightarrow \ldots \rightarrow V_1,
+ \end{align*}
+ é um ciclo em $\sG$. Como $\sG$ é um DAG,
+ ou $C_i$ não é ascendente de $V_2$ ou
+ $C_j$ não é ascendente de $V_1$.
+ Sem perda de generalidade, considere que
+ $C_i$ não é ascendente de $V_2$.
+ Como $C_i$ é descendente de $V_1$,
+ $C_i$ também não é ascendente de $V_1$.
+ Como $C_i$ não é ascendente de $V_1$ ou de $V_2$,
+ Não há vértice em $Pa$ que é descendente de $C_i$.
+ Portanto, $C_i$ é um colisor e
+ não há descendente de $C_i$ em $Pa$.
+ Conclua que $C$ está bloqueado dado $Pa$, um absurdo.
+ Portanto, $V_1 \perp V_2 | Pa$.
+\end{proof}
+

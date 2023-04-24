@@ -114,3 +114,35 @@ Neste caso, dizemos que os grafos são
   $f$ é fiel a $\sG^*$}.
  \end{align*}
 \end{definition}
+
+\begin{theorem}[{\citet{Verma2022}}]
+ \label{thm:fiel_equiv}
+ $\sG \sim \sG^*$ se e somente se
+ \begin{enumerate}
+  \item Para quaisquer vértices $V_1$ e $V_2$,
+  $V_1$ e $V_2$ são adjacentes em $\sG$ 
+  se e somente se
+  $V_1$ e $V_2$ são adjacentes em $\sG^*$.
+  \item Para quaisquer vértices 
+  $V_1, V_2, V_3$ tais que
+  $V_1$ é adjacente a $V_2$, 
+  $V_2$ é a adjacente a $V_3$ e
+  $V_1$ não é adjacente a $V_3$ em $\sG$,
+  temos que $V_1 \rightarrow V_2 \leftarrow V_3$ em $\sG$
+  se e somente se
+  $V_1 \rightarrow V_2 \leftarrow V_3$ em $\sG^*$.
+ \end{enumerate}
+\end{theorem}
+
+\begin{definition}[Padrão]
+\end{definition}
+
+\section{Algoritmos de Descoberta Causal}
+
+\subsection{Algoritmo de Wermuth-Lauritzen}
+
+\subsection{Algoritmo SGS}
+
+\subsection{Algoritmo PC}
+
+\subsection{Algoritmo PC$^*$}
