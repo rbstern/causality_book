@@ -1,6 +1,6 @@
-\section{Relativas às \text{\cref{sec:frontdoor,sec:do_calculus} (\nameref{sec:frontdoor})}}
+\section{\text{\cref{sec:frontdoor,sec:do_calculus} (\nameref{sec:frontdoor})}}
 
-\subsection{Relativas ao \text{\cref{thm:do_calculus}}}
+\subsection{\text{\cref{thm:do_calculus}}}
 
 \begin{lemma}
  \label{lemma:do_calculus_1}
@@ -92,7 +92,7 @@
  \cref{lemma:do_calculus_1,lemma:do_calculus_2,lemma:do_calculus_3}.
 \end{proof}
 
-\subsection{Relativas ao \text{\cref{thm:frontdoor}}}
+\subsection{\text{\cref{thm:frontdoor}}}
 
 \begin{lemma}
  \label{lemma:frontdoor_1}
@@ -140,7 +140,9 @@
  
  Conclua que existe $C_i$ que é um colisor.
  Como não há arestas apontando para $\W$ em $\sG(\bar{\W}, X^{+})$,
- $C_i \notin \W$. Como $C_i$ é um colisor e $C_i \notin \W$,
+ não há $W \in \W$ que é descendente de $C_i$. 
+ Como $C_i$ é um colisor e 
+ $C_i$ não tem descendentes em $\W$,
  conclua que $C$ está bloqueado.
  Como $C$ era arbitrário,
  $\Y \dsep I_{X} | \W$ em $\sG(\bar{\W}, X^{+})$.
@@ -161,7 +163,7 @@
  \end{align*}
 \end{proof}
 
-\subsection{Relativas ao \text{\cref{thm:frontdoor_ipw}}}
+\subsection{\text{\cref{thm:frontdoor_ipw}}}
 
 \begin{proof}[Prova do \cref{thm:frontdoor_ipw}]
  \begin{align*}

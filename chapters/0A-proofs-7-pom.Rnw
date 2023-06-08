@@ -1,4 +1,4 @@
-\section{Relativas à \cref{sec:trad_scm_pom} (\nameref{sec:trad_scm_pom})}
+\section{\cref{sec:trad_scm_pom} (\nameref{sec:trad_scm_pom})}
 
 \begin{proof}[Prova do \cref{lemma:obs_to_potential_prev}]
  Se $\Z_{\V=\bv}(\omega) \neq \bz$, então
@@ -84,9 +84,9 @@
 \begin{proof}[Prova do \cref{lemma:po_do}]
  \begin{align*}
   f(\sV_{\bv})
-  &= \I(\V = \bv) \cdot \prod_{V \in \sV-\V} f^*(V_{\bv}|Pa^*(V_{\bv}))
+  &= \I(\V = \bv) \cdot \prod_{V \in \sV-\V} f^*(V|Pa(V))
   & \text{\cref{def:pom}} \\
-  &= \I(V = \bv) \cdot \prod_{V \in \sV-\V} f(V|Pa(V))
+  &= \I(\V = \bv) \cdot \prod_{V \in \sV-\V} f(V|Pa(V))
   & \text{\cref{def:scm,def:pom}} \\
   &= f(\sV|do(\V=\bv))
   & \text{\cref{def:intervencao}}
@@ -181,7 +181,7 @@
  é um caminho de $X$ a $Y_x$.
 \end{proof}
 
-\section{Relativas à \cref{sec:instrument} (\nameref{sec:instrument})}
+\section{\cref{sec:instrument} (\nameref{sec:instrument})}
 
 \begin{definition}
  \label{def:pom_partition}
@@ -462,7 +462,7 @@
  $\LACE = 0 = \frac{\E[Y|I=1] - \E[Y|I=0]}{\E[X|I=1] - \E[X|I=0]}$.
 \end{proof}
 
-\section{Relativas à \cref{sec:contrafactuais} (\nameref{sec:contrafactuais})}
+\section{\cref{sec:contrafactuais} (\nameref{sec:contrafactuais})}
 
 \begin{proof}[Prova do \cref{thm:contrafactual}]
  Tome um caminho arbitrário de $Y_{\X=\x}$ a $\Z$.

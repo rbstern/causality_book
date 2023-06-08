@@ -349,7 +349,7 @@ ggdag(grafo, layout = "circle") +
 
 \begin{exercise}
  Prove que se $\V_1 \perp \V_2 | \V_3$, então
- para todo $V \in \sV$, 
+ para todo $V \in (Anc(\V_3)-\V_3)$, 
  $V \perp \V_1 | \V_3$ ou
  $V \perp \V_2 | \V_3$.
 \end{exercise}

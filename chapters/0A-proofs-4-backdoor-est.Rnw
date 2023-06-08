@@ -1,4 +1,4 @@
-\subsection{Relativas aos \cref{thm:backdoor_ajuste,thm:backdoor_ipw}}
+\subsection{\cref{thm:backdoor_ajuste,thm:backdoor_ipw}}
 
 \begin{proof}[Prova do \cref{thm:backdoor_ajuste}]
  \begin{align}
@@ -38,7 +38,7 @@
  \end{align*}
 \end{proof}
 
-\subsection{Relativas ao \cref{thm:conv_ajuste}}
+\subsection{\cref{thm:conv_ajuste}}
 
 \begin{lemma}
  \label{lemma:conv_l1_to_p}
@@ -80,7 +80,7 @@
  \end{align*}
 \end{proof}
 
-\subsection{Relativas ao \cref{thm:conv_ipw}}
+\subsection{\cref{thm:conv_ipw}}
 
 \begin{proof}[Prova do \cref{thm:conv_ipw}]
  Pela Lei dos Grandes números,
@@ -116,7 +116,7 @@
  \end{align*}
 \end{proof}
 
-\subsection{Relativas ao \cref{thm:conv_duplo_robusto}}
+\subsection{\cref{thm:conv_duplo_robusto}}
 
 \begin{proof}[Prova do \cref{thm:conv_duplo_robusto}]
  Se as condições do \cref{thm:conv_ajuste} estão satisfeitas,

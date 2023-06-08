@@ -1,4 +1,4 @@
-\subsection{Relativas ao \cref{thm:id_rdd}}
+\subsection{\cref{thm:id_rdd}}
 
 \begin{proof}[Prova do \cref{thm:id_rdd}]
  Se $X \equiv \I(\Z \geq \z_1)$, então:
@@ -12,8 +12,8 @@
   &= \lim_{\z \downarrow \z_1} \E[Y|X=1,\Z=\z] 
   - \lim_{\z \uparrow \z_1}\E[Y|X=0,\Z=\z]
   & \text{\cref{thm:backdoor_ajuste}} \\
-  &= \lim_{\z \downarrow \z_1} \E[Y|X=1,\Z=\z] 
-  - \lim_{\z \uparrow \z_1}\E[Y|X=0,\Z=\z]
+  &= \lim_{\z \downarrow \z_1} \E[Y|\Z=\z] 
+  - \lim_{\z \uparrow \z_1}\E[Y|\Z=\z]
   & X \equiv \I(\Z \geq \z_1)
  \end{align*}
  

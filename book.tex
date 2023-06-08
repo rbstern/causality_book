@@ -1414,7 +1414,7 @@ Esta conclusão é apresentada no
 
 \begin{exercise}
  Prove que se $\V_1 \perp \V_2 | \V_3$, então
- para todo $V \in \sV$, 
+ para todo $V \in (Anc(\V_3)-\V_3)$, 
  $V \perp \V_1 | \V_3$ ou
  $V \perp \V_2 | \V_3$.
 \end{exercise}
@@ -2074,17 +2074,24 @@ se $\Z$ satisfaz o critério backdoor, então
 distribuições sob intervenção em $X$ a
 distribuições observacionais:
 
-\begin{theorem}
- \label{thm:backdoor}
- Se $\Z$ satisfaz 
- o critério backdoor para medir
- o efeito causal de $X$ em $Y$, então
+\begin{definition}
+ \label{def:conf_control}
+ $\Z$ controla confundidores para
+ medir o efeito causal de $X$ em $Y$ se
  \begin{align*}
   f(\z|do(x)) 
   &= f(\z), \text{ e } \\
   f(y|do(x), \z) 
   &= f(y|x, \z).
  \end{align*}
+\end{definition}
+
+\begin{theorem}
+ \label{thm:backdoor}
+ Se $\Z$ satisfaz 
+ o critério backdoor para medir
+ o efeito causal de $X$ em $Y$, então
+ $\Z$ satisfaz a \cref{def:conf_control}.
 \end{theorem}
 
 O \cref{thm:backdoor} mostra que,
@@ -2103,9 +2110,8 @@ $f(y|do(x))$ a partir de $f(y,x,\z)$:
 
 \begin{corollary}
  \label{cor:backdoor}
- Se $\Z$ satisfaz 
- o critério backdoor para medir
- o efeito causal de $X$ em $Y$, então
+ Se $\Z$ satisfaz
+ a \cref{def:conf_control}, então
  \begin{align*}
   f(y|do(x)) &=
   \int f(y|x,\z)f(\z)d\z.
@@ -2140,8 +2146,7 @@ nos \cref{thm:backdoor_ajuste,thm:backdoor_ipw}.
 \begin{theorem}
  \label{thm:backdoor_ajuste}
  Se $\Z$ satisfaz 
- o critério backdoor para medir
- o efeito causal de $X$ em $Y$, então
+ a \cref{def:conf_control}, então
  \begin{align*}
   \E[g(Y)|do(X=x),\Z]
   &= \E[g(Y)|X=x,\Z], \text{ e } \\
@@ -2153,8 +2158,7 @@ nos \cref{thm:backdoor_ajuste,thm:backdoor_ipw}.
 \begin{theorem}
  \label{thm:backdoor_ipw}
  Se $\Z$ satisfaz 
- o critério backdoor para medir
- o efeito causal de $X$ em $Y$ e
+ a \cref{def:conf_control} e
  $X$ é discreto, então
  \begin{align*}
   \E[g(Y)|do(X=x),\Z] 
@@ -2198,8 +2202,7 @@ a seguinte definição será útil
 
 \subsubsection{Fórmula do ajuste}
 
-O \cref{thm:backdoor_ajuste} determina que, 
-se $\Z$ satisfaz o critério backdoor, então
+Se $\Z$ satisfaz a \cref{def:conf_control}, então
 $\E[Y|do(X),\Z] = \E[Y|X,\Z]$.
 Como $\mu(X,Z) := \E[Y|X,\Z]$ é 
 a função de regressão de $Y$ em $X$ e $Z$,
@@ -2247,8 +2250,7 @@ na média amostral:
 
 \begin{definition}
  \label{def:ajuste}
- Considere que $\Z$ satisfaz o critério backdoor para
- medir o efeito causal de $X$ em $Y$ e
+ Considere que $\Z$ satisfaz a \cref{def:conf_control} e
  $\hmu(x,\z)$ é uma estimativa 
  da regressão $\E[Y|X=x,\Z=\z]$.
  Os estimadores de 
@@ -2271,8 +2273,7 @@ por meio de expressões como o $\ACE$.
 \begin{theorem}
  \label{thm:conv_ajuste}
  Seja $\mu(X,\Z) := \E[Y|X,\Z]$.
- Se $\Z$ satisfaz o critério backdoor para
- medir o efeito causal de $X$ em $Y$,
+ Se $\Z$ satisfaz a \cref{def:conf_control},
  $\E[|\mu(x,\Z_1)|] < \infty$,
  $\E[|\hmu(x,\Z_1)-\mu(x,\Z_1)|] = o(1)$, 
  e $\hmu$ é invariante a permutações (\cref{def:perm}), então
@@ -2459,7 +2460,7 @@ Uma outra forma de estimar
 $\E[Y|do(X=x)]$ e $\E[Y|do(X=x),\Z]$ é
 motivada pelo \cref{thm:backdoor_ipw}.
 Este resultado determina que, 
-se $\Z$ satisfaz o critério backdoor, então
+se $\Z$ satisfaz a \cref{def:conf_control}, então
 \begin{align*}
  \E[Y|do(X=x),\Z] 
  &= \frac{\E\left[Y \I(X=x)|\Z\right]}{f(x|\Z)}.
@@ -2505,8 +2506,7 @@ ela pode ser aproximada pela média amostral
 Combinando estas aproximações, obtemos:
 \begin{definition}
  \label{def:ipw}
- Considere que $\Z$ satisfaz o critério backdoor para
- medir o efeito causal de $X$ em $Y$ e
+ Considere que $\Z$ satisfaz a \cref{def:conf_control} e
  $\hf(x|\z)$ é uma estimativa de $f(x|\z)$.
  Os estimadores de $\E[Y|do(X=x),\Z]$ e $\E[Y|do(X=x)]$ 
  por IPW são:
@@ -2522,7 +2522,8 @@ $\hdoyb$ converge para $\E[Y|do(X=x)]$.
 
 \begin{theorem}
  \label{thm:conv_ipw}
- Se $\hf$ é invariante a permutações (\cref{def:perm}),
+ Se $\Z$ satisfaz a \cref{def:conf_control}, também
+ $\hf$ é invariante a permutações (\cref{def:perm}),
  $\E[|\hf(x|\Z_1)-f(x|\Z_1)|] = o(1)$, e
  existe $M > 0$ tal que
  $\sup_\z \E[|Y| \I(X=x)|\Z=\z] < M$, e
@@ -2635,8 +2636,7 @@ quando este é consistente e
 para $\hdoyb$ quando aquele o é.
 
 \begin{definition}
- Sejam $\Z$ variáveis que satisfazem o critério backdoor
- para medir o efeito causal de $X$ em $Y$ e 
+ Se $\Z$ satisfaz a \cref{def:conf_control} e 
  sejam $\hf$ e $\hmu$ tais quais nas
  \cref{def:ajuste,def:ipw}.
  O estimador duplamente robusto para
@@ -2805,8 +2805,8 @@ identicação causal abaixo:
 
 \begin{theorem}[\citet{Hahn2001}]
  \label{thm:id_rdd}
- Considere que $\Z \in \Re$ satisfaz o critério backdoor para
- estimar o efeito causal de $X \in \{0,1\}$ em $Y$ e que
+ Considere que $\Z \in \Re$ satisfaz 
+ a \cref{def:conf_control}, $X \in \{0,1\}$, e
  $\E[Y|do(X=0),\Z]$ e $\E[Y|do(X=1),\Z]$ são 
  contínuas em $\Z=\z_1$.
  
@@ -3383,7 +3383,7 @@ Isto é, $\P(Y=1, Y=0|\ldots) = 0$.
 A última constatação nos revela que
 o modelo no \cref{cap:intervencao}
 não tem variáveis suficientes para
-traduzir a perguntada levantada.
+traduzir a pergunta levantada.
 Se imaginamos que é possível que
 um indivíduo se cure ao receber o tratamento e
 não se cure quando não o recebe, 
@@ -3799,10 +3799,8 @@ eles induzem o mesmo tipo de identificação causal.
  \label{lemma:cignore_do}
  Se $X$ é condicionalmente ignorável para 
  medir o efeito causal em $Y$ dado $\Z$, então
- \begin{align*}
-  f(y|do(x),\z) &= f(y|x,\z), \text{ e } \\
-  f(\z|do(x)) &= f(\z),
- \end{align*}
+ $\Z$ controla confundidores para
+ medir o efeito causal de $X$ em $Y$ (\cref{def:conf_control}).
 \end{lemma}
 
 Decorre do \cref{lemma:cignore_do} que
@@ -4446,37 +4444,125 @@ Neste caso, dizemos que os grafos são
  \end{align*}
 \end{definition}
 
-\begin{theorem}[{\citet{Verma2022}}]
- \label{thm:fiel_equiv}
- $\sG \sim \sG^*$ se e somente se
+A seguir, a \cref{def:padrao_dag} e
+o \cref{thm:fiel_equiv} mostram 
+uma operacionalização da 
+relação de indistinguibilidade fiel.
+
+\begin{definition}
+ \label{def:colisor_desprotegido}
+ Dizemos que $(V_1, V_2, V_3)$ formam
+ um colisor desprotegido em $\sG$ se
+ $V_1 \stackrel{\sG}{\rightarrow} V_2
+ \stackrel{\sG}{\leftarrow} V_3$ e
+ $V_1$ e $V_3$ não são adjacentes em $\sG$.
+\end{definition}
+
+\begin{definition}
+ \label{def:padrao_dag}
+ Os DAGs $\sG$ e $\sG^*$ tem o mesmo padrão se:
  \begin{enumerate}
   \item Para quaisquer vértices $V_1$ e $V_2$,
   $V_1$ e $V_2$ são adjacentes em $\sG$ 
   se e somente se
   $V_1$ e $V_2$ são adjacentes em $\sG^*$.
-  \item Para quaisquer vértices 
-  $V_1, V_2, V_3$ tais que
-  $V_1$ é adjacente a $V_2$, 
-  $V_2$ é a adjacente a $V_3$ e
-  $V_1$ não é adjacente a $V_3$ em $\sG$,
-  temos que $V_1 \rightarrow V_2 \leftarrow V_3$ em $\sG$
-  se e somente se
-  $V_1 \rightarrow V_2 \leftarrow V_3$ em $\sG^*$.
+  \item $(V_1, V_2, V_3)$ é um colisor desprotegido em $\sG$
+  se e somente se é um colisor desprotegido em $\sG^*$.
  \end{enumerate}
+\end{definition}
+
+\begin{theorem}[{\citet{Verma2022}}]
+ \label{thm:fiel_equiv}
+ $\sG \sim \sG^*$ se e somente se
+ $\sG$ e $\sG^*$ tem o mesmo padrão.
 \end{theorem}
 
-\begin{definition}[Padrão]
-\end{definition}
+De forma geral, 
+o \cref{thm:fiel_equiv} mostra que,
+sem maiores suposições,
+só é possível aprender 
+o padrão de um grafo a partir dos dados.
+Isto é, é possível determinar todas
+as relações de adjacência e, também,
+os colisores desprotegidos existentes no grafo.
+A seguir, estudaremos algoritmos que
+se propõem a descobrir esse padrão.
 
 \section{Algoritmos de Descoberta Causal}
 
-\subsection{Algoritmo de Wermuth-Lauritzen}
+\subsection{Algoritmos baseados em testes de independência condicional}
 
-\subsection{Algoritmo SGS}
+%\subsection{Algoritmo de Wermuth-Lauritzen}
 
-\subsection{Algoritmo PC}
+\subsubsection{Algoritmo SGS}
 
-\subsection{Algoritmo PC$^*$}
+\begin{algorithm2}
+ Algoritmo SGS
+ \begin{enumerate}
+  \item Inicie um grafo não direcionado completo em $\sV$.
+  \item Para cada $V_1, V_2 \in \sV$, 
+  se $H_0: V_1 \ind V_2 | S$ é rejeitada para
+  algum $S \subseteq \sV - \{V_1,V_2\}$, \textbf{retire}
+  a aresta $\{V_1,V_2\}$.
+  \item Para todos $V_1, V_2, V_3 \in \sV$ tais que
+  $\{V_1, V_2\}$ e $\{V_2,V_3\}$ são adjacentes, mas $\{V_1, V_3\}$ não o são,
+  caso exista $S \subseteq \{V_2\} \cup \sV-\{V_1,V_3\}$ tal que
+  $H_0: V_1 \ind V_2 | S$ não é rejeitada, 
+  \textbf{direcione} as arestas
+  $V_1 \rightarrow V_2 \leftarrow V_3$.
+  \item Repetir até que não haja mudanças:
+  \begin{enumerate}[label=(\alph*)]
+   \item Se $A \rightarrow B$, 
+   $B$ e $C$ são adjacentes e não direcionados e
+   $A$ e $C$ não são adjacentes, 
+   \textbf{direcione} $B \rightarrow C$.
+   \item Se $B$ é descendente de $A$ e 
+   $\{A,B\}$ são adjacentes,
+   \textbf{direcione} $A \rightarrow B$.
+  \end{enumerate}
+ \end{enumerate}
+\end{algorithm2}
+
+\subsubsection{Algoritmo PC}
+
+\begin{definition}
+ $Adj_{\sG}(X)$ é o conjunto de vértices em $\sV$ que
+ é adjacente a $X$ em $\sG$.
+\end{definition}
+
+\begin{algorithm2}
+ Algoritmo PC
+ \begin{enumerate}
+  \item Inicie um grafo não direcionado completo em $\sV$, $\sG$.
+  \item Inicialize $n = 0$.
+  \item Enquanto houver um vértice $X \in \sV$ com
+  $|Adj_{\sG}(X)| > n+1$:
+  \begin{enumerate}[label=(\alph*)]
+   \item Para cada $X \in \sV$ com $|Adj_{\sG}(X)| \geq n+1$,
+   cada $Y \in Adj_{\sG}(X)$ e
+   $S \subseteq Adj_{\sG}(X)-\{Y\}$ em que $|S| = n$,
+   se $H_0: X \ind Y | S$ é rejeitada, então
+   \textbf{retire} a aresta $\{X,Y\}$ de $\sG$ e
+   defina $Sep(\{X,Y\}) = S$.
+   \item Defina $n = n+1$.
+  \end{enumerate}
+  \item Para cada $X, Y, Z \in \sV$ tais que
+  $\{X, Y\}$ e $\{Y, Z\}$ são adjacentes, mas
+  $\{X, Z\}$ não o são e
+  $Y \notin Sep(\{X,Z\})$, \textbf{oriente}
+  $X \rightarrow Y \leftarrow Z$.
+  \item Repetir até que não haja mudanças:
+  \begin{enumerate}[label=(\alph*)]
+   \item Se $A \rightarrow B$, 
+   $B$ e $C$ são adjacentes e não direcionados e
+   $A$ e $C$ não são adjacentes, 
+   \textbf{direcione} $B \rightarrow C$.
+   \item Se $B$ é descendente de $A$ e 
+   $\{A,B\}$ são adjacentes,
+   \textbf{direcione} $A \rightarrow B$.
+  \end{enumerate}
+ \end{enumerate}
+\end{algorithm2}
 
 \bibliographystyle{apalike}
 \bibliography{book}
@@ -4484,7 +4570,7 @@ Neste caso, dizemos que os grafos são
 \appendix
 \chapter{Demonstrações}
 
-\section{Relativas à \text{\cref{sec:dag-ex} (\nameref{sec:dag-ex})}}
+\section{\text{\cref{sec:dag-ex} (\nameref{sec:dag-ex})}}
 
 \begin{proof}[Prova do \cref{lem:conf-ind}]
  \begin{align*}
@@ -4584,7 +4670,7 @@ Neste caso, dizemos que os grafos são
  $V_1 \not\ind V_3 | V_2$.
 \end{proof}
 
-\section{Relativas à \text{\cref{sec:cm} (\nameref{sec:cm})}}
+\section{\text{\cref{sec:cm} (\nameref{sec:cm})}}
 
 \begin{proof}[Prova do \cref{lemma:cm_linear_esp}]
  Realizaremos a demonstração por indução.
@@ -4639,7 +4725,7 @@ Neste caso, dizemos que os grafos são
  \end{align*}
 \end{proof}
 
-\section{Relativas à \text{\cref{sec:d-sep} (\nameref{sec:d-sep})}}
+\section{\text{\cref{sec:d-sep} (\nameref{sec:d-sep})}}
 
 \subsection{Relativas ao \cref{lemma:equivIndep}}
 
@@ -4702,7 +4788,7 @@ Neste caso, dizemos que os grafos são
  \end{itemize}
 \end{proof}
 
-\subsection{Relativas ao \cref{thm:d-sep}}
+\subsection{\cref{thm:d-sep}}
 
 \begin{lemma}
  \label{lem:dsep_indep_anc}
@@ -4982,9 +5068,9 @@ Como $\V^*_1 \ind^f \V^*_2 | \V_3$,
  \end{align*}
 \end{proof}
 
-\section{Relativas à \cref{sec:backdoor} (\nameref{sec:backdoor})}
+\section{\cref{sec:backdoor} (\nameref{sec:backdoor})}
 
-\subsection{Relativas ao \cref{thm:backdoor}}
+\subsection{\cref{thm:backdoor}}
 
 Para realizar a demonstração do \cref{thm:backdoor},
 consideraremos um SCM aumentado, 
@@ -5114,41 +5200,6 @@ ao condicionamento usual no SCM aumentado.
 \end{proof}
 
 \begin{lemma}
- \label{lemma:backdoor_4}
- Se $(\sG_*, f_*)$ é tal qual em \cref{def:cm_star} e
- $\X \notin Anc(\Z)$, então:
- \begin{align*}
-  f_*(\z) &= f(\z)
- \end{align*}
-\end{lemma}
-
-\begin{proof}
- Seja $\Z_* = Anc(\Z)$ e
- $\V = \sV - (\{X\} \cup \Z_*)$.
- Como $X \notin \Z_*$, decorre 
- da \cref{def:cm_star} que $I \notin \Z_*$.
- Portanto,
- \begin{align*}
-  f_*(\z_*) 
-  &= \int f_*(\z_*, I,X,\bv) d(I,X,\bv) \\
-  &= \int \left(\prod_{z \in \z_*} f(z|Pa(z))\right)
-  \left(f_*(I)f_*(X|I,Pa(X))
-  \prod_{v \in \bv} f(v|Pa(v))\right)d(I,X,\bv)
-  & \text{\cref{def:cm_star}} \\
-  &= \left(\prod_{z \in \z_*} f(z|Pa(z))\right) 
-  \int \left(f_*(I)f_*(X|I,Pa(X)) 
-  \prod_{v \in \bv} f(v|Pa(v))\right)d(I,X,\bv) 
-  & \Z_* \cap (\V \cup \{I,X\}) = \emptyset \\
-  &\propto \prod_{z \in \z_*} f(z|Pa(z)) 
-  & \Z_* \cap (\V \cup \{I,X\}) = \emptyset \\
-  &= f(\z_*) 
-  & \text{\cref{lemma:anc_fact}}
- \end{align*}
- Assim, decorre da Lei da Probabilidade Total que
- $f_*(\z) = f(\z)$.
-\end{proof}
-
-\begin{lemma}
  \label{lemma:backdoor_5}
  Se $(\sG_*, f_*)$ é tal qual em \cref{def:cm_star} e
  $\Z$ satisfaz o critério backdoor para
@@ -5185,10 +5236,10 @@ ao condicionamento usual no SCM aumentado.
   f(\z|do(x))
   &= f_*(\z|I=1)
   & \text{\cref{lemma:backdoor_1}} \\
-  &= f_*(\z)
+  &= f_*(\z|I=0)
   & \text{\cref{lemma:backdoor_5}} \\
   &= f(\z)
-  & \text{\cref{lemma:backdoor_4}}
+  & \text{\cref{lemma:backdoor_2}}
  \end{align*}
 \end{proof}
 
@@ -5207,7 +5258,7 @@ ao condicionamento usual no SCM aumentado.
  \end{align*}
 \end{proof}
 
-\subsection{Relativas aos \cref{thm:backdoor_ajuste,thm:backdoor_ipw}}
+\subsection{\cref{thm:backdoor_ajuste,thm:backdoor_ipw}}
 
 \begin{proof}[Prova do \cref{thm:backdoor_ajuste}]
  \begin{align}
@@ -5247,7 +5298,7 @@ ao condicionamento usual no SCM aumentado.
  \end{align*}
 \end{proof}
 
-\subsection{Relativas ao \cref{thm:conv_ajuste}}
+\subsection{\cref{thm:conv_ajuste}}
 
 \begin{lemma}
  \label{lemma:conv_l1_to_p}
@@ -5289,7 +5340,7 @@ ao condicionamento usual no SCM aumentado.
  \end{align*}
 \end{proof}
 
-\subsection{Relativas ao \cref{thm:conv_ipw}}
+\subsection{\cref{thm:conv_ipw}}
 
 \begin{proof}[Prova do \cref{thm:conv_ipw}]
  Pela Lei dos Grandes números,
@@ -5325,7 +5376,7 @@ ao condicionamento usual no SCM aumentado.
  \end{align*}
 \end{proof}
 
-\subsection{Relativas ao \cref{thm:conv_duplo_robusto}}
+\subsection{\cref{thm:conv_duplo_robusto}}
 
 \begin{proof}[Prova do \cref{thm:conv_duplo_robusto}]
  Se as condições do \cref{thm:conv_ajuste} estão satisfeitas,
@@ -5418,7 +5469,7 @@ ao condicionamento usual no SCM aumentado.
  \end{align*}
 \end{proof}
 
-\subsection{Relativas ao \cref{thm:id_rdd}}
+\subsection{\cref{thm:id_rdd}}
 
 \begin{proof}[Prova do \cref{thm:id_rdd}]
  Se $X \equiv \I(\Z \geq \z_1)$, então:
@@ -5432,8 +5483,8 @@ ao condicionamento usual no SCM aumentado.
   &= \lim_{\z \downarrow \z_1} \E[Y|X=1,\Z=\z] 
   - \lim_{\z \uparrow \z_1}\E[Y|X=0,\Z=\z]
   & \text{\cref{thm:backdoor_ajuste}} \\
-  &= \lim_{\z \downarrow \z_1} \E[Y|X=1,\Z=\z] 
-  - \lim_{\z \uparrow \z_1}\E[Y|X=0,\Z=\z]
+  &= \lim_{\z \downarrow \z_1} \E[Y|\Z=\z] 
+  - \lim_{\z \uparrow \z_1}\E[Y|\Z=\z]
   & X \equiv \I(\Z \geq \z_1)
  \end{align*}
  
@@ -5468,9 +5519,9 @@ ao condicionamento usual no SCM aumentado.
  \end{align*}
 \end{proof}
 
-\section{Relativas às \text{\cref{sec:frontdoor,sec:do_calculus} (\nameref{sec:frontdoor})}}
+\section{\text{\cref{sec:frontdoor,sec:do_calculus} (\nameref{sec:frontdoor})}}
 
-\subsection{Relativas ao \text{\cref{thm:do_calculus}}}
+\subsection{\text{\cref{thm:do_calculus}}}
 
 \begin{lemma}
  \label{lemma:do_calculus_1}
@@ -5562,7 +5613,7 @@ ao condicionamento usual no SCM aumentado.
  \cref{lemma:do_calculus_1,lemma:do_calculus_2,lemma:do_calculus_3}.
 \end{proof}
 
-\subsection{Relativas ao \text{\cref{thm:frontdoor}}}
+\subsection{\text{\cref{thm:frontdoor}}}
 
 \begin{lemma}
  \label{lemma:frontdoor_1}
@@ -5610,7 +5661,9 @@ ao condicionamento usual no SCM aumentado.
  
  Conclua que existe $C_i$ que é um colisor.
  Como não há arestas apontando para $\W$ em $\sG(\bar{\W}, X^{+})$,
- $C_i \notin \W$. Como $C_i$ é um colisor e $C_i \notin \W$,
+ não há $W \in \W$ que é descendente de $C_i$. 
+ Como $C_i$ é um colisor e 
+ $C_i$ não tem descendentes em $\W$,
  conclua que $C$ está bloqueado.
  Como $C$ era arbitrário,
  $\Y \dsep I_{X} | \W$ em $\sG(\bar{\W}, X^{+})$.
@@ -5631,7 +5684,7 @@ ao condicionamento usual no SCM aumentado.
  \end{align*}
 \end{proof}
 
-\subsection{Relativas ao \text{\cref{thm:frontdoor_ipw}}}
+\subsection{\text{\cref{thm:frontdoor_ipw}}}
 
 \begin{proof}[Prova do \cref{thm:frontdoor_ipw}]
  \begin{align*}
@@ -5645,7 +5698,7 @@ ao condicionamento usual no SCM aumentado.
  \end{align*}
 \end{proof}
 
-\section{Relativas à \cref{sec:trad_scm_pom} (\nameref{sec:trad_scm_pom})}
+\section{\cref{sec:trad_scm_pom} (\nameref{sec:trad_scm_pom})}
 
 \begin{proof}[Prova do \cref{lemma:obs_to_potential_prev}]
  Se $\Z_{\V=\bv}(\omega) \neq \bz$, então
@@ -5731,9 +5784,9 @@ ao condicionamento usual no SCM aumentado.
 \begin{proof}[Prova do \cref{lemma:po_do}]
  \begin{align*}
   f(\sV_{\bv})
-  &= \I(\V = \bv) \cdot \prod_{V \in \sV-\V} f^*(V_{\bv}|Pa^*(V_{\bv}))
+  &= \I(\V = \bv) \cdot \prod_{V \in \sV-\V} f^*(V|Pa(V))
   & \text{\cref{def:pom}} \\
-  &= \I(V = \bv) \cdot \prod_{V \in \sV-\V} f(V|Pa(V))
+  &= \I(\V = \bv) \cdot \prod_{V \in \sV-\V} f(V|Pa(V))
   & \text{\cref{def:scm,def:pom}} \\
   &= f(\sV|do(\V=\bv))
   & \text{\cref{def:intervencao}}
@@ -5828,7 +5881,7 @@ ao condicionamento usual no SCM aumentado.
  é um caminho de $X$ a $Y_x$.
 \end{proof}
 
-\section{Relativas à \cref{sec:instrument} (\nameref{sec:instrument})}
+\section{\cref{sec:instrument} (\nameref{sec:instrument})}
 
 \begin{definition}
  \label{def:pom_partition}
@@ -6109,7 +6162,7 @@ ao condicionamento usual no SCM aumentado.
  $\LACE = 0 = \frac{\E[Y|I=1] - \E[Y|I=0]}{\E[X|I=1] - \E[X|I=0]}$.
 \end{proof}
 
-\section{Relativas à \cref{sec:contrafactuais} (\nameref{sec:contrafactuais})}
+\section{\cref{sec:contrafactuais} (\nameref{sec:contrafactuais})}
 
 \begin{proof}[Prova do \cref{thm:contrafactual}]
  Tome um caminho arbitrário de $Y_{\X=\x}$ a $\Z$.
@@ -6131,9 +6184,10 @@ ao condicionamento usual no SCM aumentado.
  \end{align*}
 \end{proof}
 
-\section{Relativas à \cref{sec:discovery_id} (\nameref{sec:discovery_id})}
+\section{\cref{sec:discovery_id} (\nameref{sec:discovery_id})}
 
 \begin{lemma}[\citet{Verma2022}]
+ \label{lemma:ident_1}
  Para quaisquer vértices $V_1, V_2 \in \sV$
  em um grafo causal, $\sG$,
  as seguintes afirmações são equivalentes:
@@ -6229,5 +6283,276 @@ ao condicionamento usual no SCM aumentado.
  Portanto, $V_1 \perp V_2 | Pa$.
 \end{proof}
 
+\begin{lemma}[\citet{Verma2022}]
+ \label{lemma:ident_2}
+ Considere que $\sG$ é tal que
+ $V_1$ é adjacente a $V_2$,
+ $V_2$ é adjacente a $V_3$, mas
+ $V_1$ não é adjacente a $V_3$.
+ Temos que $V_1 \rightarrow V_2$ e
+ $V_2 \leftarrow V_3$ se e somente se
+ $V_1$ não é d-separado de $V_3$ dado
+ qualquer $\V$ tal que $V_2 \in \V$.
+\end{lemma}
+
+\begin{proof}
+ ($\rightarrow$) Considere que $V_1 \rightarrow V_2$ e
+ $V_2 \leftarrow V_3$. Tome o caminho
+ $C = V_1 \rightarrow V_2 \leftarrow V_3$.
+ Como $V_2$ é um colisor em $C$,
+ $C$ não está bloqueado dado
+ qualquer $\V$ tal que $V_2 \in \V$.
+ Conclua que $V_1$ não é d-separado de $V_3$ dado
+ qualquer $\V$ tal que $V_2 \in \V$.
+ 
+ ($\leftarrow$)
+ Considere que $V_1 \leftarrow V_2$ ou
+ $V_2 \rightarrow V_3$. Portanto,
+ $V_2 \in Pa := Pa(\{V_1,V_3\}) - \{V_1,V_3\}$.
+ Como $V_1$ não é adjacente a $V_3$,
+ conclua do \cref{lemma:ident_1} que
+ $V_1 \perp V_3 | Pa$.
+\end{proof}
+
+\begin{lemma}
+ \label{lemma:fiel_equiv_1}
+ Se $\sG$ e $\sG^*$ não tem o mesmo padrão, então
+ $\sG$ e $\sG^*$ não são fielmente equivalentes.
+\end{lemma}
+
+\begin{proof}
+ Decorre diretamente dos \cref{lemma:ident_1,lemma:ident_2}.
+\end{proof}
+
+\begin{lemma}
+ \label{lemma:colisor_fiel}
+ Se $\sG$ e $\sG^*$ tem o mesmo padrão,
+ $V_1 \rightarrow V_2 \leftarrow V_3$ é um colisor
+ tanto em $\sG$ quanto em $\sG^*$ e
+ $Z$ é tal que $V_2 = Z$ ou 
+ $Z$ é um descendente de $V_2$ em $\sG$, então
+ ou $V_1$ e $V_3$ são adjacentes em ambos os DAGs,
+ ou existe um vértice $V_*$ tal que
+ $V_1 \rightarrow V_* \leftarrow V_3$ é
+ um colisor em $\sG^*$ e
+ $Z = V_*$ ou $Z$ é descendente de $V_*$ em $\sG$.
+\end{lemma}
+
+\begin{proof}
+ Para provar este resultado basta mostrar que,
+ se $V_1$ e $V_3$ não são adjacentes nas condições do lema,
+ então existe $V_*$ com as condições especificadas.
+ Como $Z$ é descendente de $V_2$ em $\sG$,
+ existe um caminho direcionado em $\sG$, 
+ $C = (C_1, \ldots, C_n)$, tal que 
+ $C_1 = V_2$ e $C_n = Z$.
+ Como $\sG^*$ tem o mesmo padrão de $\sG$,
+ $C$ é um caminho de $V_2$ em $Z$.
+ Faremos a demonstração por indução.
+ 
+ Suponha que $C_1 = V_2$ e $C_1 = Z$,
+ isto é, $V_2 = Z$.
+ Neste caso, $V_* = V_2$ satisfaz
+ as condições do lema.
+ A seguir, suponha que, se $n \leq n^*$, então
+ existe $V_*$ nas condições do lema e que $n = n^* + 1$.
+ Se $Z$ é descendente de $V_2$ em $\sG^*$, então
+ basta tomar $V_* = Z$.
+ Caso contrário, existe um menor $i$ tal que 
+ $C_{i} \leftarrow C_{i+1}$.
+ Existem $2$ casos a considerar: 
+ $i = 1$ e $i > 1$.
+ 
+ Se $i > 1$, então
+ $C_{i-1} \rightarrow C_{i} \leftarrow C_{i+1}$ é
+ um colisor em $\sG^*$. 
+ Como eles formam uma cadeia em $\sG$, e
+ $\sG$ e $\sG^*$ tem o mesmo padrão,
+ $C_{i-1}$ e $C_{i+1}$ são adjacentes em ambos os DAGs.
+ Como $C_{i-1} \stackrel{\sG}{\rightarrow} C_i \stackrel{\sG}{\rightarrow} C_{i+1}$ e
+ $\sG$ é acíclico, $C_{i-1} \stackrel{\sG}{\rightarrow} C_{i+1}$.
+ Portanto,
+ $C^* = (C_1, \ldots, C_{i-1}, C_{i+1}, \ldots, C_n)$ é
+ um caminho de tamanho $n-1$ de $V_2$ a $Z$ em $\sG^*$ que
+ é um caminho direcionado em $\sG$.
+ Decorre da hipótese de indução que
+ existe $V_*$ tal qual desejado.
+ 
+ Se $i=1$, $V_2 \stackrel{\sG^*}{\leftarrow} C_2$.
+ Portanto, $V_1 \rightarrow V_2 \leftarrow C_2$ e
+ $V_3 \rightarrow V_2 \leftarrow C_2$ são 
+ colisores em $\sG^*$, mas não em $\sG$.
+ Como $\sG$ e $\sG^*$ tem o mesmo padrão,
+ conclua que $V_1$ e $C_2$, e $V_3$ e $C_2$ são
+ adjacentes em ambos os DAGs.
+ Como $V_1 \stackrel{\sG}{\rightarrow} V_2 \stackrel{\sG}{\rightarrow} C_2$
+ e $\sG$ é acíclico, $V_1 \stackrel{\sG}{\rightarrow} C_2$.
+ Por simetria $V_3 \stackrel{\sG}{\rightarrow} C_2$.
+ Portanto, $V_1 \rightarrow C_2 \leftarrow V_3$ é um colisor em $\sG$.
+ Como $V_1$ e $V_3$ não são adjacentes por suposição e
+ $\sG$ e $\sG^*$ tem o mesmo padrão,
+ $V_1 \rightarrow C_2 \leftarrow V_3$ é um colisor em $\sG^*$,
+ $(C_2, C_3, \ldots, C_n)$ é um caminho de tamanho $n-1$ em $\sG^*$ e
+ que também é um caminho direcionado em $\sG$. 
+ Portanto, pela hipótese de indução, 
+ existe $V_*$ tal qual desejado.
+\end{proof}
+
+\begin{lemma}
+ \label{lemma:fiel_equiv_2}
+ Se $\sG$ e $\sG^*$ tem o mesmo padrão, então
+ $\sG$ e $\sG^*$ são fielmente equivalentes.
+\end{lemma}
+
+\begin{proof}
+ Desejamos provar que para quaisquer 
+ $V_1, V_2 \in \sV$ e $\V \subseteq \sV$ tais que 
+ $V_1 \neq V_2$ e $\{V_1, V_2\} \cap \V = \emptyset$,
+ se existe um caminho em $\sG$ de $V_1$ a $V_2$
+ não bloqueado dado $\V$, então 
+ existe um caminho em $\sG^*$ de $V_1$ a $V_2$
+ não bloqueado dado $\V$.
+ Tome $V_1$, $V_2$ e $\V$ arbitrários.
+ Realizaremos a demonstração por indução.
+ 
+ Suponha que há um caminho de tamanho $2$ de 
+ $V_1$ a $V_2$ em $\sG$ que não é bloqueado dado $\V$.
+ Portanto, $V_1$ e $V_2$ são adjacentes em $\sG$.
+ Como $\sG$ e $\sG^*$ tem o mesmo padrão,
+ $V_1$ e $V_2$ são adjacentes em $\sG^*$.
+ Conclua do \cref{lemma:ident_2} que
+ $(V_1, V_2)$ é um caminho não bloqueado dado $\V$ em $\sG^*$.
+ 
+ A seguir, suponha que, para todo caminho de
+ tamanho menor ou igual a $n$ em $\sG$ de $V_1$ a $V_2$
+ que não é bloqueado dado $\V$, existe
+ um caminho em $\sG^*$ de $V_1$ a $V_2$ que
+ não é bloqueado dado $\V$.
+ Tome um caminho caminho arbitrário de tamanho $n+1$,
+ $(C_1, C_2, \ldots, C_n, C_{n+1})$
+ em $\sG$ de $V_1$ a $V_2$ que não é bloqueado dado $\V$.
+ Desejamos provar que existe um caminho em $\sG^*$
+ de $V_1$ a $V_2$ que não é bloqueado dado $\V$.
+ 
+ Para tal, observamos inicialmente que,
+ como $\sG$ e $\sG^*$ tem o mesmo padrão,
+ $C$ é um caminho de $V_1$ a $V_2$ em $\sG^*$.
+ A seguir, dividiremos a análise em alguns casos:
+ 
+ \begin{enumerate}[label=\alph*)]
+  \item Considere que existe $i$ tal que
+  $C_i$ é um colisor em $\sG$ e
+  não é um colisor em $\sG^*$.
+  Como $\sG$ e $\sG^*$ tem o mesmo padrão,
+  $C_{i-1}$ e $C_{i+1}$ são adjacentes em $\sG$.
+  Sem perda de generalidade, suponha que
+  $C_{i-1} \stackrel{\sG}{\rightarrow} C_{i+1}$.
+  Tome $C^* = (C_1,\ldots,C_{i-1},C_{i+1},\ldots,C_{n+1})$.
+  Com exceção de $C_{i+1}$, todos os vértices em $C^*$
+  tem o mesmo tipo entre colisor e não-colisor que eles tem em $C$.
+  Assim, todos os demais vértices estão abertos dado $\V$.
+  Caso $C_{i+1}$ não seja um colisor em $C^*$, então
+  ele tem o mesmo tipo que em $C$ e, assim, 
+  está aberto em $C^*$ dado $\V$.
+  A seguir, resta o caso em que $C_{i+1}$ é 
+  um colisor em $C^*$. 
+  Como $C_i$ é um colisor em $C$,
+  $C_i$ é descendente de $C_{i+1}$.
+  Também, como $C_i$ não estava bloqueado em $C$ dado $\V$,
+  existe $V \in \V$ tal que $V$ é descendente de $C_i$.
+  Conclua que $V$ é descendente de $C_{i+1}$ e,
+  assim, $C_{i+1}$ não está bloqueado em $C^*$ dado $\V$.
+  Portanto, $C^*$ é um caminho de tamanho $n$ 
+  de $V_1$ a $V_2$ em $\sG$ que não está bloqueado dado $\V$.
+  Assim, esse caso está resolvido pela hipótese de indução.  
+  
+  \item Considere que existe $i$ tal que
+  $C_i$ não é um colisor em $\sG$ e
+  é um colisor em $\sG^*$.
+  Como $\sG$ e $\sG^*$ tem o mesmo padrão,
+  $C_{i-1}$ e $C_{i+1}$ são adjacentes em $\sG$.
+  Há 3 casos a analisar:
+  \begin{enumerate}[label=\Roman*)]
+   \item Caso $C_{i-1} \stackrel{\sG}{\rightarrow} C_i \stackrel{\sG}{\rightarrow} C_{i+1}$,
+   como $\sG$ é um DAG, obtemos que 
+   $C_{i-1} \stackrel{\sG}{\rightarrow} C_{i+1}$.
+   Neste caso, todos os vértices no caminho 
+   $C^* = (C_1,\ldots,C_{i-1},C_{i+1},\ldots,C_{n+1})$ tem
+   o mesmo tipo entre colisor e não-colisor que eles tem em $C$.
+   Assim, $C^*$ é um caminho de tamanho $n$ de $V_1$ a $V_2$ que
+   não está bloqueado em $\sG$ dado $\V$.
+   Assim, esse caso está resolvido pela hipótese de indução.
+   
+   \item Caso $C_{i-1} \stackrel{\sG}{\leftarrow} C_i \stackrel{\sG}{\leftarrow} C_{i+1}$,
+   a análise é análoga ao caso anterior.
+   
+   \item Caso $C_{i-1} \stackrel{\sG}{\leftarrow} C_i \stackrel{\sG}{\rightarrow} C_{i+1}$,
+   tome sem perda de generalidade que
+   $C_{i-1} \stackrel{\sG}{\rightarrow} C_{i+1}$.
+   A seguir, há dois casos a considerar. 
+   Primeiramente, considere que $C_{i-1}$ é um colisor em $C$ em $\sG$.
+   Como $C_i$ é um colisor em $C$ em $\sG^*$, 
+   $C_{i-1}$ não é um colisor em $C$ em $\sG^*$.
+   Portanto, $C_{i-1}$ satisfaz as condições do caso tratado em a).
+   A seguir, se $C_{i-1}$ não é um colisor em $C$ em $\sG$, então
+   todos os vértices em 
+   $C^* = (C_1, \ldots, C_{i-1}, C_{i+1},\ldots,C_{n+1})$ tem
+   o mesmo tipo entre colisor e não-colisor dado $\V$ que em $C$.
+   Portanto, $C^*$ é um caminho de tamanho $n$ de
+   $V_1$ a $V_2$ que não está bloqueado dado $\V$ em $\sG$.
+   Assim, esse caso está resolvido pela hipótese de indução.
+  \end{enumerate}
+  
+  \item Resta o caso tal que,
+  para todo $i$, tanto em $\sG$ quanto em $\sG^*$,
+  $C_i$ tem o mesmo tipo em $C$ entre
+  colisor e não-colisor.
+  Existem dois casos a analisar:
+  \begin{enumerate}[label=\Roman*)]
+   \item Caso exista algum $i$ tal que
+   $C_i$ é um colisor em $C$ tanto em
+   $\sG$ quanto em $\sG^*$ e
+   $C_{i-1}$ e $C_{i+1}$ são adjacentes em $\sG$.
+   Sem perda de generalidade, suponha que
+   $C_{i-1} \stackrel{\sG}{\rightarrow} C_{i+1}$ e
+   tome $C^* = (C_1, \ldots, C_{i-1}, C_{i+1}, \ldots, C_{n+1})$.
+   Todos os vértices em $C^*$ com exceção de
+   $C_{i+1}$ tem o mesmo tipo entre
+   colisor e não-colisor que em $C$.
+   Caso $C_{i+1}$ também tenha o mesmo tipo, então
+   $C^*$ não está bloqueado dado $\V$.
+   Caso contrário, $C_{i+1}$ é um colisor em $C^*$.
+   Como $C_i$ é um colisor em $C$, obtemos que
+   $C_{i+1} \stackrel{\sG}{\rightarrow} C_i$.
+   Além disso, como $C_i$ não está bloqueado em $C$ dado $\V$,
+   conclua que existe $V \in \V$ tal que 
+   $V$ é descendente de $C_i$.
+   Conclua das duas últimas sentenças que
+   $V$ é descendente de $C_{i+1}$.
+   Assim, $C_{i+1}$ não está bloqueado em $C^*$ dado $\V$.
+   Decorre que $C^*$ é um caminho de tamanho $n$ 
+   de $V_1$ a $V_2$ que não está bloqueado em $\sG$ dado $\V$.
+   Assim, esse caso está resolvido pela hipótese de indução.
+   
+   \item Caso contrário, para todo $i$ em que
+   $C_i$ é um colisor em $C$,
+   $C_{i-1}$ e $C_{i+1}$ não são adjacentes.
+   Portanto, decorre do \cref{lemma:colisor_fiel} que
+   existe $C^*_{i}$ tal que
+   $C_{i-1} \stackrel{\sG^*}{\rightarrow} C^*_{i}
+   \stackrel{\sG^*}{\leftarrow} C_{i+1}$ e
+   existe $V \in \V$ que é descendente de $C_i$ em $\sG^*$.
+   Para todo $i$ em que 
+   $C_i$ não é colisor em $C$,
+   tome $C^*_i = C_i$.
+   Por construção, $C^*$ 
+   não está bloqueado em $\sG^*$ dado $\V$.
+  \end{enumerate}
+ \end{enumerate}
+\end{proof}
+
+\begin{proof}[Prova do \cref{thm:fiel_equiv}]
+ Decorre dos \cref{lemma:fiel_equiv_1,lemma:fiel_equiv_2}
+\end{proof}
 
 \end{document}

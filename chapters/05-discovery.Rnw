@@ -115,34 +115,122 @@ Neste caso, dizemos que os grafos são
  \end{align*}
 \end{definition}
 
-\begin{theorem}[{\citet{Verma2022}}]
- \label{thm:fiel_equiv}
- $\sG \sim \sG^*$ se e somente se
+A seguir, a \cref{def:padrao_dag} e
+o \cref{thm:fiel_equiv} mostram 
+uma operacionalização da 
+relação de indistinguibilidade fiel.
+
+\begin{definition}
+ \label{def:colisor_desprotegido}
+ Dizemos que $(V_1, V_2, V_3)$ formam
+ um colisor desprotegido em $\sG$ se
+ $V_1 \stackrel{\sG}{\rightarrow} V_2
+ \stackrel{\sG}{\leftarrow} V_3$ e
+ $V_1$ e $V_3$ não são adjacentes em $\sG$.
+\end{definition}
+
+\begin{definition}
+ \label{def:padrao_dag}
+ Os DAGs $\sG$ e $\sG^*$ tem o mesmo padrão se:
  \begin{enumerate}
   \item Para quaisquer vértices $V_1$ e $V_2$,
   $V_1$ e $V_2$ são adjacentes em $\sG$ 
   se e somente se
   $V_1$ e $V_2$ são adjacentes em $\sG^*$.
-  \item Para quaisquer vértices 
-  $V_1, V_2, V_3$ tais que
-  $V_1$ é adjacente a $V_2$, 
-  $V_2$ é a adjacente a $V_3$ e
-  $V_1$ não é adjacente a $V_3$ em $\sG$,
-  temos que $V_1 \rightarrow V_2 \leftarrow V_3$ em $\sG$
-  se e somente se
-  $V_1 \rightarrow V_2 \leftarrow V_3$ em $\sG^*$.
+  \item $(V_1, V_2, V_3)$ é um colisor desprotegido em $\sG$
+  se e somente se é um colisor desprotegido em $\sG^*$.
  \end{enumerate}
+\end{definition}
+
+\begin{theorem}[{\citet{Verma2022}}]
+ \label{thm:fiel_equiv}
+ $\sG \sim \sG^*$ se e somente se
+ $\sG$ e $\sG^*$ tem o mesmo padrão.
 \end{theorem}
 
-\begin{definition}[Padrão]
-\end{definition}
+De forma geral, 
+o \cref{thm:fiel_equiv} mostra que,
+sem maiores suposições,
+só é possível aprender 
+o padrão de um grafo a partir dos dados.
+Isto é, é possível determinar todas
+as relações de adjacência e, também,
+os colisores desprotegidos existentes no grafo.
+A seguir, estudaremos algoritmos que
+se propõem a descobrir esse padrão.
 
 \section{Algoritmos de Descoberta Causal}
 
-\subsection{Algoritmo de Wermuth-Lauritzen}
+\subsection{Algoritmos baseados em testes de independência condicional}
 
-\subsection{Algoritmo SGS}
+%\subsection{Algoritmo de Wermuth-Lauritzen}
 
-\subsection{Algoritmo PC}
+\subsubsection{Algoritmo SGS}
 
-\subsection{Algoritmo PC$^*$}
+\begin{algorithm2}
+ Algoritmo SGS
+ \begin{enumerate}
+  \item Inicie um grafo não direcionado completo em $\sV$.
+  \item Para cada $V_1, V_2 \in \sV$, 
+  se $H_0: V_1 \ind V_2 | S$ é rejeitada para
+  algum $S \subseteq \sV - \{V_1,V_2\}$, \textbf{retire}
+  a aresta $\{V_1,V_2\}$.
+  \item Para todos $V_1, V_2, V_3 \in \sV$ tais que
+  $\{V_1, V_2\}$ e $\{V_2,V_3\}$ são adjacentes, mas $\{V_1, V_3\}$ não o são,
+  caso exista $S \subseteq \{V_2\} \cup \sV-\{V_1,V_3\}$ tal que
+  $H_0: V_1 \ind V_2 | S$ não é rejeitada, 
+  \textbf{direcione} as arestas
+  $V_1 \rightarrow V_2 \leftarrow V_3$.
+  \item Repetir até que não haja mudanças:
+  \begin{enumerate}[label=(\alph*)]
+   \item Se $A \rightarrow B$, 
+   $B$ e $C$ são adjacentes e não direcionados e
+   $A$ e $C$ não são adjacentes, 
+   \textbf{direcione} $B \rightarrow C$.
+   \item Se $B$ é descendente de $A$ e 
+   $\{A,B\}$ são adjacentes,
+   \textbf{direcione} $A \rightarrow B$.
+  \end{enumerate}
+ \end{enumerate}
+\end{algorithm2}
+
+\subsubsection{Algoritmo PC}
+
+\begin{definition}
+ $Adj_{\sG}(X)$ é o conjunto de vértices em $\sV$ que
+ é adjacente a $X$ em $\sG$.
+\end{definition}
+
+\begin{algorithm2}
+ Algoritmo PC
+ \begin{enumerate}
+  \item Inicie um grafo não direcionado completo em $\sV$, $\sG$.
+  \item Inicialize $n = 0$.
+  \item Enquanto houver um vértice $X \in \sV$ com
+  $|Adj_{\sG}(X)| > n+1$:
+  \begin{enumerate}[label=(\alph*)]
+   \item Para cada $X \in \sV$ com $|Adj_{\sG}(X)| \geq n+1$,
+   cada $Y \in Adj_{\sG}(X)$ e
+   $S \subseteq Adj_{\sG}(X)-\{Y\}$ em que $|S| = n$,
+   se $H_0: X \ind Y | S$ é rejeitada, então
+   \textbf{retire} a aresta $\{X,Y\}$ de $\sG$ e
+   defina $Sep(\{X,Y\}) = S$.
+   \item Defina $n = n+1$.
+  \end{enumerate}
+  \item Para cada $X, Y, Z \in \sV$ tais que
+  $\{X, Y\}$ e $\{Y, Z\}$ são adjacentes, mas
+  $\{X, Z\}$ não o são e
+  $Y \notin Sep(\{X,Z\})$, \textbf{oriente}
+  $X \rightarrow Y \leftarrow Z$.
+  \item Repetir até que não haja mudanças:
+  \begin{enumerate}[label=(\alph*)]
+   \item Se $A \rightarrow B$, 
+   $B$ e $C$ são adjacentes e não direcionados e
+   $A$ e $C$ não são adjacentes, 
+   \textbf{direcione} $B \rightarrow C$.
+   \item Se $B$ é descendente de $A$ e 
+   $\{A,B\}$ são adjacentes,
+   \textbf{direcione} $A \rightarrow B$.
+  \end{enumerate}
+ \end{enumerate}
+\end{algorithm2}

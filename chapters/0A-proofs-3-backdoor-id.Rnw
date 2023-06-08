@@ -1,6 +1,6 @@
-\section{Relativas à \cref{sec:backdoor} (\nameref{sec:backdoor})}
+\section{\cref{sec:backdoor} (\nameref{sec:backdoor})}
 
-\subsection{Relativas ao \cref{thm:backdoor}}
+\subsection{\cref{thm:backdoor}}
 
 Para realizar a demonstração do \cref{thm:backdoor},
 consideraremos um SCM aumentado, 
@@ -130,41 +130,6 @@ ao condicionamento usual no SCM aumentado.
 \end{proof}
 
 \begin{lemma}
- \label{lemma:backdoor_4}
- Se $(\sG_*, f_*)$ é tal qual em \cref{def:cm_star} e
- $\X \notin Anc(\Z)$, então:
- \begin{align*}
-  f_*(\z) &= f(\z)
- \end{align*}
-\end{lemma}
-
-\begin{proof}
- Seja $\Z_* = Anc(\Z)$ e
- $\V = \sV - (\{X\} \cup \Z_*)$.
- Como $X \notin \Z_*$, decorre 
- da \cref{def:cm_star} que $I \notin \Z_*$.
- Portanto,
- \begin{align*}
-  f_*(\z_*) 
-  &= \int f_*(\z_*, I,X,\bv) d(I,X,\bv) \\
-  &= \int \left(\prod_{z \in \z_*} f(z|Pa(z))\right)
-  \left(f_*(I)f_*(X|I,Pa(X))
-  \prod_{v \in \bv} f(v|Pa(v))\right)d(I,X,\bv)
-  & \text{\cref{def:cm_star}} \\
-  &= \left(\prod_{z \in \z_*} f(z|Pa(z))\right) 
-  \int \left(f_*(I)f_*(X|I,Pa(X)) 
-  \prod_{v \in \bv} f(v|Pa(v))\right)d(I,X,\bv) 
-  & \Z_* \cap (\V \cup \{I,X\}) = \emptyset \\
-  &\propto \prod_{z \in \z_*} f(z|Pa(z)) 
-  & \Z_* \cap (\V \cup \{I,X\}) = \emptyset \\
-  &= f(\z_*) 
-  & \text{\cref{lemma:anc_fact}}
- \end{align*}
- Assim, decorre da Lei da Probabilidade Total que
- $f_*(\z) = f(\z)$.
-\end{proof}
-
-\begin{lemma}
  \label{lemma:backdoor_5}
  Se $(\sG_*, f_*)$ é tal qual em \cref{def:cm_star} e
  $\Z$ satisfaz o critério backdoor para
@@ -201,10 +166,10 @@ ao condicionamento usual no SCM aumentado.
   f(\z|do(x))
   &= f_*(\z|I=1)
   & \text{\cref{lemma:backdoor_1}} \\
-  &= f_*(\z)
+  &= f_*(\z|I=0)
   & \text{\cref{lemma:backdoor_5}} \\
   &= f(\z)
-  & \text{\cref{lemma:backdoor_4}}
+  & \text{\cref{lemma:backdoor_2}}
  \end{align*}
 \end{proof}
 

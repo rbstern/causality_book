@@ -36,7 +36,7 @@ Isto é, $\P(Y=1, Y=0|\ldots) = 0$.
 A última constatação nos revela que
 o modelo no \cref{cap:intervencao}
 não tem variáveis suficientes para
-traduzir a perguntada levantada.
+traduzir a pergunta levantada.
 Se imaginamos que é possível que
 um indivíduo se cure ao receber o tratamento e
 não se cure quando não o recebe, 
@@ -465,10 +465,8 @@ eles induzem o mesmo tipo de identificação causal.
  \label{lemma:cignore_do}
  Se $X$ é condicionalmente ignorável para 
  medir o efeito causal em $Y$ dado $\Z$, então
- \begin{align*}
-  f(y|do(x),\z) &= f(y|x,\z), \text{ e } \\
-  f(\z|do(x)) &= f(\z),
- \end{align*}
+ $\Z$ controla confundidores para
+ medir o efeito causal de $X$ em $Y$ (\cref{def:conf_control}).
 \end{lemma}
 
 Decorre do \cref{lemma:cignore_do} que

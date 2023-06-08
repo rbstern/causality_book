@@ -52,31 +52,17 @@ todos os caminhos de informação que passam por confundidores:
 \end{example}
 
 \begin{example}
- <<backdoor_ex_1, fig.pos="t", fig.height=2.5, fig.width=4, fig.cap="Para medir o efeito causal de X em Y, podemos aplicar o critério backdoor. Neste grafo o único caminho aplicável ao critério backdoor é (X, Z, W, Y). Neste caminho, $Z$ é uma cadeia e $W$ é um confundidor. Assim, todas as possibilidades dentre Z, W, (Z,W) bloqueiam o caminho e satisfazem o critério backdoor.", fig.align="center", echo = FALSE, message = FALSE, warning = FALSE>>==
-library(dagitty)
-library(ggdag)
-library(ggplot2)
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{figure}[t]
 
-# Especificar o grafo
-grafo <- dagitty("dag {
-    X[e] Y[o]
-    W -> { Z Y };
-    Z -> X;
-    X -> { A Y };
-    A -> Y
-}")
-coordinates(grafo) <- list( 
-  x=c(W=2, Z=0, X=0, Y=2, A= 1),
-  y=c(W=1, Z=1, X=0, Y=0, A= -1))
+{\centering \includegraphics[width=\maxwidth]{figure/backdoor_ex_1-1} 
 
-# Exibir a figura do grafo
-ggdag(grafo, layout = "circle") +
-  theme(axis.text.x=element_blank(),
-      axis.ticks.x=element_blank(),
-      axis.text.y=element_blank(),
-      axis.ticks.y=element_blank()) +
-  xlab("") + ylab("")
-@
+}
+
+\caption[Para medir o efeito causal de X em Y, podemos aplicar o critério backdoor]{Para medir o efeito causal de X em Y, podemos aplicar o critério backdoor. Neste grafo o único caminho aplicável ao critério backdoor é (X, Z, W, Y). Neste caminho, $Z$ é uma cadeia e $W$ é um confundidor. Assim, todas as possibilidades dentre Z, W, (Z,W) bloqueiam o caminho e satisfazem o critério backdoor.}\label{fig:backdoor_ex_1}
+\end{figure}
+
+\end{knitrout}
 
  Considere o grafo causal na \cref{fig:backdoor_ex_1}.
  Para aplicar o critério backdoor, devemos identificar
@@ -92,32 +78,17 @@ ggdag(grafo, layout = "circle") +
 \end{example}
 
 \begin{example}
- <<backdoor_ex_2, fig.pos="t", fig.height=3, fig.width=4, fig.cap="Para medir o efeito causal de X em Y, podemos aplicar o critério backdoor. Neste grafo existem dois caminhos aplicáveis ao critério backdoor: (X, A, B, Y) e (X, C, Y). No primeiro, A é um confundidor. No segundo caminho, C é um confudidor. Assim, (A,C) bloqueia ambos os caminhos e satisfaz o critério backdoor.", fig.align="center", echo = FALSE, message = FALSE, warning = FALSE>>==
-library(dagitty)
-library(ggdag)
-library(ggplot2)
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{figure}[t]
 
-# Especificar o grafo
-grafo <- dagitty("dag {
-    X[e] Y[o]
-    A -> { X B };
-    B -> { Y }
-    C -> { X Y };
-    X -> { D Y };
-    D -> Y
-}")
-coordinates(grafo) <- list( 
-  x=c(A=0, B=1, C=2, D=1, X=0, Y=2),
-  y=c(A=3, B=2, C=2, D=0, X=1, Y=1))
+{\centering \includegraphics[width=\maxwidth]{figure/backdoor_ex_2-1} 
 
-# Exibir a figura do grafo
-ggdag(grafo, layout = "circle") +
-  theme(axis.text.x=element_blank(),
-      axis.ticks.x=element_blank(),
-      axis.text.y=element_blank(),
-      axis.ticks.y=element_blank()) +
-  xlab("") + ylab("")
-@
+}
+
+\caption[Para medir o efeito causal de X em Y, podemos aplicar o critério backdoor]{Para medir o efeito causal de X em Y, podemos aplicar o critério backdoor. Neste grafo existem dois caminhos aplicáveis ao critério backdoor: (X, A, B, Y) e (X, C, Y). No primeiro, A é um confundidor. No segundo caminho, C é um confudidor. Assim, (A,C) bloqueia ambos os caminhos e satisfaz o critério backdoor.}\label{fig:backdoor_ex_2}
+\end{figure}
+
+\end{knitrout}
 
  Considere o grafo causal na \cref{fig:backdoor_ex_2}.
  Para aplicar o critério backdoor,
@@ -139,16 +110,25 @@ ggdag(grafo, layout = "circle") +
  do pacote \textit{dagitty},
  como ilustrado a seguir:
  
-<<backdoor_ex_2_2, message = FALSE, warning = FALSE>>==
-library(dagitty)
-# Especificar o grafo
-grafo <- dagitty("dag{
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{library}\hlstd{(dagitty)}
+\hlcom{# Especificar o grafo}
+\hlstd{grafo} \hlkwb{<-} \hlkwd{dagitty}\hlstd{(}\hlstr{"dag\{
     X[e] Y[o]
-    A -> { X B }; B -> { Y }; C -> { X Y };
-    X -> { D Y }; D -> Y }")
+    A -> \{ X B \}; B -> \{ Y \}; C -> \{ X Y \};
+    X -> \{ D Y \}; D -> Y \}"}\hlstd{)}
 
-adjustmentSets(grafo, type = "all")
-@
+\hlkwd{adjustmentSets}\hlstd{(grafo,} \hlkwc{type} \hlstd{=} \hlstr{"all"}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+## { A, C }
+## { B, C }
+## { A, B, C }
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
 \end{example}
 
 O critério backdoor generaliza duas condições especiais que
@@ -416,24 +396,17 @@ ilustrar a implementação da fórmula do ajuste.
 
 \begin{example}
  \label{ex:backdoor_est_ajuste}
-<<backdoor_est_ex, fig.pos="t", fig.height=2.5, fig.width=4, fig.cap="DAG usado como exemplo para estimar efeito de X em Y.", fig.align="center", echo = FALSE, message = FALSE, warning = FALSE>>==
-# Especificar o grafo
-grafo <- dagitty("dag {
-    X[e] Y[o]
-    {A B} -> { X Y }; X -> {C Y}; C -> Y
-}")
-coordinates(grafo) <- list( 
-  x=c(A=0, B=2, X=0, Y=2, C= 1),
-  y=c(A=1, B=1, X=0, Y=0, C= -1))
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{figure}[t]
 
-# Exibir a figura do grafo
-ggdag(grafo, layout = "circle") +
-  theme(axis.text.x=element_blank(),
-      axis.ticks.x=element_blank(),
-      axis.text.y=element_blank(),
-      axis.ticks.y=element_blank()) +
-  xlab("") + ylab("")
-@
+{\centering \includegraphics[width=\maxwidth]{figure/backdoor_est_ex-1} 
+
+}
+
+\caption[DAG usado como exemplo para estimar efeito de X em Y]{DAG usado como exemplo para estimar efeito de X em Y.}\label{fig:backdoor_est_ex}
+\end{figure}
+
+\end{knitrout}
 
 Considere que o grafo causal é
 dado pela \cref{fig:backdoor_est_ex}.
@@ -446,60 +419,71 @@ $X \equiv \I(A + B > 0)\epsilon + \I(A + B < 0)(1-\epsilon)$,
 $C \sim N(X, \sigma^2)$, e
 $Y \sim N(A + B + C + X, \sigma^2)$:
 
-<<backdoor_est_ex_2, message = FALSE, warning = FALSE>>==
-# Especificar o grafo
-grafo <- dagitty::dagitty("dag {
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{# Especificar o grafo}
+\hlstd{grafo} \hlkwb{<-} \hlstd{dagitty}\hlopt{::}\hlkwd{dagitty}\hlstd{(}\hlstr{"dag \{
     X[e] Y[o]
-    {A B} -> { X Y }; X -> {C Y}; C -> Y }")
+    \{A B\} -> \{ X Y \}; X -> \{C Y\}; C -> Y \}"}\hlstd{)}
 
-# Simular os dados
-n <- 10^5
-sd = 0.1
-A <- rnorm(n, 0, sd)
-B <- rnorm(n, 0, sd)
-eps <- rbinom(n, 1, 0.8)
-X <- as.numeric(eps*((A + B) > 0) + 
-                  (1-eps)*((A + B) <= 0))
-C <- rnorm(n, X, sd)
-Y <- rnorm(n, A + B + C + X, sd)
-data <- dplyr::tibble(A, B, C, X, Y)
-@
+\hlcom{# Simular os dados}
+\hlstd{n} \hlkwb{<-} \hlnum{10}\hlopt{^}\hlnum{5}
+\hlstd{sd} \hlkwb{=} \hlnum{0.1}
+\hlstd{A} \hlkwb{<-} \hlkwd{rnorm}\hlstd{(n,} \hlnum{0}\hlstd{, sd)}
+\hlstd{B} \hlkwb{<-} \hlkwd{rnorm}\hlstd{(n,} \hlnum{0}\hlstd{, sd)}
+\hlstd{eps} \hlkwb{<-} \hlkwd{rbinom}\hlstd{(n,} \hlnum{1}\hlstd{,} \hlnum{0.8}\hlstd{)}
+\hlstd{X} \hlkwb{<-} \hlkwd{as.numeric}\hlstd{(eps}\hlopt{*}\hlstd{((A} \hlopt{+} \hlstd{B)} \hlopt{>} \hlnum{0}\hlstd{)} \hlopt{+}
+                  \hlstd{(}\hlnum{1}\hlopt{-}\hlstd{eps)}\hlopt{*}\hlstd{((A} \hlopt{+} \hlstd{B)} \hlopt{<=} \hlnum{0}\hlstd{))}
+\hlstd{C} \hlkwb{<-} \hlkwd{rnorm}\hlstd{(n, X, sd)}
+\hlstd{Y} \hlkwb{<-} \hlkwd{rnorm}\hlstd{(n, A} \hlopt{+} \hlstd{B} \hlopt{+} \hlstd{C} \hlopt{+} \hlstd{X, sd)}
+\hlstd{data} \hlkwb{<-} \hlstd{dplyr}\hlopt{::}\hlkwd{tibble}\hlstd{(A, B, C, X, Y)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
 
 Estimaremos o efeito causal pela
 fórmula do ajuste (\cref{def:ajuste}).
 Iniciaremos a análise utilizando $\hmu$ como
 sendo uma regressão linear simples:
 
-<<backdoor_est_ex_3>>==
-# Sejam Z variáveis que satisfazem o critério backdoor para
-# estimar o efeito causal de causa em efeito em grafo.
-# Retorna uma fórmula do tipo Y ~ X + Z_1 + ... + Z_d
-fm_ajuste <- function(grafo, causa, efeito)
-{
-  var_backdoor <- dagitty::adjustmentSets(grafo)[[1]]
-  regressores = c(causa, var_backdoor)
-  fm = paste(regressores, collapse = "+")
-  fm = paste(c(efeito, fm), collapse = "~")
-  as.formula(fm)
-}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{# Sejam Z variáveis que satisfazem o critério backdoor para}
+\hlcom{# estimar o efeito causal de causa em efeito em grafo.}
+\hlcom{# Retorna uma fórmula do tipo Y ~ X + Z_1 + ... + Z_d}
+\hlstd{fm_ajuste} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{grafo}\hlstd{,} \hlkwc{causa}\hlstd{,} \hlkwc{efeito}\hlstd{)}
+\hlstd{\{}
+  \hlstd{var_backdoor} \hlkwb{<-} \hlstd{dagitty}\hlopt{::}\hlkwd{adjustmentSets}\hlstd{(grafo)[[}\hlnum{1}\hlstd{]]}
+  \hlstd{regressores} \hlkwb{=} \hlkwd{c}\hlstd{(causa, var_backdoor)}
+  \hlstd{fm} \hlkwb{=} \hlkwd{paste}\hlstd{(regressores,} \hlkwc{collapse} \hlstd{=} \hlstr{"+"}\hlstd{)}
+  \hlstd{fm} \hlkwb{=} \hlkwd{paste}\hlstd{(}\hlkwd{c}\hlstd{(efeito, fm),} \hlkwc{collapse} \hlstd{=} \hlstr{"~"}\hlstd{)}
+  \hlkwd{as.formula}\hlstd{(fm)}
+\hlstd{\}}
 
-# Estima E[Efeito|do(causa = x)] pela 
-# formula do ajuste usando mu_chapeu como regressao 
-est_do_x_lm <- function(data, mu_chapeu, causa, x)
-{
-  data %>% 
-    dplyr::mutate({{causa}} := x) %>%  
-    predict(mu_chapeu, newdata = .) %>% 
-    mean()
-}
+\hlcom{# Estima E[Efeito|do(causa = x)] pela }
+\hlcom{# formula do ajuste usando mu_chapeu como regressao }
+\hlstd{est_do_x_lm} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{data}\hlstd{,} \hlkwc{mu_chapeu}\hlstd{,} \hlkwc{causa}\hlstd{,} \hlkwc{x}\hlstd{)}
+\hlstd{\{}
+  \hlstd{data} \hlopt{%>%}
+    \hlstd{dplyr}\hlopt{::}\hlkwd{mutate}\hlstd{(\{\{causa\}\}} \hlkwb{:=} \hlstd{x)} \hlopt{%>%}
+    \hlkwd{predict}\hlstd{(mu_chapeu,} \hlkwc{newdata} \hlstd{= .)} \hlopt{%>%}
+    \hlkwd{mean}\hlstd{()}
+\hlstd{\}}
 
-# Estimação do ACE com regressão linear simples
-fm <- fm_ajuste(grafo, "X", "Y")
-mu_chapeu_lm <- lm(fm, data = data)
-ace_ajuste_lm = est_do_x_lm(data, mu_chapeu_lm, "X", 1) - 
-  est_do_x_lm(data, mu_chapeu_lm, "X", 0)
-round(ace_ajuste_lm)
-@
+\hlcom{# Estimação do ACE com regressão linear simples}
+\hlstd{fm} \hlkwb{<-} \hlkwd{fm_ajuste}\hlstd{(grafo,} \hlstr{"X"}\hlstd{,} \hlstr{"Y"}\hlstd{)}
+\hlstd{mu_chapeu_lm} \hlkwb{<-} \hlkwd{lm}\hlstd{(fm,} \hlkwc{data} \hlstd{= data)}
+\hlstd{ace_ajuste_lm} \hlkwb{=} \hlkwd{est_do_x_lm}\hlstd{(data, mu_chapeu_lm,} \hlstr{"X"}\hlstd{,} \hlnum{1}\hlstd{)} \hlopt{-}
+  \hlkwd{est_do_x_lm}\hlstd{(data, mu_chapeu_lm,} \hlstr{"X"}\hlstd{,} \hlnum{0}\hlstd{)}
+\hlkwd{round}\hlstd{(ace_ajuste_lm)}
+\end{alltt}
+\begin{verbatim}
+## [1] 2
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
 
 Em alguns casos, não é razoável supor que 
 $\E[Y|X,\Z]$ é linear. Nestas situações,
@@ -508,38 +492,45 @@ algum método não-paramétrico arbitrário.
 Exibimos uma implementação usando XGBoost 
 \citep{Chen2023}:
 
-<<backdoor_est_ex_4, message = FALSE, warning = FALSE>>==
-library(xgboost)
-var_backdoor <- dagitty::adjustmentSets(grafo, "X", "Y")[[1]]
-mu_chapeu <- xgboost(
-  data = data %>% 
-    dplyr::select(all_of(c(var_backdoor, "X"))) %>% 
-    as.matrix(),
-  label = data %>% 
-    dplyr::select(Y) %>% 
-    as.matrix(),
-  nrounds = 100,
-  objective = "reg:squarederror",
-  early_stopping_rounds = 3,
-  max_depth = 2,
-  eta = .25,
-  verbose = FALSE
-)
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{library}\hlstd{(xgboost)}
+\hlstd{var_backdoor} \hlkwb{<-} \hlstd{dagitty}\hlopt{::}\hlkwd{adjustmentSets}\hlstd{(grafo,} \hlstr{"X"}\hlstd{,} \hlstr{"Y"}\hlstd{)[[}\hlnum{1}\hlstd{]]}
+\hlstd{mu_chapeu} \hlkwb{<-} \hlkwd{xgboost}\hlstd{(}
+  \hlkwc{data} \hlstd{= data} \hlopt{%>%}
+    \hlstd{dplyr}\hlopt{::}\hlkwd{select}\hlstd{(}\hlkwd{all_of}\hlstd{(}\hlkwd{c}\hlstd{(var_backdoor,} \hlstr{"X"}\hlstd{)))} \hlopt{%>%}
+    \hlkwd{as.matrix}\hlstd{(),}
+  \hlkwc{label} \hlstd{= data} \hlopt{%>%}
+    \hlstd{dplyr}\hlopt{::}\hlkwd{select}\hlstd{(Y)} \hlopt{%>%}
+    \hlkwd{as.matrix}\hlstd{(),}
+  \hlkwc{nrounds} \hlstd{=} \hlnum{100}\hlstd{,}
+  \hlkwc{objective} \hlstd{=} \hlstr{"reg:squarederror"}\hlstd{,}
+  \hlkwc{early_stopping_rounds} \hlstd{=} \hlnum{3}\hlstd{,}
+  \hlkwc{max_depth} \hlstd{=} \hlnum{2}\hlstd{,}
+  \hlkwc{eta} \hlstd{=} \hlnum{.25}\hlstd{,}
+  \hlkwc{verbose} \hlstd{=} \hlnum{FALSE}
+\hlstd{)}
 
-est_do_x_xgb <- function(data, mu_chapeu, causa, x)
-{
-  data %>% 
-    dplyr::mutate({{causa}} := x) %>%  
-    dplyr::select(c(var_backdoor, causa)) %>% 
-    as.matrix() %>% 
-    predict(mu_chapeu, newdata = .) %>% 
-    mean()
-}
+\hlstd{est_do_x_xgb} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{data}\hlstd{,} \hlkwc{mu_chapeu}\hlstd{,} \hlkwc{causa}\hlstd{,} \hlkwc{x}\hlstd{)}
+\hlstd{\{}
+  \hlstd{data} \hlopt{%>%}
+    \hlstd{dplyr}\hlopt{::}\hlkwd{mutate}\hlstd{(\{\{causa\}\}} \hlkwb{:=} \hlstd{x)} \hlopt{%>%}
+    \hlstd{dplyr}\hlopt{::}\hlkwd{select}\hlstd{(}\hlkwd{c}\hlstd{(var_backdoor, causa))} \hlopt{%>%}
+    \hlkwd{as.matrix}\hlstd{()} \hlopt{%>%}
+    \hlkwd{predict}\hlstd{(mu_chapeu,} \hlkwc{newdata} \hlstd{= .)} \hlopt{%>%}
+    \hlkwd{mean}\hlstd{()}
+\hlstd{\}}
 
-ace_est_xgb = est_do_x_xgb(data, mu_chapeu, "X", 1) - 
-  est_do_x_xgb(data, mu_chapeu, "X", 0)
-round(ace_est_xgb, 2)
-@
+\hlstd{ace_est_xgb} \hlkwb{=} \hlkwd{est_do_x_xgb}\hlstd{(data, mu_chapeu,} \hlstr{"X"}\hlstd{,} \hlnum{1}\hlstd{)} \hlopt{-}
+  \hlkwd{est_do_x_xgb}\hlstd{(data, mu_chapeu,} \hlstr{"X"}\hlstd{,} \hlnum{0}\hlstd{)}
+\hlkwd{round}\hlstd{(ace_est_xgb,} \hlnum{2}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+## [1] 2
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
 
  Como o modelo linear era adequado para $\E[Y|X,\Z]$,
  não vemos diferença entre a estimativa obtida
@@ -663,67 +654,83 @@ idênticos àqueles do \cref{ex:backdoor_est_ajuste}.
 Iniciaremos a análise utilizando 
 regressão logística para estimar $\hf$.
  
- <<backdoor_est_ex_5>>==
-# Sejam Z variáveis que satisfazem o critério backdoor para
-# estimar o efeito causal de causa em efeito em grafo.
-# Retorna uma fórmula do tipo X ~ Z_1 + ... + Z_d
-fm_ipw <- function(grafo, causa, efeito)
-{
-  var_backdoor <- dagitty::adjustmentSets(grafo)[[1]]
-  fm = paste(var_backdoor, collapse = "+")
-  fm = paste(c(causa, fm), collapse = "~")
-  as.formula(fm)
-}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{# Sejam Z variáveis que satisfazem o critério backdoor para}
+\hlcom{# estimar o efeito causal de causa em efeito em grafo.}
+\hlcom{# Retorna uma fórmula do tipo X ~ Z_1 + ... + Z_d}
+\hlstd{fm_ipw} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{grafo}\hlstd{,} \hlkwc{causa}\hlstd{,} \hlkwc{efeito}\hlstd{)}
+\hlstd{\{}
+ \hlstd{var_backdoor} \hlkwb{<-} \hlstd{dagitty}\hlopt{::}\hlkwd{adjustmentSets}\hlstd{(grafo)[[}\hlnum{1}\hlstd{]]}
+ \hlstd{fm} \hlkwb{=} \hlkwd{paste}\hlstd{(var_backdoor,} \hlkwc{collapse} \hlstd{=} \hlstr{"+"}\hlstd{)}
+ \hlstd{fm} \hlkwb{=} \hlkwd{paste}\hlstd{(}\hlkwd{c}\hlstd{(causa, fm),} \hlkwc{collapse} \hlstd{=} \hlstr{"~"}\hlstd{)}
+ \hlkwd{as.formula}\hlstd{(fm)}
+\hlstd{\}}
 
-# Estimação do ACE por IPW onde
-# Supomos X binário e
-# f_1 é o vetor P(X_i=1|Z_i)
-ACE_ipw <- function(data, causa, efeito, f_1)
-{
-  data %>% 
-  mutate(f_1 = f_1,
-         est_1 = {{efeito}}*({{causa}}==1)/f_1,
-         est_0 = {{efeito}}*({{causa}}==0)/(1-f_1)
-  ) %>% 
-  summarise(do_1 = mean(est_1),
-            do_0 = mean(est_0)) %>% 
-  mutate(ACE = do_1 - do_0) %>% 
-  dplyr::select(ACE)
-}
+\hlcom{# Estimação do ACE por IPW onde}
+\hlcom{# Supomos X binário e}
+\hlcom{# f_1 é o vetor P(X_i=1|Z_i)}
+\hlstd{ACE_ipw} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{data}\hlstd{,} \hlkwc{causa}\hlstd{,} \hlkwc{efeito}\hlstd{,} \hlkwc{f_1}\hlstd{)}
+\hlstd{\{}
+ \hlstd{data} \hlopt{%>%}
+ \hlkwd{mutate}\hlstd{(}\hlkwc{f_1} \hlstd{= f_1,}
+        \hlkwc{est_1} \hlstd{= \{\{efeito\}\}}\hlopt{*}\hlstd{(\{\{causa\}\}}\hlopt{==}\hlnum{1}\hlstd{)}\hlopt{/}\hlstd{f_1,}
+        \hlkwc{est_0} \hlstd{= \{\{efeito\}\}}\hlopt{*}\hlstd{(\{\{causa\}\}}\hlopt{==}\hlnum{0}\hlstd{)}\hlopt{/}\hlstd{(}\hlnum{1}\hlopt{-}\hlstd{f_1)}
+ \hlstd{)} \hlopt{%>%}
+ \hlkwd{summarise}\hlstd{(}\hlkwc{do_1} \hlstd{=} \hlkwd{mean}\hlstd{(est_1),}
+           \hlkwc{do_0} \hlstd{=} \hlkwd{mean}\hlstd{(est_0))} \hlopt{%>%}
+ \hlkwd{mutate}\hlstd{(}\hlkwc{ACE} \hlstd{= do_1} \hlopt{-} \hlstd{do_0)} \hlopt{%>%}
+ \hlstd{dplyr}\hlopt{::}\hlkwd{select}\hlstd{(ACE)}
+\hlstd{\}}
 
-fm <- fm_ipw(grafo, "X", "Y")
-f_chapeu <- glm(fm, family = "binomial", data = data)
-f_1_lm <- predict(f_chapeu, type = "response")
-ace_ipw_lm <- data %>% ACE_ipw(X, Y, f_1_lm) %>% as.numeric()
-ace_ipw_lm %>% round(2)
-@
+\hlstd{fm} \hlkwb{<-} \hlkwd{fm_ipw}\hlstd{(grafo,} \hlstr{"X"}\hlstd{,} \hlstr{"Y"}\hlstd{)}
+\hlstd{f_chapeu} \hlkwb{<-} \hlkwd{glm}\hlstd{(fm,} \hlkwc{family} \hlstd{=} \hlstr{"binomial"}\hlstd{,} \hlkwc{data} \hlstd{= data)}
+\hlstd{f_1_lm} \hlkwb{<-} \hlkwd{predict}\hlstd{(f_chapeu,} \hlkwc{type} \hlstd{=} \hlstr{"response"}\hlstd{)}
+\hlstd{ace_ipw_lm} \hlkwb{<-} \hlstd{data} \hlopt{%>%} \hlkwd{ACE_ipw}\hlstd{(X, Y, f_1_lm)} \hlopt{%>%} \hlkwd{as.numeric}\hlstd{()}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in mutate(., ACE = do\_1 - do\_0): could not find function "{}mutate"{}}}\begin{alltt}
+\hlstd{ace_ipw_lm} \hlopt{%>%} \hlkwd{round}\hlstd{(}\hlnum{2}\hlstd{)}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in ace\_ipw\_lm \%>\% round(2): object 'ace\_ipw\_lm' not found}}\end{kframe}
+\end{knitrout}
 
 Também é fácil adaptar o código acima para
 estimar $\ACE$ por IPW utilizando
 algum método não-paramétrico para estimar $\hf$.
 Abaixo há um exemplo utilizando o XGBoost:
 
- <<backdoor_est_ex_6>>==
-var_backdoor <- dagitty::adjustmentSets(grafo)[[1]]
-f_chapeu <- xgboost(
-  data = data %>% 
-    dplyr::select(all_of(var_backdoor)) %>% 
-    as.matrix(),
-  label = data %>% 
-    dplyr::select(X) %>% 
-    as.matrix(),
-  nrounds = 100,
-  objective = "binary:logistic",
-  early_stopping_rounds = 3,
-  max_depth = 2,
-  eta = .25,
-  verbose = FALSE
-)
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{var_backdoor} \hlkwb{<-} \hlstd{dagitty}\hlopt{::}\hlkwd{adjustmentSets}\hlstd{(grafo)[[}\hlnum{1}\hlstd{]]}
+\hlstd{f_chapeu} \hlkwb{<-} \hlkwd{xgboost}\hlstd{(}
+ \hlkwc{data} \hlstd{= data} \hlopt{%>%}
+   \hlstd{dplyr}\hlopt{::}\hlkwd{select}\hlstd{(}\hlkwd{all_of}\hlstd{(var_backdoor))} \hlopt{%>%}
+   \hlkwd{as.matrix}\hlstd{(),}
+ \hlkwc{label} \hlstd{= data} \hlopt{%>%}
+   \hlstd{dplyr}\hlopt{::}\hlkwd{select}\hlstd{(X)} \hlopt{%>%}
+   \hlkwd{as.matrix}\hlstd{(),}
+ \hlkwc{nrounds} \hlstd{=} \hlnum{100}\hlstd{,}
+ \hlkwc{objective} \hlstd{=} \hlstr{"binary:logistic"}\hlstd{,}
+ \hlkwc{early_stopping_rounds} \hlstd{=} \hlnum{3}\hlstd{,}
+ \hlkwc{max_depth} \hlstd{=} \hlnum{2}\hlstd{,}
+ \hlkwc{eta} \hlstd{=} \hlnum{.25}\hlstd{,}
+ \hlkwc{verbose} \hlstd{=} \hlnum{FALSE}
+\hlstd{)}
 
-covs <- data %>% dplyr::select(all_of(var_backdoor)) %>% as.matrix()
-f_1 <- predict(f_chapeu, newdata = covs)
-data %>% ACE_ipw(X, Y, f_1) %>% as.numeric() %>% round(2)
-@
+\hlstd{covs} \hlkwb{<-} \hlstd{data} \hlopt{%>%} \hlstd{dplyr}\hlopt{::}\hlkwd{select}\hlstd{(}\hlkwd{all_of}\hlstd{(var_backdoor))} \hlopt{%>%} \hlkwd{as.matrix}\hlstd{()}
+\hlstd{f_1} \hlkwb{<-} \hlkwd{predict}\hlstd{(f_chapeu,} \hlkwc{newdata} \hlstd{= covs)}
+\hlstd{data} \hlopt{%>%} \hlkwd{ACE_ipw}\hlstd{(X, Y, f_1)} \hlopt{%>%} \hlkwd{as.numeric}\hlstd{()} \hlopt{%>%} \hlkwd{round}\hlstd{(}\hlnum{2}\hlstd{)}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in mutate(., ACE = do\_1 - do\_0): could not find function "{}mutate"{}}}\end{kframe}
+\end{knitrout}
 \end{example}
 
 \subsubsection{Estimador duplamente robusto}
@@ -795,27 +802,41 @@ combinaremos o estimador da fórmula do ajuste obtido
 por regressão linear no \cref{ex:backdoor_est_ajuste} e
 aquele de IPW por regressão logística
 no \cref{ex:backdoor_est_ipw}.
-<<backdoor_est_ex_7>>==
-mu_1_lm <- data %>% 
-  dplyr::mutate(X = 1) %>%
-  predict(mu_chapeu_lm, newdata = .)
-mu_0_lm <- data %>% 
-  dplyr::mutate(X = 0) %>%
-  predict(mu_chapeu_lm, newdata = .)
-corr <- data %>% 
-  mutate(mu_1 = mu_1_lm, 
-         mu_0 = mu_0_lm,
-         f_1 = f_1_lm,
-         corr_1 = (X == 1)*mu_1/f_1,
-         corr_0 = (X == 0)*mu_0/(1-f_1)) %>% 
-  summarise(corr_1 = mean(corr_1),
-            corr_0 = mean(corr_0)) %>% 
-  mutate(corr = corr_1 - corr_0) %>% 
-  dplyr::select(corr) %>% 
-  as.numeric()
-ace_rob_lm <- ace_ajuste_lm + ace_ipw_lm - corr
-ace_rob_lm %>% round(2)
-@ 
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{mu_1_lm} \hlkwb{<-} \hlstd{data} \hlopt{%>%}
+  \hlstd{dplyr}\hlopt{::}\hlkwd{mutate}\hlstd{(}\hlkwc{X} \hlstd{=} \hlnum{1}\hlstd{)} \hlopt{%>%}
+  \hlkwd{predict}\hlstd{(mu_chapeu_lm,} \hlkwc{newdata} \hlstd{= .)}
+\hlstd{mu_0_lm} \hlkwb{<-} \hlstd{data} \hlopt{%>%}
+  \hlstd{dplyr}\hlopt{::}\hlkwd{mutate}\hlstd{(}\hlkwc{X} \hlstd{=} \hlnum{0}\hlstd{)} \hlopt{%>%}
+  \hlkwd{predict}\hlstd{(mu_chapeu_lm,} \hlkwc{newdata} \hlstd{= .)}
+\hlstd{corr} \hlkwb{<-} \hlstd{data} \hlopt{%>%}
+  \hlkwd{mutate}\hlstd{(}\hlkwc{mu_1} \hlstd{= mu_1_lm,}
+         \hlkwc{mu_0} \hlstd{= mu_0_lm,}
+         \hlkwc{f_1} \hlstd{= f_1_lm,}
+         \hlkwc{corr_1} \hlstd{= (X} \hlopt{==} \hlnum{1}\hlstd{)}\hlopt{*}\hlstd{mu_1}\hlopt{/}\hlstd{f_1,}
+         \hlkwc{corr_0} \hlstd{= (X} \hlopt{==} \hlnum{0}\hlstd{)}\hlopt{*}\hlstd{mu_0}\hlopt{/}\hlstd{(}\hlnum{1}\hlopt{-}\hlstd{f_1))} \hlopt{%>%}
+  \hlkwd{summarise}\hlstd{(}\hlkwc{corr_1} \hlstd{=} \hlkwd{mean}\hlstd{(corr_1),}
+            \hlkwc{corr_0} \hlstd{=} \hlkwd{mean}\hlstd{(corr_0))} \hlopt{%>%}
+  \hlkwd{mutate}\hlstd{(}\hlkwc{corr} \hlstd{= corr_1} \hlopt{-} \hlstd{corr_0)} \hlopt{%>%}
+  \hlstd{dplyr}\hlopt{::}\hlkwd{select}\hlstd{(corr)} \hlopt{%>%}
+  \hlkwd{as.numeric}\hlstd{()}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in mutate(., corr = corr\_1 - corr\_0): could not find function "{}mutate"{}}}\begin{alltt}
+\hlstd{ace_rob_lm} \hlkwb{<-} \hlstd{ace_ajuste_lm} \hlopt{+} \hlstd{ace_ipw_lm} \hlopt{-} \hlstd{corr}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in eval(expr, envir, enclos): object 'ace\_ipw\_lm' not found}}\begin{alltt}
+\hlstd{ace_rob_lm} \hlopt{%>%} \hlkwd{round}\hlstd{(}\hlnum{2}\hlstd{)}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in ace\_rob\_lm \%>\% round(2): object 'ace\_rob\_lm' not found}}\end{kframe}
+\end{knitrout}
 \end{example}
 
 \subsection{Exercícios}
@@ -1037,14 +1058,30 @@ regressão de Kernel de Nadaraya-Watson.
  $Y_i|X_i,Z_i \sim N(50(X_i+1)(Z_i + 1), 1)$.
  Podemos simular os dados da seguinte forma:
  
-<<rdd_ex_1_1, fig.pos="t", fig.height=3.5, fig.width=5, fig.cap="Exemplo em que Z satisfaz o critério backdoor para medir o efeito causal de X em Y e X = I(Z $>$ 0). Como resultado da descontinuidade da propensidade de X em Z = 0, há uma descontinuidade na regressão de Y em Z no ponto Z=0.", fig.align="center">>==
-n <- 1000
-Z <- rnorm(n)
-X <- Z >= 0
-Y <- rnorm(n, 50*(X+1)*(Z+1))
-data <- tibble(X, Y, Z)
-plot(Z, Y)
-@
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{n} \hlkwb{<-} \hlnum{1000}
+\hlstd{Z} \hlkwb{<-} \hlkwd{rnorm}\hlstd{(n)}
+\hlstd{X} \hlkwb{<-} \hlstd{Z} \hlopt{>=} \hlnum{0}
+\hlstd{Y} \hlkwb{<-} \hlkwd{rnorm}\hlstd{(n,} \hlnum{50}\hlopt{*}\hlstd{(X}\hlopt{+}\hlnum{1}\hlstd{)}\hlopt{*}\hlstd{(Z}\hlopt{+}\hlnum{1}\hlstd{))}
+\hlstd{data} \hlkwb{<-} \hlkwd{tibble}\hlstd{(X, Y, Z)}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in tibble(X, Y, Z): could not find function "{}tibble"{}}}\begin{alltt}
+\hlkwd{plot}\hlstd{(Z, Y)}
+\end{alltt}
+\end{kframe}\begin{figure}[t]
+
+{\centering \includegraphics[width=\maxwidth]{figure/rdd_ex_1_1-1} 
+
+}
+
+\caption[Exemplo em que Z satisfaz o critério backdoor para medir o efeito causal de X em Y e X = I(Z $>$ 0)]{Exemplo em que Z satisfaz o critério backdoor para medir o efeito causal de X em Y e X = I(Z $>$ 0). Como resultado da descontinuidade da propensidade de X em Z = 0, há uma descontinuidade na regressão de Y em Z no ponto Z=0.}\label{fig:rdd_ex_1_1}
+\end{figure}
+
+\end{knitrout}
  
  Como estamos simulando os dados,
  podemos calcular $\CACE(0)$:
@@ -1063,43 +1100,78 @@ plot(Z, Y)
 
 O código abaixo estima $\CACE(0)$ usando regressão linear:
 
-<<rdd_ex_1_2>>==
-regs = data %>% 
-  mutate(Z1 = (Z >= 0)) %>% 
-  group_by(Z1) %>% 
-  summarise(
-    intercepto = lm(Y ~ Z)$coefficients[1], 
-    coef_angular = lm(Y ~ Z)$coefficients[2]
-  ) 
-regs
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{regs} \hlkwb{=} \hlstd{data} \hlopt{%>%}
+  \hlkwd{mutate}\hlstd{(}\hlkwc{Z1} \hlstd{= (Z} \hlopt{>=} \hlnum{0}\hlstd{))} \hlopt{%>%}
+  \hlkwd{group_by}\hlstd{(Z1)} \hlopt{%>%}
+  \hlkwd{summarise}\hlstd{(}
+    \hlkwc{intercepto} \hlstd{=} \hlkwd{lm}\hlstd{(Y} \hlopt{~} \hlstd{Z)}\hlopt{$}\hlstd{coefficients[}\hlnum{1}\hlstd{],}
+    \hlkwc{coef_angular} \hlstd{=} \hlkwd{lm}\hlstd{(Y} \hlopt{~} \hlstd{Z)}\hlopt{$}\hlstd{coefficients[}\hlnum{2}\hlstd{]}
+  \hlstd{)}
+\end{alltt}
 
-est_cace = 1*regs[2, 2] + 0*regs[2, 3] -
-  1*regs[1, 2] + 0*regs[1, 3]
-round(as.numeric(est_cace), 2)
-@
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in summarise(., intercepto = lm(Y \textasciitilde{} Z)\$coefficients[1], coef\_angular = lm(Y \textasciitilde{} : could not find function "{}summarise"{}}}\begin{alltt}
+\hlstd{regs}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in eval(expr, envir, enclos): object 'regs' not found}}\begin{alltt}
+\hlstd{est_cace} \hlkwb{=} \hlnum{1}\hlopt{*}\hlstd{regs[}\hlnum{2}\hlstd{,} \hlnum{2}\hlstd{]} \hlopt{+} \hlnum{0}\hlopt{*}\hlstd{regs[}\hlnum{2}\hlstd{,} \hlnum{3}\hlstd{]} \hlopt{-}
+  \hlnum{1}\hlopt{*}\hlstd{regs[}\hlnum{1}\hlstd{,} \hlnum{2}\hlstd{]} \hlopt{+} \hlnum{0}\hlopt{*}\hlstd{regs[}\hlnum{1}\hlstd{,} \hlnum{3}\hlstd{]}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in eval(expr, envir, enclos): object 'regs' not found}}\begin{alltt}
+\hlkwd{round}\hlstd{(}\hlkwd{as.numeric}\hlstd{(est_cace),} \hlnum{2}\hlstd{)}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in eval(expr, envir, enclos): object 'est\_cace' not found}}\end{kframe}
+\end{knitrout}
 
 Similarmente, podemos estimar $\CACE(0)$ usando
 regressão por kernel de Nadaraya-Watson:
 
-<<rdd_ex_1_3, warning=FALSE, message=FALSE>>==
-library(np)
-options(np.messages = FALSE)
-nw_reg <- function(data, valor)
-{
-  bw <- npregbw(xdat = data$Z, ydat = data$Y)$bw
-  npksum(txdat= data$Z, exdat = valor, tydat = data$Y, bws = bw)$ksum/
-    npksum(txdat = data$Z, exdat = valor, bws = bw)$ksum
-}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{library}\hlstd{(np)}
+\hlkwd{options}\hlstd{(}\hlkwc{np.messages} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\hlstd{nw_reg} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{data}\hlstd{,} \hlkwc{valor}\hlstd{)}
+\hlstd{\{}
+  \hlstd{bw} \hlkwb{<-} \hlkwd{npregbw}\hlstd{(}\hlkwc{xdat} \hlstd{= data}\hlopt{$}\hlstd{Z,} \hlkwc{ydat} \hlstd{= data}\hlopt{$}\hlstd{Y)}\hlopt{$}\hlstd{bw}
+  \hlkwd{npksum}\hlstd{(}\hlkwc{txdat}\hlstd{= data}\hlopt{$}\hlstd{Z,} \hlkwc{exdat} \hlstd{= valor,} \hlkwc{tydat} \hlstd{= data}\hlopt{$}\hlstd{Y,} \hlkwc{bws} \hlstd{= bw)}\hlopt{$}\hlstd{ksum}\hlopt{/}
+    \hlkwd{npksum}\hlstd{(}\hlkwc{txdat} \hlstd{= data}\hlopt{$}\hlstd{Z,} \hlkwc{exdat} \hlstd{= valor,} \hlkwc{bws} \hlstd{= bw)}\hlopt{$}\hlstd{ksum}
+\hlstd{\}}
 
-reg_baixo <- data %>% 
-  filter(Z < 0) %>% 
-  nw_reg(0)
-reg_cima <- data %>% 
-  filter(Z >= 0) %>% 
-  nw_reg(0)
-est_cace <- reg_cima - reg_baixo
-round(est_cace, 2)
-@
+\hlstd{reg_baixo} \hlkwb{<-} \hlstd{data} \hlopt{%>%}
+  \hlkwd{filter}\hlstd{(Z} \hlopt{<} \hlnum{0}\hlstd{)} \hlopt{%>%}
+  \hlkwd{nw_reg}\hlstd{(}\hlnum{0}\hlstd{)}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in `filter()`:\\\#\# i In argument: `Z < 0`.\\\#\# Caused by error:\\\#\# ! `..1` must be of size 100000 or 1, not size 1000.}}\begin{alltt}
+\hlstd{reg_cima} \hlkwb{<-} \hlstd{data} \hlopt{%>%}
+  \hlkwd{filter}\hlstd{(Z} \hlopt{>=} \hlnum{0}\hlstd{)} \hlopt{%>%}
+  \hlkwd{nw_reg}\hlstd{(}\hlnum{0}\hlstd{)}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in `filter()`:\\\#\# i In argument: `Z >= 0`.\\\#\# Caused by error:\\\#\# ! `..1` must be of size 100000 or 1, not size 1000.}}\begin{alltt}
+\hlstd{est_cace} \hlkwb{<-} \hlstd{reg_cima} \hlopt{-} \hlstd{reg_baixo}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in eval(expr, envir, enclos): object 'reg\_cima' not found}}\begin{alltt}
+\hlkwd{round}\hlstd{(est_cace,} \hlnum{2}\hlstd{)}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in eval(expr, envir, enclos): object 'est\_cace' not found}}\end{kframe}
+\end{knitrout}
 
 \subsection{Exercícios}
 

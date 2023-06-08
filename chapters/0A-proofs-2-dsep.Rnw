@@ -1,4 +1,4 @@
-\subsection{Relativas ao \cref{thm:d-sep}}
+\subsection{\cref{thm:d-sep}}
 
 \begin{lemma}
  \label{lem:dsep_indep_anc}

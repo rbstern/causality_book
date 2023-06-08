@@ -1,4 +1,4 @@
-\section{Relativas à \text{\cref{sec:dag-ex} (\nameref{sec:dag-ex})}}
+\section{\text{\cref{sec:dag-ex} (\nameref{sec:dag-ex})}}
 
 \begin{proof}[Prova do \cref{lem:conf-ind}]
  \begin{align*}
@@ -98,7 +98,7 @@
  $V_1 \not\ind V_3 | V_2$.
 \end{proof}
 
-\section{Relativas à \text{\cref{sec:cm} (\nameref{sec:cm})}}
+\section{\text{\cref{sec:cm} (\nameref{sec:cm})}}
 
 \begin{proof}[Prova do \cref{lemma:cm_linear_esp}]
  Realizaremos a demonstração por indução.
@@ -153,7 +153,7 @@
  \end{align*}
 \end{proof}
 
-\section{Relativas à \text{\cref{sec:d-sep} (\nameref{sec:d-sep})}}
+\section{\text{\cref{sec:d-sep} (\nameref{sec:d-sep})}}
 
 \subsection{Relativas ao \cref{lemma:equivIndep}}
 

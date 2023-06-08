@@ -1,6 +1,7 @@
-\section{Relativas à \cref{sec:discovery_id} (\nameref{sec:discovery_id})}
+\section{\cref{sec:discovery_id} (\nameref{sec:discovery_id})}
 
 \begin{lemma}[\citet{Verma2022}]
+ \label{lemma:ident_1}
  Para quaisquer vértices $V_1, V_2 \in \sV$
  em um grafo causal, $\sG$,
  as seguintes afirmações são equivalentes:
@@ -96,3 +97,274 @@
  Portanto, $V_1 \perp V_2 | Pa$.
 \end{proof}
 
+\begin{lemma}[\citet{Verma2022}]
+ \label{lemma:ident_2}
+ Considere que $\sG$ é tal que
+ $V_1$ é adjacente a $V_2$,
+ $V_2$ é adjacente a $V_3$, mas
+ $V_1$ não é adjacente a $V_3$.
+ Temos que $V_1 \rightarrow V_2$ e
+ $V_2 \leftarrow V_3$ se e somente se
+ $V_1$ não é d-separado de $V_3$ dado
+ qualquer $\V$ tal que $V_2 \in \V$.
+\end{lemma}
+
+\begin{proof}
+ ($\rightarrow$) Considere que $V_1 \rightarrow V_2$ e
+ $V_2 \leftarrow V_3$. Tome o caminho
+ $C = V_1 \rightarrow V_2 \leftarrow V_3$.
+ Como $V_2$ é um colisor em $C$,
+ $C$ não está bloqueado dado
+ qualquer $\V$ tal que $V_2 \in \V$.
+ Conclua que $V_1$ não é d-separado de $V_3$ dado
+ qualquer $\V$ tal que $V_2 \in \V$.
+ 
+ ($\leftarrow$)
+ Considere que $V_1 \leftarrow V_2$ ou
+ $V_2 \rightarrow V_3$. Portanto,
+ $V_2 \in Pa := Pa(\{V_1,V_3\}) - \{V_1,V_3\}$.
+ Como $V_1$ não é adjacente a $V_3$,
+ conclua do \cref{lemma:ident_1} que
+ $V_1 \perp V_3 | Pa$.
+\end{proof}
+
+\begin{lemma}
+ \label{lemma:fiel_equiv_1}
+ Se $\sG$ e $\sG^*$ não tem o mesmo padrão, então
+ $\sG$ e $\sG^*$ não são fielmente equivalentes.
+\end{lemma}
+
+\begin{proof}
+ Decorre diretamente dos \cref{lemma:ident_1,lemma:ident_2}.
+\end{proof}
+
+\begin{lemma}
+ \label{lemma:colisor_fiel}
+ Se $\sG$ e $\sG^*$ tem o mesmo padrão,
+ $V_1 \rightarrow V_2 \leftarrow V_3$ é um colisor
+ tanto em $\sG$ quanto em $\sG^*$ e
+ $Z$ é tal que $V_2 = Z$ ou 
+ $Z$ é um descendente de $V_2$ em $\sG$, então
+ ou $V_1$ e $V_3$ são adjacentes em ambos os DAGs,
+ ou existe um vértice $V_*$ tal que
+ $V_1 \rightarrow V_* \leftarrow V_3$ é
+ um colisor em $\sG^*$ e
+ $Z = V_*$ ou $Z$ é descendente de $V_*$ em $\sG$.
+\end{lemma}
+
+\begin{proof}
+ Para provar este resultado basta mostrar que,
+ se $V_1$ e $V_3$ não são adjacentes nas condições do lema,
+ então existe $V_*$ com as condições especificadas.
+ Como $Z$ é descendente de $V_2$ em $\sG$,
+ existe um caminho direcionado em $\sG$, 
+ $C = (C_1, \ldots, C_n)$, tal que 
+ $C_1 = V_2$ e $C_n = Z$.
+ Como $\sG^*$ tem o mesmo padrão de $\sG$,
+ $C$ é um caminho de $V_2$ em $Z$.
+ Faremos a demonstração por indução.
+ 
+ Suponha que $C_1 = V_2$ e $C_1 = Z$,
+ isto é, $V_2 = Z$.
+ Neste caso, $V_* = V_2$ satisfaz
+ as condições do lema.
+ A seguir, suponha que, se $n \leq n^*$, então
+ existe $V_*$ nas condições do lema e que $n = n^* + 1$.
+ Se $Z$ é descendente de $V_2$ em $\sG^*$, então
+ basta tomar $V_* = Z$.
+ Caso contrário, existe um menor $i$ tal que 
+ $C_{i} \leftarrow C_{i+1}$.
+ Existem $2$ casos a considerar: 
+ $i = 1$ e $i > 1$.
+ 
+ Se $i > 1$, então
+ $C_{i-1} \rightarrow C_{i} \leftarrow C_{i+1}$ é
+ um colisor em $\sG^*$. 
+ Como eles formam uma cadeia em $\sG$, e
+ $\sG$ e $\sG^*$ tem o mesmo padrão,
+ $C_{i-1}$ e $C_{i+1}$ são adjacentes em ambos os DAGs.
+ Como $C_{i-1} \stackrel{\sG}{\rightarrow} C_i \stackrel{\sG}{\rightarrow} C_{i+1}$ e
+ $\sG$ é acíclico, $C_{i-1} \stackrel{\sG}{\rightarrow} C_{i+1}$.
+ Portanto,
+ $C^* = (C_1, \ldots, C_{i-1}, C_{i+1}, \ldots, C_n)$ é
+ um caminho de tamanho $n-1$ de $V_2$ a $Z$ em $\sG^*$ que
+ é um caminho direcionado em $\sG$.
+ Decorre da hipótese de indução que
+ existe $V_*$ tal qual desejado.
+ 
+ Se $i=1$, $V_2 \stackrel{\sG^*}{\leftarrow} C_2$.
+ Portanto, $V_1 \rightarrow V_2 \leftarrow C_2$ e
+ $V_3 \rightarrow V_2 \leftarrow C_2$ são 
+ colisores em $\sG^*$, mas não em $\sG$.
+ Como $\sG$ e $\sG^*$ tem o mesmo padrão,
+ conclua que $V_1$ e $C_2$, e $V_3$ e $C_2$ são
+ adjacentes em ambos os DAGs.
+ Como $V_1 \stackrel{\sG}{\rightarrow} V_2 \stackrel{\sG}{\rightarrow} C_2$
+ e $\sG$ é acíclico, $V_1 \stackrel{\sG}{\rightarrow} C_2$.
+ Por simetria $V_3 \stackrel{\sG}{\rightarrow} C_2$.
+ Portanto, $V_1 \rightarrow C_2 \leftarrow V_3$ é um colisor em $\sG$.
+ Como $V_1$ e $V_3$ não são adjacentes por suposição e
+ $\sG$ e $\sG^*$ tem o mesmo padrão,
+ $V_1 \rightarrow C_2 \leftarrow V_3$ é um colisor em $\sG^*$,
+ $(C_2, C_3, \ldots, C_n)$ é um caminho de tamanho $n-1$ em $\sG^*$ e
+ que também é um caminho direcionado em $\sG$. 
+ Portanto, pela hipótese de indução, 
+ existe $V_*$ tal qual desejado.
+\end{proof}
+
+\begin{lemma}
+ \label{lemma:fiel_equiv_2}
+ Se $\sG$ e $\sG^*$ tem o mesmo padrão, então
+ $\sG$ e $\sG^*$ são fielmente equivalentes.
+\end{lemma}
+
+\begin{proof}
+ Desejamos provar que para quaisquer 
+ $V_1, V_2 \in \sV$ e $\V \subseteq \sV$ tais que 
+ $V_1 \neq V_2$ e $\{V_1, V_2\} \cap \V = \emptyset$,
+ se existe um caminho em $\sG$ de $V_1$ a $V_2$
+ não bloqueado dado $\V$, então 
+ existe um caminho em $\sG^*$ de $V_1$ a $V_2$
+ não bloqueado dado $\V$.
+ Tome $V_1$, $V_2$ e $\V$ arbitrários.
+ Realizaremos a demonstração por indução.
+ 
+ Suponha que há um caminho de tamanho $2$ de 
+ $V_1$ a $V_2$ em $\sG$ que não é bloqueado dado $\V$.
+ Portanto, $V_1$ e $V_2$ são adjacentes em $\sG$.
+ Como $\sG$ e $\sG^*$ tem o mesmo padrão,
+ $V_1$ e $V_2$ são adjacentes em $\sG^*$.
+ Conclua do \cref{lemma:ident_2} que
+ $(V_1, V_2)$ é um caminho não bloqueado dado $\V$ em $\sG^*$.
+ 
+ A seguir, suponha que, para todo caminho de
+ tamanho menor ou igual a $n$ em $\sG$ de $V_1$ a $V_2$
+ que não é bloqueado dado $\V$, existe
+ um caminho em $\sG^*$ de $V_1$ a $V_2$ que
+ não é bloqueado dado $\V$.
+ Tome um caminho caminho arbitrário de tamanho $n+1$,
+ $(C_1, C_2, \ldots, C_n, C_{n+1})$
+ em $\sG$ de $V_1$ a $V_2$ que não é bloqueado dado $\V$.
+ Desejamos provar que existe um caminho em $\sG^*$
+ de $V_1$ a $V_2$ que não é bloqueado dado $\V$.
+ 
+ Para tal, observamos inicialmente que,
+ como $\sG$ e $\sG^*$ tem o mesmo padrão,
+ $C$ é um caminho de $V_1$ a $V_2$ em $\sG^*$.
+ A seguir, dividiremos a análise em alguns casos:
+ 
+ \begin{enumerate}[label=\alph*)]
+  \item Considere que existe $i$ tal que
+  $C_i$ é um colisor em $\sG$ e
+  não é um colisor em $\sG^*$.
+  Como $\sG$ e $\sG^*$ tem o mesmo padrão,
+  $C_{i-1}$ e $C_{i+1}$ são adjacentes em $\sG$.
+  Sem perda de generalidade, suponha que
+  $C_{i-1} \stackrel{\sG}{\rightarrow} C_{i+1}$.
+  Tome $C^* = (C_1,\ldots,C_{i-1},C_{i+1},\ldots,C_{n+1})$.
+  Com exceção de $C_{i+1}$, todos os vértices em $C^*$
+  tem o mesmo tipo entre colisor e não-colisor que eles tem em $C$.
+  Assim, todos os demais vértices estão abertos dado $\V$.
+  Caso $C_{i+1}$ não seja um colisor em $C^*$, então
+  ele tem o mesmo tipo que em $C$ e, assim, 
+  está aberto em $C^*$ dado $\V$.
+  A seguir, resta o caso em que $C_{i+1}$ é 
+  um colisor em $C^*$. 
+  Como $C_i$ é um colisor em $C$,
+  $C_i$ é descendente de $C_{i+1}$.
+  Também, como $C_i$ não estava bloqueado em $C$ dado $\V$,
+  existe $V \in \V$ tal que $V$ é descendente de $C_i$.
+  Conclua que $V$ é descendente de $C_{i+1}$ e,
+  assim, $C_{i+1}$ não está bloqueado em $C^*$ dado $\V$.
+  Portanto, $C^*$ é um caminho de tamanho $n$ 
+  de $V_1$ a $V_2$ em $\sG$ que não está bloqueado dado $\V$.
+  Assim, esse caso está resolvido pela hipótese de indução.  
+  
+  \item Considere que existe $i$ tal que
+  $C_i$ não é um colisor em $\sG$ e
+  é um colisor em $\sG^*$.
+  Como $\sG$ e $\sG^*$ tem o mesmo padrão,
+  $C_{i-1}$ e $C_{i+1}$ são adjacentes em $\sG$.
+  Há 3 casos a analisar:
+  \begin{enumerate}[label=\Roman*)]
+   \item Caso $C_{i-1} \stackrel{\sG}{\rightarrow} C_i \stackrel{\sG}{\rightarrow} C_{i+1}$,
+   como $\sG$ é um DAG, obtemos que 
+   $C_{i-1} \stackrel{\sG}{\rightarrow} C_{i+1}$.
+   Neste caso, todos os vértices no caminho 
+   $C^* = (C_1,\ldots,C_{i-1},C_{i+1},\ldots,C_{n+1})$ tem
+   o mesmo tipo entre colisor e não-colisor que eles tem em $C$.
+   Assim, $C^*$ é um caminho de tamanho $n$ de $V_1$ a $V_2$ que
+   não está bloqueado em $\sG$ dado $\V$.
+   Assim, esse caso está resolvido pela hipótese de indução.
+   
+   \item Caso $C_{i-1} \stackrel{\sG}{\leftarrow} C_i \stackrel{\sG}{\leftarrow} C_{i+1}$,
+   a análise é análoga ao caso anterior.
+   
+   \item Caso $C_{i-1} \stackrel{\sG}{\leftarrow} C_i \stackrel{\sG}{\rightarrow} C_{i+1}$,
+   tome sem perda de generalidade que
+   $C_{i-1} \stackrel{\sG}{\rightarrow} C_{i+1}$.
+   A seguir, há dois casos a considerar. 
+   Primeiramente, considere que $C_{i-1}$ é um colisor em $C$ em $\sG$.
+   Como $C_i$ é um colisor em $C$ em $\sG^*$, 
+   $C_{i-1}$ não é um colisor em $C$ em $\sG^*$.
+   Portanto, $C_{i-1}$ satisfaz as condições do caso tratado em a).
+   A seguir, se $C_{i-1}$ não é um colisor em $C$ em $\sG$, então
+   todos os vértices em 
+   $C^* = (C_1, \ldots, C_{i-1}, C_{i+1},\ldots,C_{n+1})$ tem
+   o mesmo tipo entre colisor e não-colisor dado $\V$ que em $C$.
+   Portanto, $C^*$ é um caminho de tamanho $n$ de
+   $V_1$ a $V_2$ que não está bloqueado dado $\V$ em $\sG$.
+   Assim, esse caso está resolvido pela hipótese de indução.
+  \end{enumerate}
+  
+  \item Resta o caso tal que,
+  para todo $i$, tanto em $\sG$ quanto em $\sG^*$,
+  $C_i$ tem o mesmo tipo em $C$ entre
+  colisor e não-colisor.
+  Existem dois casos a analisar:
+  \begin{enumerate}[label=\Roman*)]
+   \item Caso exista algum $i$ tal que
+   $C_i$ é um colisor em $C$ tanto em
+   $\sG$ quanto em $\sG^*$ e
+   $C_{i-1}$ e $C_{i+1}$ são adjacentes em $\sG$.
+   Sem perda de generalidade, suponha que
+   $C_{i-1} \stackrel{\sG}{\rightarrow} C_{i+1}$ e
+   tome $C^* = (C_1, \ldots, C_{i-1}, C_{i+1}, \ldots, C_{n+1})$.
+   Todos os vértices em $C^*$ com exceção de
+   $C_{i+1}$ tem o mesmo tipo entre
+   colisor e não-colisor que em $C$.
+   Caso $C_{i+1}$ também tenha o mesmo tipo, então
+   $C^*$ não está bloqueado dado $\V$.
+   Caso contrário, $C_{i+1}$ é um colisor em $C^*$.
+   Como $C_i$ é um colisor em $C$, obtemos que
+   $C_{i+1} \stackrel{\sG}{\rightarrow} C_i$.
+   Além disso, como $C_i$ não está bloqueado em $C$ dado $\V$,
+   conclua que existe $V \in \V$ tal que 
+   $V$ é descendente de $C_i$.
+   Conclua das duas últimas sentenças que
+   $V$ é descendente de $C_{i+1}$.
+   Assim, $C_{i+1}$ não está bloqueado em $C^*$ dado $\V$.
+   Decorre que $C^*$ é um caminho de tamanho $n$ 
+   de $V_1$ a $V_2$ que não está bloqueado em $\sG$ dado $\V$.
+   Assim, esse caso está resolvido pela hipótese de indução.
+   
+   \item Caso contrário, para todo $i$ em que
+   $C_i$ é um colisor em $C$,
+   $C_{i-1}$ e $C_{i+1}$ não são adjacentes.
+   Portanto, decorre do \cref{lemma:colisor_fiel} que
+   existe $C^*_{i}$ tal que
+   $C_{i-1} \stackrel{\sG^*}{\rightarrow} C^*_{i}
+   \stackrel{\sG^*}{\leftarrow} C_{i+1}$ e
+   existe $V \in \V$ que é descendente de $C_i$ em $\sG^*$.
+   Para todo $i$ em que 
+   $C_i$ não é colisor em $C$,
+   tome $C^*_i = C_i$.
+   Por construção, $C^*$ 
+   não está bloqueado em $\sG^*$ dado $\V$.
+  \end{enumerate}
+ \end{enumerate}
+\end{proof}
+
+\begin{proof}[Prova do \cref{thm:fiel_equiv}]
+ Decorre dos \cref{lemma:fiel_equiv_1,lemma:fiel_equiv_2}
+\end{proof}
