@@ -5,6 +5,8 @@ library(xgboost)
 grafo <- dagitty::dagitty("dag {
     {A B} -> { X Y }; X -> {C Y}; C -> Y }")
 
+plot(grafo)
+
 ####################
 # Simular os dados #
 ####################
@@ -13,7 +15,8 @@ n <- 10^5
 sd = 0.1
 A <- rnorm(n, 0, sd)
 B <- rnorm(n, 0, sd)
-X <- as.numeric((A + B) > 0)
+eps = rbinom(n, 1, 0.8)
+X = eps*as.numeric((A + B) > 0) + (1-eps)*(as.numeric((A + B) <= 0))
 C <- rnorm(n, X, sd)
 Y <- rnorm(n, A + B + C + X, sd)
 data <- dplyr::tibble(A, B, C, X, Y)
@@ -49,7 +52,7 @@ fm <- fm_ajuste(grafo, "X", "Y")
 mu_chapeu <- lm(fm, data = data)
 ace_est = est_do_x_lm(data, mu_chapeu, "X", 1) - 
   est_do_x_lm(data, mu_chapeu, "X", 0)
-round(ace_est)
+round(ace_est, 2)
 
 #################################
 # Fórmula do ajuste por XGBoost #

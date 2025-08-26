@@ -6,7 +6,7 @@
 
 \vspace{20mm}
 
-\textbf{Agradecimentos}: Vitor Mello
+\textbf{Agradecimentos}: Ciro A. Higashi, Vitor Mello
 
 \newpage
 
@@ -1009,6 +1009,15 @@ será fundamental nos capítulos posteriores.
 \begin{exercise}
  Para cada um dos modelos de confundidor, cadeia e colisor,
  dê exemplos de situações práticas em que este modelo é razoável.
+\end{exercise}
+
+\begin{exercise}
+ Seja $f(v_1,v_2,v_3)$ uma densidade arbitrária.
+ Prove que $f$ é compatível com
+ o modelo de confundidor \cref{fig:confundidor}
+ se e somente se
+ $f$ é compatível com
+ o modelo de cadeia \cref{fig:cadeia}.
 \end{exercise}
 
 \begin{exercise}
@@ -3517,9 +3526,10 @@ houve intervenção.
  por intervenções em $\X \subseteq \sV$,
  $\sG^* = (\sV^*, \sE^*)$ é tal que
  \begin{align*}
-  \sV^* &= \{W_{\V=\bv}: W \in \sV, \V \subseteq \X, \bv \in supp(\V)\} \cup \{U_W: W \in \sV\}, \\
-  \sE^* &= \{(W_{\V=\bv}, Z_{\V=\bv}): \V \subseteq \X, \bv \in supp(\V),
-  (W, Z) \in \sE^{+}, Z \notin \V\}.
+  \sV^* =& \{W_{\V=\bv}: W \in \sV, \V \subseteq \X, \bv \in supp(\V)\} \cup \{U_W: W \in \sV\}, \\
+  \sE^* =& \{(W_{\V=\bv}, Z_{\V=\bv}): \V \subseteq \X, \bv \in supp(\V),
+  (W, Z) \in \sE, Z \notin \V\} \cup \\
+  &\{(U_Z, Z_{\V=\bv}, \V \subseteq \X, \bv \in supp(\V), Z \notin \V \} .
  \end{align*}
  Para todo $W \in \sV$, abreviamos $W_{\emptyset}$ por $W$.
 \end{definition}
@@ -3620,7 +3630,7 @@ um modelo de resultados potenciais.
  \label{ex:pom}
  Considere o SCM em equações estruturais em \cref{ex:eq_struct}.
  Na construção do modelo de resultados potenciais,
- definimos $X, Y, U_X, U_Y$ igualmente a em \cref{ex:eq_struct}.
+ definimos $X, Y, U_X, U_Y$ igualmente ao \cref{ex:eq_struct}.
  Além disso, para cada $x > 0$,
  $X_{x} \equiv x$ e $Y_x \equiv -log(U_Y)/X_x$.
 \end{example}
@@ -3653,7 +3663,7 @@ os resultados potenciais dada a
 intervenção $\Z=\bz$ são
 idênticos aos resultados observados.
 Em outras palavras,
-ao observamos que $\Z=\bz$, aprendemos que
+ao observarmos que $\Z=\bz$, aprendemos que
 estamos justamente na hipótese
 de resultados potenciais em que $\Z=\bz$.
 
@@ -3696,11 +3706,11 @@ $\E[Y_{X=x}] = \E[Y|do(X=x)]$. Assim,
 se por exemplo $X$ é binário,
 $\ACE = \E[Y_1] - \E[Y_0]$.
 Em outras palavras, 
-como o \cref{def:pom} cria 
+como a \cref{def:pom} cria 
 variáveis aleatórias que tem a distribuição intervencional,
-ele permite que imaginemos o efeito causal
+ela permite que imaginemos o efeito causal
 em termos destas variáveis.
-Como na \cref{cap:intervencao} 
+Como no \cref{cap:intervencao} 
 não havia acesso aos resultados potenciais, 
 era necessário imaginar o efeito causal
 somente em termos da distribuição intervencional.
@@ -3717,7 +3727,8 @@ identificação causal está
 na definição de \textit{ignorabilidade}.
 Dizemos que $X$ é ignorável para
 medir o efeito causal em $Y$ se
-ele é independente dos resultados potenciais $Y_{x}$.
+ele é independente dos resultados potenciais $Y_{x}$\footnote{
+Quando não houver ambiguidade, denotaremos $Y_{X=x}$ por $Y_x$}.
 Em outras palavras, 
 saber o valor de $X$ não traz informação sobre
 o resultado de $Y$ em uma outra realidade em que
@@ -3731,7 +3742,8 @@ realizamos uma intervenção sobre $X$.
 \end{definition}
 
 O critério da ignorabilidade é equivalente a
-afirmar que $X$ e $Y$ não tem um ancestral comum.
+afirmar que $X$ e $Y$ não tem um ancestral comum, 
+isto é, um confundidor.
 Em outras palavras, $X$ é ignorável se
 e somente se $\emptyset$ satisfaz o critério backdoor para
 medir o efeito causal de $X$ em $Y$.
@@ -3792,8 +3804,9 @@ conforme formalizado no \cref{lemma:cignore_backdoor}.
 \end{lemma}
 
 Apesar do critério backdoor e
-das ignorabilidade condicional não serem equivalentes,
-eles induzem o mesmo tipo de identificação causal.
+da ignorabilidade condicional não serem equivalentes,
+ambos controlam confundidores, isto é,
+induzem o mesmo tipo de identificação causal:
 
 \begin{lemma}
  \label{lemma:cignore_do}
@@ -3852,7 +3865,7 @@ todos os mediadores de $X$ a $Y$.
 Nestes casos, não é possível
 justificar os métodos baseados
 nos critérios backdoor e frontdoor
-vistos na \cref{cap:intervencao}.
+vistos no \cref{cap:intervencao}.
 Variáveis instrumentais são 
 um modo de evitar esse tipo de suposição.
 
@@ -5083,12 +5096,11 @@ ao condicionamento usual no SCM aumentado.
 \begin{definition}
  \label{def:cm_star}
  Seja $(\sG_*, f_*)$ um SCM expandido tal que
- $\sG_* = (\sV \cup \{I_X: X \in \X\}, \sE_*)$, e
- $\sE_* = \sE \cup \{(I_X \rightarrow X: X \in \X)\}$.
+ $\sG_* = (\sV \cup \{I_X\}, \sE_*)$, e
+ $\sE_* = \sE \cup \{(I_X,X)\}$.
  Isto é, $\sG_*$ é uma cópia de $\sG$ em que
- adicionamos para cada $X \in \X$
- os vértice $I_X \in \{0,1\}$ e 
- arestas de $I_X$ para $X$.
+ adicionamos o vértice $I_X \in \{0,1\}$ e 
+ uma aresta de $I_X$ para $X$.
  
  $\sG^*$ admite uma interpretação intuitiva.
  $I_X$ é a indicadora de que fazemos uma intervenção em $X$,
@@ -5112,18 +5124,18 @@ ao condicionamento usual no SCM aumentado.
  \label{lemma:backdoor_1}
  Se $(\sG_*, f_*)$ é tal qual em \cref{def:cm_star}, então:
  \begin{align*}
-  f(\sV|do(X=x)) &= f_*(\sV|I_{\X}=1)
+  f(\sV|do(X=x)) &= f_*(\sV|I_{X}=1)
  \end{align*}
 \end{lemma}
 
 \begin{proof}
  \begin{align*}
-  f_*(\sV|I_{\X} = 1) 
-  &= \frac{f_*(\sV, I_{\X}=1)}{f(I_{\X}=1)} \\
-  &= \frac{f(I_{\X}=1)\prod_{X \in \X}\I(X = x)\prod_{V \notin \X}f(V|Pa(V))}{f(I=1)}
+  f_*(\sV|I_{X} = 1) 
+  &= \frac{f_*(\sV, I_{X}=1)}{f(I_{X}=1)} \\
+  &= \frac{f(I_{X}=1)\I(X=x)\prod_{V \notin \X}f(V|Pa(V))}{f(I=1)}
   & \text{\cref{def:cm_star}} \\
-  &= \prod_{X \in \X}\I(X = x) \cdot \prod_{V \notin \V_1}f(V|Pa(V)) \\
-  &= f(\sV|do(\X=\x)) 
+  &= \I(X = x) \cdot \prod_{V \notin \V_1}f(V|Pa(V)) \\
+  &= f(\sV|do(X=x)) 
   & \text{\cref{def:intervencao}}
  \end{align*}
 \end{proof}
@@ -5132,18 +5144,18 @@ ao condicionamento usual no SCM aumentado.
  \label{lemma:backdoor_2}
  Se $(\sG_*, f_*)$ é tal qual em \cref{def:cm_star}, então:
  \begin{align*}
-  f_*(\sV|I_{\X}=0) &= f(\sV).
+  f_*(\sV|I_X=0) &= f(\sV).
  \end{align*}
 \end{lemma}
 
 \begin{proof}
  \begin{align*}
-  f_*(\sV|I_{\X}=0) 
-  &= \frac{f_*(\sV, I_{\X}=0)}{f_*(I_{\X}=0)} \\
-  &= \frac{f_*(I_{\X}=0)\prod_{X \in \X}f_*(X|Pa(X),I_{X}=0)
+  f_*(\sV|I_X=0) 
+  &= \frac{f_*(\sV, I_X=0)}{f_*(I_X=0)} \\
+  &= \frac{f_*(I_X=0)f_*(X|Pa(X),I_{X}=0)
   \prod_{V \notin \X} f(V|Pa(V))}{f_*(I=0)}
   & \text{\cref{def:cm_star}} \\
-  &= \prod_{X \in \X}f(X|Pa(X))\prod_{V \notin \X} f(V|Pa(V))
+  &= f(X|Pa(X))\prod_{V \notin \X} f(V|Pa(V))
   & \text{\cref{def:cm_star}} \\
   &= \prod_{V \in \sV} f(V|Pa(V)) \\
   &= f(\sV) 
@@ -5155,14 +5167,16 @@ ao condicionamento usual no SCM aumentado.
  \label{lemma:backdoor_3}
  Se $(\sG_*, f_*)$ é tal qual em \cref{def:cm_star} e
  $\Z$ satisfaz o segundo item do critério backdoor para
- medir o efeito causal de $X$ em $Y$, então $I \dsep Y | X, \Z$.
+ medir o efeito causal de $X$ em $Y$, então 
+ $I_X \dsep Y | X, \Z$.
 \end{lemma}
 
 \begin{proof}
  Tome um caminho arbitrário de
- $I$ em $Y$, $C = (I, C_2, \ldots, C_{n-1}, Y)$.
- Por definição de $I$, $C_2 = X$ e 
- $I \rightarrow X$. 
+ $I_X$ em $Y$, 
+ $C = (I_X, C_2, \ldots, C_{n-1}, Y)$.
+ Por definição de $I_X$, $C_2 = X$ e 
+ $I_X \rightarrow X$. 
  Se $X \rightarrow C_3$, então
  $X$ não é um colisor em $C$ e 
  $C$ está bloqueado dado $X$ e $\Z$.
@@ -5186,13 +5200,13 @@ ao condicionamento usual no SCM aumentado.
 \begin{proof}
  \begin{align*}
   f(y|do(x),\z)
-  &= f_*(y|I=1, \z)
+  &= f_*(y|I_X=1, \z)
   & \text{\cref{lemma:backdoor_1}} \\
-  &= \int f_*(y,X|I=1, \z)dX \\
-  &= \int f_*(X|I=1,\z)f_*(y|X, I=1, \z)dX \\
-  &= \int \I(X=x)f_*(y|X, I=1, \z)dX \\
-  &= f_*(y|x,I=1,\z) \\
-  &= f_*(y|x,I=0,\z)
+  &= \int f_*(y,X|I_X=1, \z)dX \\
+  &= \int f_*(X|I_X=1,\z)f_*(y|X, I_X=1, \z)dX \\
+  &= \int \I(X=x)f_*(y|X, I_X=1, \z)dX \\
+  &= f_*(y|x,I_X=1,\z) \\
+  &= f_*(y|x,I_X=0,\z)
   & \text{\cref{lemma:backdoor_3}} \\
   &= f(y|x,\z)
   & \text{\cref{lemma:backdoor_2}}
@@ -5203,18 +5217,18 @@ ao condicionamento usual no SCM aumentado.
  \label{lemma:backdoor_5}
  Se $(\sG_*, f_*)$ é tal qual em \cref{def:cm_star} e
  $\Z$ satisfaz o critério backdoor para
- medir o efeito causal de $X$ em $Y$, então $I \dsep \Z$.
+ medir o efeito causal de $X$ em $Y$, então $I_X \dsep \Z$.
 \end{lemma}
 
 \begin{proof}
  Tome arbitrariamente um $Z \in \Z$ e
- um caminho de $I$ em $Z$, 
+ um caminho de $I_X$ em $Z$, 
  $C = (I, C_2, \ldots, C_{n-1}, Z)$.
- Por definição de $I$, $C_2 = X$ e
- $I \rightarrow X$. 
+ Por definição de $I_X$, $C_2 = X$ e
+ $I_X \rightarrow X$. 
  Suponha por absurdo que $C$ não tem colisor.
- Como, $I \rightarrow X$, decorre que
- $C = I \rightarrow X \rightarrow \ldots 
+ Como, $I_X \rightarrow X$, decorre que
+ $C = I_X \rightarrow X \rightarrow \ldots 
  \rightarrow C_{n-1} \rightarrow Z$.
  Assim, $Z$ é um descendente de $X$,
  uma contradição com 
@@ -5234,9 +5248,9 @@ ao condicionamento usual no SCM aumentado.
 \begin{proof}
  \begin{align*}
   f(\z|do(x))
-  &= f_*(\z|I=1)
+  &= f_*(\z|I_X=1)
   & \text{\cref{lemma:backdoor_1}} \\
-  &= f_*(\z|I=0)
+  &= f_*(\z|I_X=0)
   & \text{\cref{lemma:backdoor_5}} \\
   &= f(\z)
   & \text{\cref{lemma:backdoor_2}}
@@ -5725,9 +5739,9 @@ ao condicionamento usual no SCM aumentado.
  
  Para provar este fato,
  construíremos uma ordem sobre $\sV-(\Z \cup \V)$.
- Defina $\sV^{(0)} = \{W \in \sV-(\Z \cup \V): Pa(W) = \emptyset\}$,
+ Defina $\sV^{(0)} = \{W \in \sV-(\Z \cup \V): Pa(W) \subseteq (\Z \cup \V)\}$,
  isto é $\sV^{(0)}$ são vértices no DAG que 
- não estão em $\Z \cup \V$ e que são raízes.
+ não estão em $\Z \cup \V$ e cujos pais estão em $\Z \cup \V$.
  Além disso, para todo $1 \leq i \leq n$,
  $\sV^{(i)} = \{W \in \sV-(\Z \cup \V): 
  Pa(W) \subseteq \sV^{(i-1)} \cup (\Z \cup \V)\}$.
@@ -5736,14 +5750,17 @@ ao condicionamento usual no SCM aumentado.
  todos os avós de $\sV^{(2)}$ 
  são raízes ou estão em $(\Z \cup \V)$, e assim por diante.
  Como $\sV$ é finito, existe $n$ tal que
- $\sV^{(n)} \equiv \sV-(\U \cup \V)$.
+ $\sV^{(n)} \equiv \sV-(\Z \cup \V)$.
  
  Completaremos a prova por indução finita.
  Primeiramente, se $W \in \sV^{(0)}$,
  decorre da \cref{def:pom} que
- $W_{\V=\bv} \equiv g_W(U_W) \equiv W_{\Z=\bz,\V=\bv}$.
- Em particular,
- $W_{\V=\bv}(\omega) = W_{\Z=\bz,\V=\bv}(\omega)$.
+ $W_{\V=\bv} \equiv g_W(U_W, Pa(W)_{\V=\bv})$ e que
+ $W_{\Z=\bz,\V=\bv} \equiv g_W(U_W, Pa(W)_{\Z=\bz,\V=\bv})$.
+ Como $Pa(W) \subseteq (\Z,\V)$, estabelecemos que
+ $Pa(W)_{\V=\bv}(\omega) = Pa(W)_{\Z=\bz,\V=\bv}(\omega)$.
+ Portanto, $W_{\V=\bv}(\omega) = W_{\Z=\bz,\V=\bv}(\omega)$.
+
  A seguir, suponha que 
  para todo $W \in \sV^{(i-1)}$,
  $W_{\V=\bv}(\omega) =  W_{\Z=\bz,\V=\bv}(\omega)$ e
@@ -5764,8 +5781,9 @@ ao condicionamento usual no SCM aumentado.
  $Pa^*(W_{\V=\bv})(\omega) = Pa(W^*_{\Z=\bz,\V=\bv})(\omega)$,
  conclua que
  $W_{\V=\bv}(\omega) = W_{\Z=\bz,\V=\bv}(\omega)$.
+ 
  A prova está completa observando que
- $W \in \sV^(n) = \sV - (\Z \cup \V)$.
+ $\sV^{(n)} = \sV - (\Z \cup \V)$.
 \end{proof}
 
 \begin{proof}[Prova do \cref{lemma:obs_to_potential}]
@@ -5817,6 +5835,13 @@ ao condicionamento usual no SCM aumentado.
  a negação de $3$ implica a negação de $2$.
  Suponha que no grafo potencial, $\sG^*$,
  existe um caminho não bloqueado de $X$ a $Y_x$, $C$.
+ Para que exista tal caminho, 
+ ele deve necessariamente passar por ao menos uma variável de ruído, $U_V$.
+ Além disso, não é possível que o caminho passe por duas ou mais variáveis de ruído,
+ $U_V$ e $U_W$. Caso isso ocorresse, então ele conteria um sub-caminho
+ $U_V \rightarrow \ldots \leftarrow U_W$.
+ Isto é, existiria um colisor no caminho e ele estaria bloqueado.
+ Assim, podemos concluir que $C$ passa por exatamente uma variável de ruído, $U_V$.
  Portanto, existe $V \in \sV$ tal que
  $C = X, \ldots V \leftarrow U_V \rightarrow V_x, \ldots Y_x$.
  Como $C$ não está bloqueado, não há colisor em $C$.

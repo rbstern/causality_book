@@ -1,5 +1,5 @@
 \documentclass[11pt]{scrbook}
-\usepackage[portuguese]{babel}
+\usepackage[brazil]{babel}
 \usepackage[utf8]{inputenc}
 
 \usepackage{nameref}
@@ -22,12 +22,17 @@
 \declaretheorem[name=Lema, refname={Lema, Lemas}, Refname={Lema, Lemas}, sibling=theorem]{lemma}
 \declaretheorem[name=Exercício, refname={Exercício, Exercícios}, Refname={Exercício, Exercícios}, sibling=theorem, style=definition]{exercise}
 
+\crefname{figure}{figura}{figuras}
+\Crefname{figure}{Figura}{Figuras}
 \crefname{section}{Seção}{Seções}
 \Crefname{section}{Seção}{Seções}
 \crefname{chapter}{capítulo}{capítulos}
 \Crefname{chapter}{Capítulo}{Capítulos}
 \crefname{table}{tabela}{tabelas}
 \Crefname{table}{Tabela}{Tabelas}
+
+\crefformat{equation}{#2eq.~(#1)#3}
+\Crefformat{equation}{#2Eq.~(#1)#3}
 
 \newcommand{\crefrangeconjunction}{ a }
 \newcommand{\crefpairconjunction}{ e }

@@ -809,6 +809,15 @@ será fundamental nos capítulos posteriores.
 \end{exercise}
 
 \begin{exercise}
+ Seja $f(v_1,v_2,v_3)$ uma densidade arbitrária.
+ Prove que $f$ é compatível com
+ o modelo de confundidor \cref{fig:confundidor}
+ se e somente se
+ $f$ é compatível com
+ o modelo de cadeia \cref{fig:cadeia}.
+\end{exercise}
+
+\begin{exercise}
  Considere que, dado $T$, $X_1,\ldots,X_n$ são i.i.d. e
  $X_i|T \sim \text{Bernoulli}(T)$. Além disso,
  $T \sim \text{Beta}(a,b)$.

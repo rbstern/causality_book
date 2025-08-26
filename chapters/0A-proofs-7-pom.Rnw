@@ -25,9 +25,9 @@
  
  Para provar este fato,
  construíremos uma ordem sobre $\sV-(\Z \cup \V)$.
- Defina $\sV^{(0)} = \{W \in \sV-(\Z \cup \V): Pa(W) = \emptyset\}$,
+ Defina $\sV^{(0)} = \{W \in \sV-(\Z \cup \V): Pa(W) \subseteq (\Z \cup \V)\}$,
  isto é $\sV^{(0)}$ são vértices no DAG que 
- não estão em $\Z \cup \V$ e que são raízes.
+ não estão em $\Z \cup \V$ e cujos pais estão em $\Z \cup \V$.
  Além disso, para todo $1 \leq i \leq n$,
  $\sV^{(i)} = \{W \in \sV-(\Z \cup \V): 
  Pa(W) \subseteq \sV^{(i-1)} \cup (\Z \cup \V)\}$.
@@ -36,14 +36,17 @@
  todos os avós de $\sV^{(2)}$ 
  são raízes ou estão em $(\Z \cup \V)$, e assim por diante.
  Como $\sV$ é finito, existe $n$ tal que
- $\sV^{(n)} \equiv \sV-(\U \cup \V)$.
+ $\sV^{(n)} \equiv \sV-(\Z \cup \V)$.
  
  Completaremos a prova por indução finita.
  Primeiramente, se $W \in \sV^{(0)}$,
  decorre da \cref{def:pom} que
- $W_{\V=\bv} \equiv g_W(U_W) \equiv W_{\Z=\bz,\V=\bv}$.
- Em particular,
- $W_{\V=\bv}(\omega) = W_{\Z=\bz,\V=\bv}(\omega)$.
+ $W_{\V=\bv} \equiv g_W(U_W, Pa(W)_{\V=\bv})$ e que
+ $W_{\Z=\bz,\V=\bv} \equiv g_W(U_W, Pa(W)_{\Z=\bz,\V=\bv})$.
+ Como $Pa(W) \subseteq (\Z,\V)$, estabelecemos que
+ $Pa(W)_{\V=\bv}(\omega) = Pa(W)_{\Z=\bz,\V=\bv}(\omega)$.
+ Portanto, $W_{\V=\bv}(\omega) = W_{\Z=\bz,\V=\bv}(\omega)$.
+
  A seguir, suponha que 
  para todo $W \in \sV^{(i-1)}$,
  $W_{\V=\bv}(\omega) =  W_{\Z=\bz,\V=\bv}(\omega)$ e
@@ -64,8 +67,9 @@
  $Pa^*(W_{\V=\bv})(\omega) = Pa(W^*_{\Z=\bz,\V=\bv})(\omega)$,
  conclua que
  $W_{\V=\bv}(\omega) = W_{\Z=\bz,\V=\bv}(\omega)$.
+ 
  A prova está completa observando que
- $W \in \sV^(n) = \sV - (\Z \cup \V)$.
+ $\sV^{(n)} = \sV - (\Z \cup \V)$.
 \end{proof}
 
 \begin{proof}[Prova do \cref{lemma:obs_to_potential}]
@@ -117,6 +121,13 @@
  a negação de $3$ implica a negação de $2$.
  Suponha que no grafo potencial, $\sG^*$,
  existe um caminho não bloqueado de $X$ a $Y_x$, $C$.
+ Para que exista tal caminho, 
+ ele deve necessariamente passar por ao menos uma variável de ruído, $U_V$.
+ Além disso, não é possível que o caminho passe por duas ou mais variáveis de ruído,
+ $U_V$ e $U_W$. Caso isso ocorresse, então ele conteria um sub-caminho
+ $U_V \rightarrow \ldots \leftarrow U_W$.
+ Isto é, existiria um colisor no caminho e ele estaria bloqueado.
+ Assim, podemos concluir que $C$ passa por exatamente uma variável de ruído, $U_V$.
  Portanto, existe $V \in \sV$ tal que
  $C = X, \ldots V \leftarrow U_V \rightarrow V_x, \ldots Y_x$.
  Como $C$ não está bloqueado, não há colisor em $C$.

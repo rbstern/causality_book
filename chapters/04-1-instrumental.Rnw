@@ -9,7 +9,7 @@ todos os mediadores de $X$ a $Y$.
 Nestes casos, não é possível
 justificar os métodos baseados
 nos critérios backdoor e frontdoor
-vistos na \cref{cap:intervencao}.
+vistos no \cref{cap:intervencao}.
 Variáveis instrumentais são 
 um modo de evitar esse tipo de suposição.
 

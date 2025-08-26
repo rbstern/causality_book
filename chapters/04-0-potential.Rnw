@@ -170,9 +170,10 @@ houve intervenção.
  por intervenções em $\X \subseteq \sV$,
  $\sG^* = (\sV^*, \sE^*)$ é tal que
  \begin{align*}
-  \sV^* &= \{W_{\V=\bv}: W \in \sV, \V \subseteq \X, \bv \in supp(\V)\} \cup \{U_W: W \in \sV\}, \\
-  \sE^* &= \{(W_{\V=\bv}, Z_{\V=\bv}): \V \subseteq \X, \bv \in supp(\V),
-  (W, Z) \in \sE^{+}, Z \notin \V\}.
+  \sV^* =& \{W_{\V=\bv}: W \in \sV, \V \subseteq \X, \bv \in supp(\V)\} \cup \{U_W: W \in \sV\}, \\
+  \sE^* =& \{(W_{\V=\bv}, Z_{\V=\bv}): \V \subseteq \X, \bv \in supp(\V),
+  (W, Z) \in \sE, Z \notin \V\} \cup \\
+  &\{(U_Z, Z_{\V=\bv}, \V \subseteq \X, \bv \in supp(\V), Z \notin \V \} .
  \end{align*}
  Para todo $W \in \sV$, abreviamos $W_{\emptyset}$ por $W$.
 \end{definition}
@@ -286,7 +287,7 @@ um modelo de resultados potenciais.
  \label{ex:pom}
  Considere o SCM em equações estruturais em \cref{ex:eq_struct}.
  Na construção do modelo de resultados potenciais,
- definimos $X, Y, U_X, U_Y$ igualmente a em \cref{ex:eq_struct}.
+ definimos $X, Y, U_X, U_Y$ igualmente ao \cref{ex:eq_struct}.
  Além disso, para cada $x > 0$,
  $X_{x} \equiv x$ e $Y_x \equiv -log(U_Y)/X_x$.
 \end{example}
@@ -319,7 +320,7 @@ os resultados potenciais dada a
 intervenção $\Z=\bz$ são
 idênticos aos resultados observados.
 Em outras palavras,
-ao observamos que $\Z=\bz$, aprendemos que
+ao observarmos que $\Z=\bz$, aprendemos que
 estamos justamente na hipótese
 de resultados potenciais em que $\Z=\bz$.
 
@@ -362,11 +363,11 @@ $\E[Y_{X=x}] = \E[Y|do(X=x)]$. Assim,
 se por exemplo $X$ é binário,
 $\ACE = \E[Y_1] - \E[Y_0]$.
 Em outras palavras, 
-como o \cref{def:pom} cria 
+como a \cref{def:pom} cria 
 variáveis aleatórias que tem a distribuição intervencional,
-ele permite que imaginemos o efeito causal
+ela permite que imaginemos o efeito causal
 em termos destas variáveis.
-Como na \cref{cap:intervencao} 
+Como no \cref{cap:intervencao} 
 não havia acesso aos resultados potenciais, 
 era necessário imaginar o efeito causal
 somente em termos da distribuição intervencional.
@@ -383,7 +384,8 @@ identificação causal está
 na definição de \textit{ignorabilidade}.
 Dizemos que $X$ é ignorável para
 medir o efeito causal em $Y$ se
-ele é independente dos resultados potenciais $Y_{x}$.
+ele é independente dos resultados potenciais $Y_{x}$\footnote{
+Quando não houver ambiguidade, denotaremos $Y_{X=x}$ por $Y_x$}.
 Em outras palavras, 
 saber o valor de $X$ não traz informação sobre
 o resultado de $Y$ em uma outra realidade em que
@@ -397,7 +399,8 @@ realizamos uma intervenção sobre $X$.
 \end{definition}
 
 O critério da ignorabilidade é equivalente a
-afirmar que $X$ e $Y$ não tem um ancestral comum.
+afirmar que $X$ e $Y$ não tem um ancestral comum, 
+isto é, um confundidor.
 Em outras palavras, $X$ é ignorável se
 e somente se $\emptyset$ satisfaz o critério backdoor para
 medir o efeito causal de $X$ em $Y$.
@@ -458,8 +461,9 @@ conforme formalizado no \cref{lemma:cignore_backdoor}.
 \end{lemma}
 
 Apesar do critério backdoor e
-das ignorabilidade condicional não serem equivalentes,
-eles induzem o mesmo tipo de identificação causal.
+da ignorabilidade condicional não serem equivalentes,
+ambos controlam confundidores, isto é,
+induzem o mesmo tipo de identificação causal:
 
 \begin{lemma}
  \label{lemma:cignore_do}

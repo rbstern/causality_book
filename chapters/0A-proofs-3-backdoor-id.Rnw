@@ -13,12 +13,11 @@ ao condicionamento usual no SCM aumentado.
 \begin{definition}
  \label{def:cm_star}
  Seja $(\sG_*, f_*)$ um SCM expandido tal que
- $\sG_* = (\sV \cup \{I_X: X \in \X\}, \sE_*)$, e
- $\sE_* = \sE \cup \{(I_X \rightarrow X: X \in \X)\}$.
+ $\sG_* = (\sV \cup \{I_X\}, \sE_*)$, e
+ $\sE_* = \sE \cup \{(I_X,X)\}$.
  Isto é, $\sG_*$ é uma cópia de $\sG$ em que
- adicionamos para cada $X \in \X$
- os vértice $I_X \in \{0,1\}$ e 
- arestas de $I_X$ para $X$.
+ adicionamos o vértice $I_X \in \{0,1\}$ e 
+ uma aresta de $I_X$ para $X$.
  
  $\sG^*$ admite uma interpretação intuitiva.
  $I_X$ é a indicadora de que fazemos uma intervenção em $X$,
@@ -42,18 +41,18 @@ ao condicionamento usual no SCM aumentado.
  \label{lemma:backdoor_1}
  Se $(\sG_*, f_*)$ é tal qual em \cref{def:cm_star}, então:
  \begin{align*}
-  f(\sV|do(X=x)) &= f_*(\sV|I_{\X}=1)
+  f(\sV|do(X=x)) &= f_*(\sV|I_{X}=1)
  \end{align*}
 \end{lemma}
 
 \begin{proof}
  \begin{align*}
-  f_*(\sV|I_{\X} = 1) 
-  &= \frac{f_*(\sV, I_{\X}=1)}{f(I_{\X}=1)} \\
-  &= \frac{f(I_{\X}=1)\prod_{X \in \X}\I(X = x)\prod_{V \notin \X}f(V|Pa(V))}{f(I=1)}
+  f_*(\sV|I_{X} = 1) 
+  &= \frac{f_*(\sV, I_{X}=1)}{f(I_{X}=1)} \\
+  &= \frac{f(I_{X}=1)\I(X=x)\prod_{V \notin \X}f(V|Pa(V))}{f(I=1)}
   & \text{\cref{def:cm_star}} \\
-  &= \prod_{X \in \X}\I(X = x) \cdot \prod_{V \notin \V_1}f(V|Pa(V)) \\
-  &= f(\sV|do(\X=\x)) 
+  &= \I(X = x) \cdot \prod_{V \notin \V_1}f(V|Pa(V)) \\
+  &= f(\sV|do(X=x)) 
   & \text{\cref{def:intervencao}}
  \end{align*}
 \end{proof}
@@ -62,18 +61,18 @@ ao condicionamento usual no SCM aumentado.
  \label{lemma:backdoor_2}
  Se $(\sG_*, f_*)$ é tal qual em \cref{def:cm_star}, então:
  \begin{align*}
-  f_*(\sV|I_{\X}=0) &= f(\sV).
+  f_*(\sV|I_X=0) &= f(\sV).
  \end{align*}
 \end{lemma}
 
 \begin{proof}
  \begin{align*}
-  f_*(\sV|I_{\X}=0) 
-  &= \frac{f_*(\sV, I_{\X}=0)}{f_*(I_{\X}=0)} \\
-  &= \frac{f_*(I_{\X}=0)\prod_{X \in \X}f_*(X|Pa(X),I_{X}=0)
+  f_*(\sV|I_X=0) 
+  &= \frac{f_*(\sV, I_X=0)}{f_*(I_X=0)} \\
+  &= \frac{f_*(I_X=0)f_*(X|Pa(X),I_{X}=0)
   \prod_{V \notin \X} f(V|Pa(V))}{f_*(I=0)}
   & \text{\cref{def:cm_star}} \\
-  &= \prod_{X \in \X}f(X|Pa(X))\prod_{V \notin \X} f(V|Pa(V))
+  &= f(X|Pa(X))\prod_{V \notin \X} f(V|Pa(V))
   & \text{\cref{def:cm_star}} \\
   &= \prod_{V \in \sV} f(V|Pa(V)) \\
   &= f(\sV) 
@@ -85,14 +84,16 @@ ao condicionamento usual no SCM aumentado.
  \label{lemma:backdoor_3}
  Se $(\sG_*, f_*)$ é tal qual em \cref{def:cm_star} e
  $\Z$ satisfaz o segundo item do critério backdoor para
- medir o efeito causal de $X$ em $Y$, então $I \dsep Y | X, \Z$.
+ medir o efeito causal de $X$ em $Y$, então 
+ $I_X \dsep Y | X, \Z$.
 \end{lemma}
 
 \begin{proof}
  Tome um caminho arbitrário de
- $I$ em $Y$, $C = (I, C_2, \ldots, C_{n-1}, Y)$.
- Por definição de $I$, $C_2 = X$ e 
- $I \rightarrow X$. 
+ $I_X$ em $Y$, 
+ $C = (I_X, C_2, \ldots, C_{n-1}, Y)$.
+ Por definição de $I_X$, $C_2 = X$ e 
+ $I_X \rightarrow X$. 
  Se $X \rightarrow C_3$, então
  $X$ não é um colisor em $C$ e 
  $C$ está bloqueado dado $X$ e $\Z$.
@@ -116,13 +117,13 @@ ao condicionamento usual no SCM aumentado.
 \begin{proof}
  \begin{align*}
   f(y|do(x),\z)
-  &= f_*(y|I=1, \z)
+  &= f_*(y|I_X=1, \z)
   & \text{\cref{lemma:backdoor_1}} \\
-  &= \int f_*(y,X|I=1, \z)dX \\
-  &= \int f_*(X|I=1,\z)f_*(y|X, I=1, \z)dX \\
-  &= \int \I(X=x)f_*(y|X, I=1, \z)dX \\
-  &= f_*(y|x,I=1,\z) \\
-  &= f_*(y|x,I=0,\z)
+  &= \int f_*(y,X|I_X=1, \z)dX \\
+  &= \int f_*(X|I_X=1,\z)f_*(y|X, I_X=1, \z)dX \\
+  &= \int \I(X=x)f_*(y|X, I_X=1, \z)dX \\
+  &= f_*(y|x,I_X=1,\z) \\
+  &= f_*(y|x,I_X=0,\z)
   & \text{\cref{lemma:backdoor_3}} \\
   &= f(y|x,\z)
   & \text{\cref{lemma:backdoor_2}}
@@ -133,18 +134,18 @@ ao condicionamento usual no SCM aumentado.
  \label{lemma:backdoor_5}
  Se $(\sG_*, f_*)$ é tal qual em \cref{def:cm_star} e
  $\Z$ satisfaz o critério backdoor para
- medir o efeito causal de $X$ em $Y$, então $I \dsep \Z$.
+ medir o efeito causal de $X$ em $Y$, então $I_X \dsep \Z$.
 \end{lemma}
 
 \begin{proof}
  Tome arbitrariamente um $Z \in \Z$ e
- um caminho de $I$ em $Z$, 
+ um caminho de $I_X$ em $Z$, 
  $C = (I, C_2, \ldots, C_{n-1}, Z)$.
- Por definição de $I$, $C_2 = X$ e
- $I \rightarrow X$. 
+ Por definição de $I_X$, $C_2 = X$ e
+ $I_X \rightarrow X$. 
  Suponha por absurdo que $C$ não tem colisor.
- Como, $I \rightarrow X$, decorre que
- $C = I \rightarrow X \rightarrow \ldots 
+ Como, $I_X \rightarrow X$, decorre que
+ $C = I_X \rightarrow X \rightarrow \ldots 
  \rightarrow C_{n-1} \rightarrow Z$.
  Assim, $Z$ é um descendente de $X$,
  uma contradição com 
@@ -164,9 +165,9 @@ ao condicionamento usual no SCM aumentado.
 \begin{proof}
  \begin{align*}
   f(\z|do(x))
-  &= f_*(\z|I=1)
+  &= f_*(\z|I_X=1)
   & \text{\cref{lemma:backdoor_1}} \\
-  &= f_*(\z|I=0)
+  &= f_*(\z|I_X=0)
   & \text{\cref{lemma:backdoor_5}} \\
   &= f(\z)
   & \text{\cref{lemma:backdoor_2}}
