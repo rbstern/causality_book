@@ -167,7 +167,7 @@ $\V_1$ a $\V_2$ estão bloqueados dado $\V_3$:
  Para $\V_1,\V_2,\V_3 \subseteq \sV$, dizemos que
  $\V_1$ está d-separado de $\V_2$ dado $\V_3$ se,
  para todo caminho $C = (C_1,\ldots,C_n)$ tal que
- $C_1 \in V_1$ e $C_n \in \V_2$,
+ $C_1 \in \V_1$ e $C_n \in \V_2$,
  $C$ está bloqueado dado $\V_3$.
  Neste caso, escrevemos $\V_1 \perp \V_2 | \V_3$.
 \end{definition}

@@ -6,7 +6,7 @@
 
 \vspace{20mm}
 
-\textbf{Agradecimentos}: Ciro A. Higashi, Vitor Mello
+\textbf{Agradecimentos}: Ciro A. Higashi, Stefan Z. Gonçalves, Vitor Mello
 
 \newpage
 
