@@ -205,24 +205,17 @@ se $\Z$ satisfaz o critério backdoor, então
 distribuições sob intervenção em $X$ a
 distribuições observacionais:
 
-\begin{definition}
- \label{def:conf_control}
- $\Z$ controla confundidores para
- medir o efeito causal de $X$ em $Y$ se
- \begin{align*}
-  f(\z|do(x)) 
-  &= f(\z), \text{ e } \\
-  f(y|do(x), \z) 
-  &= f(y|x, \z).
- \end{align*}
-\end{definition}
-
 \begin{theorem}
  \label{thm:backdoor}
  Se $\Z$ satisfaz 
  o critério backdoor para medir
- o efeito causal de $X$ em $Y$, então
- $\Z$ satisfaz a \cref{def:conf_control}.
+ o efeito causal de $X$ em $Y$, então:
+ \begin{align*}
+  \begin{cases}
+   f(y|do(x),\z) &= f(y|x,\z) \\
+   f(\z|do(x)) &= f(\z)
+  \end{cases}
+ \end{align*}
 \end{theorem}
 
 O \cref{thm:backdoor} mostra que,
@@ -239,14 +232,25 @@ distribuições que os geraram.
 Com base neste resultado, é possível determinar
 $f(y|do(x))$ a partir de $f(y,x,\z)$:
 
+\begin{definition}
+ \label{def:conf_control}
+ $\Z$ controla confundidores para
+ medir o efeito causal de $X$ em $Y$ se
+ \begin{align*}
+  \int_{\mathcal{Z}} f(y|do(x),\z)f(\z|do(x)) 
+  &= \int_{\mathcal{Z}} f(y|x,\z)f(\z) d\z
+ \end{align*}
+ Em particular,
+ \begin{align*}
+  f(y|do(x)) &= \int f(y|do(x),\z)f(\z|do(x)) \\
+  &= \int f(y|x,\z)f(\z) d\z
+ \end{align*}
+\end{definition}
+
 \begin{corollary}
  \label{cor:backdoor}
- Se $\Z$ satisfaz
- a \cref{def:conf_control}, então
- \begin{align*}
-  f(y|do(x)) &=
-  \int f(y|x,\z)f(\z)d\z.
- \end{align*}
+ Se $\Z$ satisfaz o critério backdoor, então
+ $\Z$ controla confundidores.
 \end{corollary}
 
 Para compreender intuitivamente o \cref{cor:backdoor},
@@ -303,7 +307,7 @@ A seguir, veremos como os
 \cref{thm:backdoor_ajuste,thm:backdoor_ipw} podem
 ser usados para estimar o efeito causal.
 Para provar resultados sobre os estimadores obtidos,
-a seguinte definição será útil
+a seguinte definição será útil:
 
 \begin{definition}
  \label{def:perm}
@@ -405,10 +409,12 @@ por meio de expressões como o $\ACE$.
  \label{thm:conv_ajuste}
  Seja $\mu(X,\Z) := \E[Y|X,\Z]$.
  Se $\Z$ satisfaz a \cref{def:conf_control},
- $\E[|\mu(x,\Z_1)|] < \infty$,
- $\E[|\hmu(x,\Z_1)-\mu(x,\Z_1)|] = o(1)$, 
- e $\hmu$ é invariante a permutações (\cref{def:perm}), então
- $\hdoy \convp \E[Y|do(X=x)]$.
+ \begin{enumerate}
+  \item $\hmu$ é invariante a permutações (\cref{def:perm}),
+  \item $\E[|\mu(x,\Z_1)|] < \infty$,
+  \item $\E[|\hmu(x,\Z_1)-\mu(x,\Z_1)|] = o(1)$, e
+ \end{enumerate}
+ então $\hdoy \convp \E[Y|do(X=x)]$.
 \end{theorem}
 
 A seguir, utilizamos dados simulados para
@@ -642,14 +648,14 @@ $\hdoyb$ converge para $\E[Y|do(X=x)]$.
 
 \begin{theorem}
  \label{thm:conv_ipw}
- Se $\Z$ satisfaz a \cref{def:conf_control}, também
- $\hf$ é invariante a permutações (\cref{def:perm}),
- $\E[|\hf(x|\Z_1)-f(x|\Z_1)|] = o(1)$, e
- existe $M > 0$ tal que
- $\sup_\z \E[|Y| \I(X=x)|\Z=\z] < M$, e
- existe $\delta > 0$ tal que
- $\inf_z \min\{f(x|\Z_1), \hf(x|\Z_1)\} > \delta$, então
- $\hdoyb \convp \E[Y|do(X=x)]$.
+ Se $\Z$ satisfaz a \cref{def:conf_control} e, também
+ \begin{enumerate}
+  \item $\hf$ é invariante a permutações (\cref{def:perm}),
+  \item $\E[|\hf(x|\Z_1)-f(x|\Z_1)|] = o(1)$,
+  \item existe $M > 0$ tal que $\sup_\z \E[|Y| \I(X=x)|\Z=\z] < M$, e
+  \item existe $\delta > 0$ tal que $\inf_z \min\{f(x|\Z_1), \hf(x|\Z_1)\} > \delta$,
+ \end{enumerate}
+ então $\hdoyb \convp \E[Y|do(X=x)]$.
 \end{theorem}
 
 A seguir, utilizamos novamente dados simulados para

@@ -30,9 +30,9 @@ há um médico muito mais concentrado, competente,
 Ou estamos supondo apenas que
 características pontuais que o levaram ao erro não estão presentes e,
 assim, essencialmente é o mesmo médico tratando o paciente?
-Ainda que não há uma resposta única para esta pergunta,
+Ainda que não haja uma resposta única para esta pergunta,
 há um cenário que é comumente analisado.
-Neste supomos que a realidade alternativa é 
+Neste, supomos que a realidade alternativa é 
 a mais próxima possível da observada dada
 a restrição que um determinado fato ocorreu diferentemente.
 
@@ -83,10 +83,10 @@ tão próximas quanto possível da realidade observada.
  podemos perguntar qual teria sido a probabilidade
  de que a perna do paciente não fosse amputada sem
  um erro médico, sabendo que observou-se
- o erro e a amputação: $\P(Y_{X=0}|X=1,Y=1)$.
+ o erro e a amputação: $\P(Y_{X=0}=1|X=1,Y=1)$.
  \begin{align*}
   \P(Y_{X=0}=1|X=1,Y=0)
-  &= \P(\I(U_Y \leq p_0) = 1|\I(U_X \leq \epsilon) == 1, \I(U_Y > p_1) = 1) \\
+  &= \P(\I(U_Y \leq p_0) = 1|\I(U_X \leq \epsilon) = 1, \I(U_Y > p_1) = 1) \\
   &= \P(U_Y \leq p_0|U_X \leq \epsilon, U_Y > p_1) \\
   &= \P(U_Y \leq p_0|U_Y > p_1) \\
   &= \frac{\P(p_1 < U_Y \leq p_0)}{\P(U_Y > p_1)} = \frac{p_0-p_1}{1-p_1}
@@ -95,7 +95,7 @@ tão próximas quanto possível da realidade observada.
 
 Uma característica importante do \cref{ex:contrafactual_1} é que 
 a probabilidade contrafactual depende 
-tanto da distribuição de $U_Y$ quanto da funções $g_Y$.
+tanto da distribuição de $U_Y$ quanto da função $g_Y$.
 Estas quantidades não podem ser determinadas pelos dados.
 Em outras palavras, as probabilidades contrafactuais dependem
 fundamentalmente de suposições que não podem ser testadas.
@@ -117,12 +117,12 @@ o acoplamento utilizado.
  $g_Y(U_Y, 0) = \I(U_Y \geq 1-p_0)$.
  \begin{align*}
   \P(Y_{X=0}=1|X=1,Y=0)
-  &= \P(\I(U_Y \geq 1-p_0) = 1|\I(U_X \leq \epsilon) == 1, \I(U_Y > p_1) = 1) \\
+  &= \P(\I(U_Y \geq 1-p_0) = 1|\I(U_X \leq \epsilon) = 1, \I(U_Y > p_1) = 1) \\
   &= \P(U_Y \geq 1-p_0|U_X \leq \epsilon, U_Y > p_1) \\
   &= \P(U_Y > 1-p_0|U_Y > p_1) \\
-  &= \frac{\P(U_Y > \max(1-p_0,p_1)}{\P(U_Y > p_1)} = \frac{\min(p_0,1-p_1)}{1-p_1}
+  &= \frac{\P(U_Y > \max(1-p_0,p_1))}{\P(U_Y > p_1)} = \frac{\min(p_0,1-p_1)}{1-p_1}
  \end{align*}
- Neste caso, $g_Y$ induz a mema distribuição 
+ Neste caso, $g_Y$ induz a mesma distribuição 
  sobre $(X,Y)$ que o acoplamento no \cref{ex:contrafactual_1}.
  Ainda assim, a probabilidade contrafactual obtida é diferente.
  Isto ocorre pois, ao contrário do \cref{ex:contrafactual_1},
@@ -172,7 +172,7 @@ O art. 927 do Código Civil de 2002 determina que:
 \end{quote}
 
 Este artigo institui a Responsabilidade Aquiliana,
-isto é o dever daquele que causa um dano 
+isto é, o dever daquele que causa um dano 
 de forma ilícita a \textbf{reparar} as vítimas.
 Sem entrar em detalhes sobre a lei,
 um elemento fundamental deste conceito é a reparação.
@@ -278,9 +278,11 @@ Por outro lado, pode-se entender que,
 no momento em que o ato ilícito foi cometido,
 a vítima deveria estar indiferente entre
 não sofrer o ilícito ou sofrê-lo e receber a indenização.
-Esta outra interpretação pode ser formalizada da seguinte forma:
+Esta outra interpretação pode ser formalizada 
+tomando $\mathcal{Q} = \{Q^*: \E[U(\sV,Q^*)] = \E[U(\sV_{X=0},0)]\}$
+e definindo:
 \begin{align*}
- Q = \arg\min_{Q^*: \E[U(\sV,Q^*)] = \E[U(\sV_{X=0},0)]}\E[(U(\sV,Q^*(E)) - U(\sV_{X=0},0))^2]
+ Q = \arg\min_{Q^* \in \mathcal{Q}}\E[(U(\sV,Q^*(E)) - U(\sV_{X=0},0))^2]
 \end{align*}
 
 Finalmente, como estabelecer 

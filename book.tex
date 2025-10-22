@@ -6,7 +6,7 @@
 
 \vspace{20mm}
 
-\textbf{Agradecimentos}: Ciro A. Higashi, Stefan Z. Gonçalves, Vitor Mello
+\textbf{Agradecimentos}: Caio S. B. Mota, Ciro A. Higashi, Stefan Z. Gonçalves, Vitor Mello
 
 \newpage
 
@@ -2083,24 +2083,17 @@ se $\Z$ satisfaz o critério backdoor, então
 distribuições sob intervenção em $X$ a
 distribuições observacionais:
 
-\begin{definition}
- \label{def:conf_control}
- $\Z$ controla confundidores para
- medir o efeito causal de $X$ em $Y$ se
- \begin{align*}
-  f(\z|do(x)) 
-  &= f(\z), \text{ e } \\
-  f(y|do(x), \z) 
-  &= f(y|x, \z).
- \end{align*}
-\end{definition}
-
 \begin{theorem}
  \label{thm:backdoor}
  Se $\Z$ satisfaz 
  o critério backdoor para medir
- o efeito causal de $X$ em $Y$, então
- $\Z$ satisfaz a \cref{def:conf_control}.
+ o efeito causal de $X$ em $Y$, então:
+ \begin{align*}
+  \begin{cases}
+   f(y|do(x),\z) &= f(y|x,\z) \\
+   f(\z|do(x)) &= f(\z)
+  \end{cases}
+ \end{align*}
 \end{theorem}
 
 O \cref{thm:backdoor} mostra que,
@@ -2117,14 +2110,25 @@ distribuições que os geraram.
 Com base neste resultado, é possível determinar
 $f(y|do(x))$ a partir de $f(y,x,\z)$:
 
+\begin{definition}
+ \label{def:conf_control}
+ $\Z$ controla confundidores para
+ medir o efeito causal de $X$ em $Y$ se
+ \begin{align*}
+  \int_{\mathcal{Z}} f(y|do(x),\z)f(\z|do(x)) 
+  &= \int_{\mathcal{Z}} f(y|x,\z)f(\z) d\z
+ \end{align*}
+ Em particular,
+ \begin{align*}
+  f(y|do(x)) &= \int f(y|do(x),\z)f(\z|do(x)) \\
+  &= \int f(y|x,\z)f(\z) d\z
+ \end{align*}
+\end{definition}
+
 \begin{corollary}
  \label{cor:backdoor}
- Se $\Z$ satisfaz
- a \cref{def:conf_control}, então
- \begin{align*}
-  f(y|do(x)) &=
-  \int f(y|x,\z)f(\z)d\z.
- \end{align*}
+ Se $\Z$ satisfaz o critério backdoor, então
+ $\Z$ controla confundidores.
 \end{corollary}
 
 Para compreender intuitivamente o \cref{cor:backdoor},
@@ -2181,7 +2185,7 @@ A seguir, veremos como os
 \cref{thm:backdoor_ajuste,thm:backdoor_ipw} podem
 ser usados para estimar o efeito causal.
 Para provar resultados sobre os estimadores obtidos,
-a seguinte definição será útil
+a seguinte definição será útil:
 
 \begin{definition}
  \label{def:perm}
@@ -2283,10 +2287,12 @@ por meio de expressões como o $\ACE$.
  \label{thm:conv_ajuste}
  Seja $\mu(X,\Z) := \E[Y|X,\Z]$.
  Se $\Z$ satisfaz a \cref{def:conf_control},
- $\E[|\mu(x,\Z_1)|] < \infty$,
- $\E[|\hmu(x,\Z_1)-\mu(x,\Z_1)|] = o(1)$, 
- e $\hmu$ é invariante a permutações (\cref{def:perm}), então
- $\hdoy \convp \E[Y|do(X=x)]$.
+ \begin{enumerate}
+  \item $\hmu$ é invariante a permutações (\cref{def:perm}),
+  \item $\E[|\mu(x,\Z_1)|] < \infty$,
+  \item $\E[|\hmu(x,\Z_1)-\mu(x,\Z_1)|] = o(1)$, e
+ \end{enumerate}
+ então $\hdoy \convp \E[Y|do(X=x)]$.
 \end{theorem}
 
 A seguir, utilizamos dados simulados para
@@ -2531,14 +2537,14 @@ $\hdoyb$ converge para $\E[Y|do(X=x)]$.
 
 \begin{theorem}
  \label{thm:conv_ipw}
- Se $\Z$ satisfaz a \cref{def:conf_control}, também
- $\hf$ é invariante a permutações (\cref{def:perm}),
- $\E[|\hf(x|\Z_1)-f(x|\Z_1)|] = o(1)$, e
- existe $M > 0$ tal que
- $\sup_\z \E[|Y| \I(X=x)|\Z=\z] < M$, e
- existe $\delta > 0$ tal que
- $\inf_z \min\{f(x|\Z_1), \hf(x|\Z_1)\} > \delta$, então
- $\hdoyb \convp \E[Y|do(X=x)]$.
+ Se $\Z$ satisfaz a \cref{def:conf_control} e, também
+ \begin{enumerate}
+  \item $\hf$ é invariante a permutações (\cref{def:perm}),
+  \item $\E[|\hf(x|\Z_1)-f(x|\Z_1)|] = o(1)$,
+  \item existe $M > 0$ tal que $\sup_\z \E[|Y| \I(X=x)|\Z=\z] < M$, e
+  \item existe $\delta > 0$ tal que $\inf_z \min\{f(x|\Z_1), \hf(x|\Z_1)\} > \delta$,
+ \end{enumerate}
+ então $\hdoyb \convp \E[Y|do(X=x)]$.
 \end{theorem}
 
 A seguir, utilizamos novamente dados simulados para
@@ -3613,7 +3619,7 @@ Esta construção é formalizada na \cref{def:pom}.
  $\sG^*$ é o grafo de resultados potenciais
  dado por intervenções em $\X$ (\cref{def:grafo_potencial}) e
  \begin{align*}
-  f^*(U_W) &= f(U_W) & \text{, para todo } W \in \sV, \\
+  f^*(U_W) &= f^{+}(U_W) & \text{, para todo } W \in \sV, \\
   f^*(W_{\V=\bv}|Pa^*(W_{\V=\bv}))
   &= 
   \begin{cases}
@@ -3754,7 +3760,7 @@ medir o efeito causal de $X$ em $Y$.
  \begin{enumerate}
   \item $\emptyset$ satisfaz o critério backdoor para
   medir o efeito causal de $X$ em $Y$,
-  \item $Anc(X) \cap Anc(Y) = \emptyset$, isto é,
+  \item $(Anc(X)-\{X\}) \cap (Anc(Y)-\{Y\}) = \emptyset$, isto é,
   $X$ e $Y$ não tem um ancestral em comum, e
   \item $X$ é ignorável para medir o efeito causal em $Y$.
  \end{enumerate}
@@ -3971,7 +3977,7 @@ o valor de $X$ necessariamente irá aumentar
  medir o efeito causal de $X$ em $Y$ se,
  para todo $i_1 > i_0$,
  \begin{align*}
-  \P(X_{I = i_1} > X_{I = i_0}) = 1.
+  \P(X_{I = i_1} \geq X_{I = i_0}) = 1.
  \end{align*}
 \end{definition}
 
@@ -4051,9 +4057,9 @@ há um médico muito mais concentrado, competente,
 Ou estamos supondo apenas que
 características pontuais que o levaram ao erro não estão presentes e,
 assim, essencialmente é o mesmo médico tratando o paciente?
-Ainda que não há uma resposta única para esta pergunta,
+Ainda que não haja uma resposta única para esta pergunta,
 há um cenário que é comumente analisado.
-Neste supomos que a realidade alternativa é 
+Neste, supomos que a realidade alternativa é 
 a mais próxima possível da observada dada
 a restrição que um determinado fato ocorreu diferentemente.
 
@@ -4104,10 +4110,10 @@ tão próximas quanto possível da realidade observada.
  podemos perguntar qual teria sido a probabilidade
  de que a perna do paciente não fosse amputada sem
  um erro médico, sabendo que observou-se
- o erro e a amputação: $\P(Y_{X=0}|X=1,Y=1)$.
+ o erro e a amputação: $\P(Y_{X=0}=1|X=1,Y=1)$.
  \begin{align*}
   \P(Y_{X=0}=1|X=1,Y=0)
-  &= \P(\I(U_Y \leq p_0) = 1|\I(U_X \leq \epsilon) == 1, \I(U_Y > p_1) = 1) \\
+  &= \P(\I(U_Y \leq p_0) = 1|\I(U_X \leq \epsilon) = 1, \I(U_Y > p_1) = 1) \\
   &= \P(U_Y \leq p_0|U_X \leq \epsilon, U_Y > p_1) \\
   &= \P(U_Y \leq p_0|U_Y > p_1) \\
   &= \frac{\P(p_1 < U_Y \leq p_0)}{\P(U_Y > p_1)} = \frac{p_0-p_1}{1-p_1}
@@ -4116,7 +4122,7 @@ tão próximas quanto possível da realidade observada.
 
 Uma característica importante do \cref{ex:contrafactual_1} é que 
 a probabilidade contrafactual depende 
-tanto da distribuição de $U_Y$ quanto da funções $g_Y$.
+tanto da distribuição de $U_Y$ quanto da função $g_Y$.
 Estas quantidades não podem ser determinadas pelos dados.
 Em outras palavras, as probabilidades contrafactuais dependem
 fundamentalmente de suposições que não podem ser testadas.
@@ -4138,12 +4144,12 @@ o acoplamento utilizado.
  $g_Y(U_Y, 0) = \I(U_Y \geq 1-p_0)$.
  \begin{align*}
   \P(Y_{X=0}=1|X=1,Y=0)
-  &= \P(\I(U_Y \geq 1-p_0) = 1|\I(U_X \leq \epsilon) == 1, \I(U_Y > p_1) = 1) \\
+  &= \P(\I(U_Y \geq 1-p_0) = 1|\I(U_X \leq \epsilon) = 1, \I(U_Y > p_1) = 1) \\
   &= \P(U_Y \geq 1-p_0|U_X \leq \epsilon, U_Y > p_1) \\
   &= \P(U_Y > 1-p_0|U_Y > p_1) \\
-  &= \frac{\P(U_Y > \max(1-p_0,p_1)}{\P(U_Y > p_1)} = \frac{\min(p_0,1-p_1)}{1-p_1}
+  &= \frac{\P(U_Y > \max(1-p_0,p_1))}{\P(U_Y > p_1)} = \frac{\min(p_0,1-p_1)}{1-p_1}
  \end{align*}
- Neste caso, $g_Y$ induz a mema distribuição 
+ Neste caso, $g_Y$ induz a mesma distribuição 
  sobre $(X,Y)$ que o acoplamento no \cref{ex:contrafactual_1}.
  Ainda assim, a probabilidade contrafactual obtida é diferente.
  Isto ocorre pois, ao contrário do \cref{ex:contrafactual_1},
@@ -4193,7 +4199,7 @@ O art. 927 do Código Civil de 2002 determina que:
 \end{quote}
 
 Este artigo institui a Responsabilidade Aquiliana,
-isto é o dever daquele que causa um dano 
+isto é, o dever daquele que causa um dano 
 de forma ilícita a \textbf{reparar} as vítimas.
 Sem entrar em detalhes sobre a lei,
 um elemento fundamental deste conceito é a reparação.
@@ -4299,9 +4305,11 @@ Por outro lado, pode-se entender que,
 no momento em que o ato ilícito foi cometido,
 a vítima deveria estar indiferente entre
 não sofrer o ilícito ou sofrê-lo e receber a indenização.
-Esta outra interpretação pode ser formalizada da seguinte forma:
+Esta outra interpretação pode ser formalizada 
+tomando $\mathcal{Q} = \{Q^*: \E[U(\sV,Q^*)] = \E[U(\sV_{X=0},0)]\}$
+e definindo:
 \begin{align*}
- Q = \arg\min_{Q^*: \E[U(\sV,Q^*)] = \E[U(\sV_{X=0},0)]}\E[(U(\sV,Q^*(E)) - U(\sV_{X=0},0))^2]
+ Q = \arg\min_{Q^* \in \mathcal{Q}}\E[(U(\sV,Q^*(E)) - U(\sV_{X=0},0))^2]
 \end{align*}
 
 Finalmente, como estabelecer 
@@ -4371,8 +4379,8 @@ Neste caso, há pelo menos duas dificuldades.
 Primeiramente, considere que 
 $f$ é tal que $X \ind^f Y$.
 Neste caso, apesar de intuitivamente 
-considerarmos o grafo causal,
-$X \hspace{3 mm} Y$, 
+considerarmos o grafo causal sem arestas,
+``$X \hspace{3 mm} Y$'', 
 a densidade $f$ também é compatível com
 $X \rightarrow Y$.
 De fato, $X \rightarrow Y$ determina que
@@ -4473,7 +4481,7 @@ relação de indistinguibilidade fiel.
 
 \begin{definition}
  \label{def:padrao_dag}
- Os DAGs $\sG$ e $\sG^*$ tem o mesmo padrão se:
+ Os DAGs $\sG$ e $\sG^*$ têm o mesmo padrão se:
  \begin{enumerate}
   \item Para quaisquer vértices $V_1$ e $V_2$,
   $V_1$ e $V_2$ são adjacentes em $\sG$ 
@@ -5277,12 +5285,13 @@ ao condicionamento usual no SCM aumentado.
 \begin{proof}[Prova do \cref{thm:backdoor_ajuste}]
  \begin{align}
   \label{eq:backdoor_ajuste_1}
-  \E[g(Y)|do(X=x),\Z]
-  &= \int g(y) f(y|do(x),\Z) dy 
-  & \text{\cref{def:exp_inter}} \nonumber \\
-  &= \int g(y) f(y|x, \Z)dy 
-  & \text{\cref{thm:backdoor}} \nonumber \\
-  &= \E[g(Y)|X=x,\Z] \\
+  \int_{\mathcal{Z}} \E[g(Y)|do(X=x),\z] f(\z|do(X=x)) d\z
+  &= \int_{\mathcal{Z}} \int g(y) f(y|do(x),\z) dy f(\z|do(X=x)) d\z \nonumber \\
+  &= \int_{\mathcal{Z}} g(y) \int f(y|do(x),\z) f(\z|do(X=x)) d\z dy \nonumber \\
+  &= \int_{\mathcal{Z}} g(y) \int f(y|x,\z) f(\z) d\z dy
+  & \text{\cref{def:conf_control}} \nonumber \\
+  &= \int_{\mathcal{Z}} \int g(y)f(y|x,\z) dy f(\z) d\z \nonumber \\
+  &= \int_{\mathcal{Z}} \E[g(Y)|X=x,\z] f(\z) d\z \\
   \E[g(Y)|do(X=x)]
   &= \E[\E[g(Y)|do(X=x),\Z]] \nonumber \\
   &= \E[\E[g(Y)|X=x,\Z]]
@@ -5292,15 +5301,16 @@ ao condicionamento usual no SCM aumentado.
 
 \begin{proof}[Prova do \cref{thm:backdoor_ipw}]
  \begin{align*}
-  \E[g(Y)|do(x),\Z]
-  &= \int g(y) f(y|do(x),\Z) dy
-  & \text{\cref{def:exp_inter}} \\
-  &= \int g(y) f(y|x,\Z) dy
-  & \text{\cref{thm:backdoor}} \\
-  &= \int \frac{g(y) f(y,x|\Z)}{f(x|\Z)} dy \\
-  &= \int \frac{g(y) \I(x_* = x) f(y,x_*|\Z)}{f(x|\Z)} d(x_*, y) \\
-  &= \E\left[\frac{g(Y)\I(X=x)}{f(x|\Z)}|\Z\right] \\
-  &= \frac{\E[g(Y)\I(X=x)|\Z]}{f(x|\Z)}
+  \int_{\mathcal{Z}} \E[g(Y)|do(x),\z] f(\z|do(x)) d\z 
+  &= \int_{\mathcal{Z}} \int g(y) f(y|do(x),\z) f(\z|do(x)) dy d\z \\
+  &= \int g(y) \int_{\mathcal{Z}} f(y|do(x),\z) f(\z|do(x)) d\z dy \\
+  &= \int g(y) \int_{\mathcal{Z}} f(y|x,\z) f(\z) d\z dy 
+  & \text{\cref{def:conf_control}} \\
+  &= \int_{\mathcal{Z}} f(\z) \int g(y) f(y|x,\z)  dy d\z \\
+  &= \int_{\mathcal{Z}} f(\z) \int \frac{g(y) f(y,x|\z)}{f(x|\z)} dy d\z \\
+  &= \int_{\mathcal{Z}} f(\z) \int \frac{g(y) \I(x_* = x) f(y,x_*|\z)}{f(x|\z)} d(x_*, y) d\z \\
+  &= \int_{\mathcal{Z}} f(\z) \E\left[\frac{g(Y)\I(X=x)}{f(x|\z)}|\z\right] d\z \\
+  &= \int_{\mathcal{Z}} \frac{\E[g(Y)\I(X=x)|\z]}{f(x|\z)} f(\z) d\z
  \end{align*}
  \begin{align*}
   \E[Y|do(x)]

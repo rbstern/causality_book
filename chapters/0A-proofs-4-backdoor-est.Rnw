@@ -3,12 +3,13 @@
 \begin{proof}[Prova do \cref{thm:backdoor_ajuste}]
  \begin{align}
   \label{eq:backdoor_ajuste_1}
-  \E[g(Y)|do(X=x),\Z]
-  &= \int g(y) f(y|do(x),\Z) dy 
-  & \text{\cref{def:exp_inter}} \nonumber \\
-  &= \int g(y) f(y|x, \Z)dy 
-  & \text{\cref{thm:backdoor}} \nonumber \\
-  &= \E[g(Y)|X=x,\Z] \\
+  \int_{\mathcal{Z}} \E[g(Y)|do(X=x),\z] f(\z|do(X=x)) d\z
+  &= \int_{\mathcal{Z}} \int g(y) f(y|do(x),\z) dy f(\z|do(X=x)) d\z \nonumber \\
+  &= \int_{\mathcal{Z}} g(y) \int f(y|do(x),\z) f(\z|do(X=x)) d\z dy \nonumber \\
+  &= \int_{\mathcal{Z}} g(y) \int f(y|x,\z) f(\z) d\z dy
+  & \text{\cref{def:conf_control}} \nonumber \\
+  &= \int_{\mathcal{Z}} \int g(y)f(y|x,\z) dy f(\z) d\z \nonumber \\
+  &= \int_{\mathcal{Z}} \E[g(Y)|X=x,\z] f(\z) d\z \\
   \E[g(Y)|do(X=x)]
   &= \E[\E[g(Y)|do(X=x),\Z]] \nonumber \\
   &= \E[\E[g(Y)|X=x,\Z]]
@@ -18,15 +19,16 @@
 
 \begin{proof}[Prova do \cref{thm:backdoor_ipw}]
  \begin{align*}
-  \E[g(Y)|do(x),\Z]
-  &= \int g(y) f(y|do(x),\Z) dy
-  & \text{\cref{def:exp_inter}} \\
-  &= \int g(y) f(y|x,\Z) dy
-  & \text{\cref{thm:backdoor}} \\
-  &= \int \frac{g(y) f(y,x|\Z)}{f(x|\Z)} dy \\
-  &= \int \frac{g(y) \I(x_* = x) f(y,x_*|\Z)}{f(x|\Z)} d(x_*, y) \\
-  &= \E\left[\frac{g(Y)\I(X=x)}{f(x|\Z)}|\Z\right] \\
-  &= \frac{\E[g(Y)\I(X=x)|\Z]}{f(x|\Z)}
+  \int_{\mathcal{Z}} \E[g(Y)|do(x),\z] f(\z|do(x)) d\z 
+  &= \int_{\mathcal{Z}} \int g(y) f(y|do(x),\z) f(\z|do(x)) dy d\z \\
+  &= \int g(y) \int_{\mathcal{Z}} f(y|do(x),\z) f(\z|do(x)) d\z dy \\
+  &= \int g(y) \int_{\mathcal{Z}} f(y|x,\z) f(\z) d\z dy 
+  & \text{\cref{def:conf_control}} \\
+  &= \int_{\mathcal{Z}} f(\z) \int g(y) f(y|x,\z)  dy d\z \\
+  &= \int_{\mathcal{Z}} f(\z) \int \frac{g(y) f(y,x|\z)}{f(x|\z)} dy d\z \\
+  &= \int_{\mathcal{Z}} f(\z) \int \frac{g(y) \I(x_* = x) f(y,x_*|\z)}{f(x|\z)} d(x_*, y) d\z \\
+  &= \int_{\mathcal{Z}} f(\z) \E\left[\frac{g(Y)\I(X=x)}{f(x|\z)}|\z\right] d\z \\
+  &= \int_{\mathcal{Z}} \frac{\E[g(Y)\I(X=x)|\z]}{f(x|\z)} f(\z) d\z
  \end{align*}
  \begin{align*}
   \E[Y|do(x)]

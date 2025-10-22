@@ -29,8 +29,8 @@ Neste caso, há pelo menos duas dificuldades.
 Primeiramente, considere que 
 $f$ é tal que $X \ind^f Y$.
 Neste caso, apesar de intuitivamente 
-considerarmos o grafo causal,
-$X \hspace{3 mm} Y$, 
+considerarmos o grafo causal sem arestas,
+``$X \hspace{3 mm} Y$'', 
 a densidade $f$ também é compatível com
 $X \rightarrow Y$.
 De fato, $X \rightarrow Y$ determina que
@@ -131,7 +131,7 @@ relação de indistinguibilidade fiel.
 
 \begin{definition}
  \label{def:padrao_dag}
- Os DAGs $\sG$ e $\sG^*$ tem o mesmo padrão se:
+ Os DAGs $\sG$ e $\sG^*$ têm o mesmo padrão se:
  \begin{enumerate}
   \item Para quaisquer vértices $V_1$ e $V_2$,
   $V_1$ e $V_2$ são adjacentes em $\sG$ 

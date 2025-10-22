@@ -9,6 +9,9 @@ dados <- dados %>%
   spread(country, gdp) %>% 
   clean_names()
 
+colnames(dados)
+plot(dados$year, dados$west_germany)
+
 analise_sc <- function(ano_trat, ano_fim)
 {
   dados_pre <- dados %>% 

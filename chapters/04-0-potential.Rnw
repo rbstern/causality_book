@@ -270,7 +270,7 @@ Esta construção é formalizada na \cref{def:pom}.
  $\sG^*$ é o grafo de resultados potenciais
  dado por intervenções em $\X$ (\cref{def:grafo_potencial}) e
  \begin{align*}
-  f^*(U_W) &= f(U_W) & \text{, para todo } W \in \sV, \\
+  f^*(U_W) &= f^{+}(U_W) & \text{, para todo } W \in \sV, \\
   f^*(W_{\V=\bv}|Pa^*(W_{\V=\bv}))
   &= 
   \begin{cases}
@@ -411,7 +411,7 @@ medir o efeito causal de $X$ em $Y$.
  \begin{enumerate}
   \item $\emptyset$ satisfaz o critério backdoor para
   medir o efeito causal de $X$ em $Y$,
-  \item $Anc(X) \cap Anc(Y) = \emptyset$, isto é,
+  \item $(Anc(X)-\{X\}) \cap (Anc(Y)-\{Y\}) = \emptyset$, isto é,
   $X$ e $Y$ não tem um ancestral em comum, e
   \item $X$ é ignorável para medir o efeito causal em $Y$.
  \end{enumerate}

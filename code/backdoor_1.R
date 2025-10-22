@@ -17,10 +17,21 @@ A <- rnorm(n, 0, sd)
 B <- rnorm(n, 0, sd)
 eps = rbinom(n, 1, 0.8)
 X = eps*as.numeric((A + B) > 0) + (1-eps)*(as.numeric((A + B) <= 0))
-C <- rnorm(n, X, sd)
-Y <- rnorm(n, A + B + C + X, sd)
+C <- rnorm(n, 3*X, sd)
+Y <- rnorm(n, A + B + 0.5*C + 1.5*X, sd)
 data <- dplyr::tibble(A, B, C, X, Y)
-  
+#V = matrix(rnorm(n*100), nrow = n, ncol = 100)
+#data = cbind(data, V) %>% as_tibble()
+
+lm(Y~C+X, data)
+lm(Y~C+A, data)
+
+lm(Y~C+X+A, data)
+lm(Y~C+X+B, data)
+lm(Y~C+X+A+B, data)
+
+lm(Y~.,data)
+
 ##########################################
 # Fórmula do ajuste por regressão linear #
 ##########################################

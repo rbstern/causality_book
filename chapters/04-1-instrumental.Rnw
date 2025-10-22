@@ -115,7 +115,7 @@ o valor de $X$ necessariamente irá aumentar
  medir o efeito causal de $X$ em $Y$ se,
  para todo $i_1 > i_0$,
  \begin{align*}
-  \P(X_{I = i_1} > X_{I = i_0}) = 1.
+  \P(X_{I = i_1} \geq X_{I = i_0}) = 1.
  \end{align*}
 \end{definition}
 
