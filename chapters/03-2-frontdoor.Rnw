@@ -82,12 +82,12 @@ O critério frontdoor é formalizado a seguir:
   existe $C_i \in \W$ e, para todo $W \in \W$,
   existe caminho direcionado de $X$ em $Y$, $C$,
   e $i$ tal que $C_i = W$.
-  \item $\emptyset$ satisfaz
-  o item 2 do critério backdoor (\cref{def:backdoor}) para
-  medir o efeito causal de $X$ em $\W$.
-  \item $X$ satisfaz
-  o item 2 do critério backdoor (\cref{def:backdoor}) para
-  medir o efeito causal de $\W$ em $Y$.
+  \item $\emptyset$ satisfaz o critério backdoor 
+  (\cref{def:backdoor}) para medir o efeito causal de 
+  $X$ em $W$, para cada $W \in \W$.
+  \item $X$ satisfaz o critério backdoor 
+  (\cref{def:backdoor}) para 
+  medir o efeito causal de $W$ em $Y$, para cada $W \in \W$.
  \end{enumerate}
 \end{definition}
 

@@ -395,7 +395,9 @@ realizamos uma intervenção sobre $X$.
  \label{def:ignore}
  Dizemos que $X$ é \textit{ignorável} para
  medir o efeito causal em $Y$ se
- $Y_x \dsep X$.
+ $Y_x \ind{f^*} X$, 
+ para todo $f$ compatível com o grafo causal e
+ respectiva $f^*$.
 \end{definition}
 
 O critério da ignorabilidade é equivalente a
@@ -443,22 +445,31 @@ $X$ é independente de todo $Y_x$ dado $\Z$.
  \label{def:cignore}
  Dizemos que $X$ é \textit{condicionalmente ignorável} para
  medir o efeito causal em $Y$ dado $\Z$ se
- $Y_x \dsep X | \Z$.
+ $Y_x \ind^{f^*} X | \Z$, 
+ para todo $f$ compatível com o grafo causal e
+ respectiva $f^*$.
 \end{definition}
 
-Se $\Z$ não tem descendentes de $X$, 
-a ignorabilidade condicional é
-uma restrição mais forte que o critério backdoor,
-conforme formalizado no \cref{lemma:cignore_backdoor}.
+O critério backdoor é uma condição 
+mais forte que a ignorabilidade condicional.
+Isto acontece pois o segundo critério não exige que
+$X \notin Anc(\Z)$, conforme 
+formalizado no \cref{theorem:cignore_backdoor}.
 
-\begin{lemma}
- \label{lemma:cignore_backdoor}
- Suponha que $X \notin Anc(\Z)$.
- Se $X$ é condicionalmente ignorável para 
- medir o efeito causal em $Y$ dado $\Z$, então
- $\Z$ satisfaz o critério backdoor para
- medir o efeito causal de $X$ em $Y$.
-\end{lemma}
+\begin{theorem}[Relação entre critério backdoor e ignorabilidade condicional]
+ \label{theorem:cignore_backdoor}
+ \begin{enumerate}[label=(\roman*)]
+  \item Se $\Z$ satisfaz o critério backdoor para 
+  medir o efeito causal de $X$ em $Y$, então
+  $X$ é condicionalmente ignorável para 
+  medir o efeito causal em $Y$ dado $\Z$.
+  \item Suponha que $X \notin Anc(\Z)$.
+  Se $X$ é condicionalmente ignorável para 
+  medir o efeito causal em $Y$ dado $\Z$, então
+  $\Z$ satisfaz o critério backdoor para 
+  medir o efeito causal de $X$ em $Y$.
+ \end{enumerate}
+\end{theorem}
 
 Apesar do critério backdoor e
 da ignorabilidade condicional não serem equivalentes,
@@ -498,10 +509,9 @@ obtida pelo critério backdoor.
 \end{exercise}
 
 \begin{exercise}
- Exiba um exemplo em que
- $X$ é condicionalmente ignorável para $Y$ dado $\Z$ mas
- $\Z$ não satisfaz o critério backdoor para
- medir o efeito causal de $X$ em $Y$.
+ \label{ex:pom_anc}
+ Prove que, se $X \notin Anc(\Z)$, então
+ $Z_{X=x} \equiv Z$.
 \end{exercise}
 
 \begin{exercise}

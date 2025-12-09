@@ -144,12 +144,23 @@
  a partir de $V_x$ por sua cópia em $\sV$.
  
  ($3 \rightarrow 1$)
- Esta demonstração decorre do \cref{lemma:cignore_backdoor},
+ Esta demonstração decorre do \cref{theorem:cignore_backdoor},
  provado a seguir, tomando $\Z = \emptyset$.
 \end{proof}
 
-\begin{proof}[Prova do \cref{lemma:cignore_backdoor}]
- Suponha que $\Z$ não satisfaz 
+\begin{proof}[Prova do \cref{theorem:cignore_backdoor}]
+ (i) Suponha que $\Z$ satisfaz o critério backdoor 
+ para medir o efeito causal de $X$ em $Y$.
+ \begin{align*}
+  \P(Y_x | Z)
+  &= \P(Y_x | Z_x) & \text{\cref{ex:pom_anc}} \\
+  &= \P(Y|Z, do(X=x)) &\text{\cref{lemma:po_do}} \\
+  &= \P(Y|Z, X=x) & \text{\cref{thm:backdoor}} \\
+  &= \P(Y_x|Z, X=x) & \text{\cref{lemma:obs_to_potential}}
+ \end{align*}
+ Assim, $Y_x \ind^{f^*} X$.
+ 
+ (ii) Suponha que $\Z$ não satisfaz 
  o critério backdoor para medir o efeito causal de $X$ em $Y$.
  Como $X \notin Anc(\Z)$, existe 
  um caminho não bloqueado de $X$ em $Y$ dado $\Z$,

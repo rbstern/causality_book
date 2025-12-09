@@ -356,7 +356,7 @@ Se $(\sG,f)$ é um \CM linear Gaussiano, então é
 possível obter uma equação direta para o $\ACE$.
 Este resultado é apresentado no \cref{thm:ace_linear} abaixo.
 
-\begin{theorem}
+\begin{theorem}[Path Analysis]
  \label{thm:ace_linear}
  Se $(\sG,f)$ é um \CM linear Gaussiano
  de parâmetros $\mu$ e $\beta$ e
@@ -477,4 +477,18 @@ onde $X, Y \in \sV$.
   $\E[X_2|X_1 = 1, do(X_3 = 3)]$, e
   $\E[X_2|do(X_1 = 1), X_3 = 3]$.
  \end{enumerate}
+ 
+ \begin{exercise}
+  Verifique que a demonstração do \cref{thm:ace_linear} não utilizou a suposição de que os resíduos do modelo linear Gaussiano são normais. Qual é o modelo mais geral que você consegue imaginar em que o \cref{thm:ace_linear} ainda vale?
+ \end{exercise}
+ 
+ \begin{exercise}
+  Considere que $\sV = \{X,Y,Z\}$ e o grafo causal é tal que
+  $Pa(Y) = \{X,Z\}$ e $Pa(Z) = \{X\}$. Também,
+  $\E[Y|Pa(Y)] = \beta_{1} \cdot Z \cdot X$, e
+  $\E[Z|Pa(Z)] = \beta_2 \cdot X$. Determine o efeito causal
+  de $X$ em $Y$. É possível obter este resultado por
+  meio do \cref{thm:ace_linear}?
+ \end{exercise}
+ 
 \end{exercise}
